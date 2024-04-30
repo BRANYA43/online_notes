@@ -1,3 +1,4 @@
+{% load django_bootstrap5 %}
 <div id="modal_login_form" class="modal fade" tabindex="-1" aria-labelledby="modal_login_form_label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -11,11 +12,7 @@
 
         {% csrf_token %}
         <div class="modal-body">
-          {# {% bootstrap_form form %} #}
-          <label for="input_email" class="col-sm-2 col-form-label">Email</label>
-          <input type="password" class="form-control" id="input_email">
-          <label for="input_password" class="col-sm-2 col-form-label">Password</label>
-          <input type="password" class="form-control" id="input_password">
+          {% bootstrap_form login_form %}
         </div>
 
         <div class="modal-footer">
