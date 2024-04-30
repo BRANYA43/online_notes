@@ -20,9 +20,12 @@ class UserManagerTest(TestCase):
 
         self.assertEqual(user.email, self.email)
         self.assertTrue(user.check_password(self.password))
+        self.assertFalse(user.is_superuser)
 
     def test_manager_creates_superuser_correctly(self):
-        user = self.manager.create_user(**self.data)
+        user = self.manager.create_superuser(**self.data)
 
         self.assertEqual(user.email, self.email)
         self.assertTrue(user.check_password(self.password))
+        self.assertTrue(user.is_superuser)
+        self.assertTrue(user.is_staff)

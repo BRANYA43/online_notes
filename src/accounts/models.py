@@ -11,6 +11,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name=_('email'),
         unique=True,
     )
+    is_staff = models.BooleanField(
+        verbose_name=_('is stuff'),
+        default=False,
+    )
     last_login = models.DateTimeField(
         verbose_name=_('last login'),
         auto_now=True,

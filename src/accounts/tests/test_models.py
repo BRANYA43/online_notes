@@ -37,6 +37,10 @@ class UserModelTest(TestCase):
     def test_email_field_is_email_field(self):
         self.assertEqual(self.model_class.EMAIL_FIELD, 'email')
 
+    def test_is_stuff_field_is_false_by_default(self):
+        user = self.model_class.objects.create(**self.data)
+        self.assertFalse(user.is_staff)
+
     def test_model_str_representation_is_email(self):
         user = self.model_class(**self.data)
         self.assertEqual(str(user), self.email)
