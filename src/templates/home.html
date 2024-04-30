@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Online Note{% endblock %}
+{% block content %}
+<aside class="d-flex flex-column w-25 ms-5 mt-3">
+    {% include 'includes/sort_panel.html' %}
+    {% include 'includes/note_list.html' %}
+</aside>
+{% endblock %}
