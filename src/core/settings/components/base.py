@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_bootstrap5',
     'accounts',
+    'notes',
 ]
 
 MIDDLEWARE = [
