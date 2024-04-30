@@ -1,0 +1,29 @@
+<div id="modal_login_form" class="modal fade" tabindex="-1" aria-labelledby="modal_login_form_label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modal_login_form_label">Login Form</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form action="#" method="post" class="form">
+
+        {% csrf_token %}
+        <div class="modal-body">
+          {# {% bootstrap_form form %} #}
+          <label for="input_email" class="col-sm-2 col-form-label">Email</label>
+          <input type="password" class="form-control" id="input_email">
+          <label for="input_password" class="col-sm-2 col-form-label">Password</label>
+          <input type="password" class="form-control" id="input_password">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Sing In</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
