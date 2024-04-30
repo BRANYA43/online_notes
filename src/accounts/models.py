@@ -3,6 +3,8 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext as _
 
+from accounts.managers import UserManager
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
@@ -20,6 +22,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
+
+    objects = UserManager()
 
     class Meta:
         verbose_name = _('user')

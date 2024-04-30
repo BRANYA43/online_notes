@@ -5,6 +5,7 @@ from django.db import IntegrityError
 from django.test import TestCase
 
 from accounts import models
+from accounts.managers import UserManager
 
 
 class UserModelTest(TestCase):
@@ -39,3 +40,6 @@ class UserModelTest(TestCase):
     def test_model_str_representation_is_email(self):
         user = self.model_class(**self.data)
         self.assertEqual(str(user), self.email)
+
+    def test_model_objects_is_UserManager(self):
+        self.assertIsInstance(self.model_class.objects, UserManager)
