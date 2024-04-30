@@ -1,0 +1,40 @@
+<div id="sort_panel">
+  <div class="input-group mb-3">
+    <input type="search" class="form-control" placeholder="Search..." aria-label="" aria-describedby="search_btn">
+    <button class="input-group-text btn btn-outline-primary" id="search_btn">Search</button>
+  </div>
+  <div class="d-flex flex-column mb-4 gap-2">
+    <h6>Sort by:</h6>
+    <div class="input-group">
+      <span class="input-group-text" id="sort_by_category">Category:</span>
+      <select class="form-select" aria-describedby="sort_by_category">
+        <option selected>---</option>
+        <option class="text-primary" value="1">Category #1</option>
+        <option class="text-success" value="2">Category #2</option>
+        <option class="text-warning" value="3">Category #3</option>
+      </select>
+    </div>
+    <div class="d-flex gap-2">
+
+      <div class="input-group">
+        <span class="input-group-text" id="sort_by_date">Date:</span>
+        <select class="form-select" aria-describedby="sort_by_date">
+          <option selected>---</option>
+          <option class="text-primary" value="1">Earlier</option>
+          <option class="text-success" value="2">Later</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <span class="input-group-text" id="sort_by_quantity_words">Word:</span>
+        <select class="form-select" aria-describedby="sort_by_quantity_words">
+          <option selected>---</option>
+          <option class="text-primary" value="1">Less Quantity</option>
+          <option class="text-success" value="2">More Quantity</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
