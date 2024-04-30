@@ -8,14 +8,18 @@
   </aside>
   <div class="d-flex ms-5 flex-grow-1 me-5 mt-3">
     <form class="d-flex flex-column flex-fill gap-3" action="#" method="post">
-      <div class="input-group">
-        <span class="input-group-text" id="sort_by_category">Category:</span>
-        <select class="form-select" aria-describedby="sort_by_category">
-          <option selected>---</option>
-          <option class="text-primary" value="1">Category #1</option>
-          <option class="text-success" value="2">Category #2</option>
-          <option class="text-warning" value="3">Category #3</option>
-        </select>
+      <div class="d-flex flex-row gap-3">
+        <div class="input-group" style="width: 324px;">
+          <span class="input-group-text" id="sort_by_category">Category:</span>
+          <select class="form-select" aria-describedby="sort_by_category">
+            <option selected>---</option>
+            <option class="text-primary" value="1">Category #1</option>
+            <option class="text-success" value="2">Category #2</option>
+            <option class="text-warning" value="3">Category #3</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-primary">Create New Category</button>
+        <button type="button" class="btn btn-danger">Delete Category</button>
       </div>
       <input type="text" class="form-control" placeholder="Name...">
       <textarea class="form-control h-100" placeholder="Text..."></textarea>
