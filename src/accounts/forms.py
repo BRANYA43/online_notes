@@ -1,9 +1,44 @@
 from django import forms
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 User = get_user_model()
+
+
+class UserLoginForm(forms.Form):
+    email = forms.EmailField(
+        label=_('Email'),
+        required=True,
+    )
+    password = forms.CharField(
+        label=_('Password'),
+        required=True,
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
+    )
+
+    error_messages = {
+        'invalid_login': _('Please enter a correct email and password. Note: both fields may be case-sensitive.'),
+    }
+
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+
+        if email and password:
+            user = authenticate(self.request, email=email, password=password)
+            if user is None:
+                raise ValidationError(
+                    self.error_messages['invalid_login'],
+                    'invalid_login',
+                )
+
+        return self.cleaned_data
 
 
 class UserRegisterForm(forms.ModelForm):

@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.http import HttpRequest
 from django.test import TestCase
 
 from django.forms import ModelForm
@@ -6,6 +7,39 @@ from django.forms import ModelForm
 from accounts import forms
 
 User = get_user_model()
+
+
+class UserLoginFormTest(TestCase):
+    def setUp(self) -> None:
+        self.request = HttpRequest()
+        self.form_class = forms.UserLoginForm
+        self.email = 'shurup.cherikovich@test.com'
+        self.password = 'qwe123!@#'
+        self.data = {
+            'email': self.email,
+            'password': self.password,
+        }
+        self.user = User.objects.create_user(**self.data)
+
+    def test_form_is_invalid_if_email_is_empty(self):
+        self.data['email'] = ''
+        form = self.form_class(self.request, data=self.data)
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'email', ['This field is required.'])
+
+    def test_form_is_invalid_if_password_is_empty(self):
+        self.data['password'] = ''
+        form = self.form_class(self.request, data=self.data)
+        self.assertFalse(form.is_valid())
+        self.assertFormError(form, 'password', ['This field is required.'])
+
+    def test_form_is_invalid_if_authenticating_returns_none_user(self):
+        self.data['email'] = 'the.non.existent.man@test.com'
+        form = self.form_class(self.request, data=self.data)
+        self.assertFalse(form.is_valid())
+        self.assertFormError(
+            form, None, ['Please enter a correct email and password. Note: both fields may be case-sensitive.']
+        )
 
 
 class UserRegisterFormTest(TestCase):
