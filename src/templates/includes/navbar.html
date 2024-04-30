@@ -15,7 +15,7 @@
           </li>
         {% else %}
           <li class="nav-item">
-            <a class="nav-link" href="#">Sing Up</a>
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modal_registration_form">Sing Up</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Sing In</a>
@@ -25,3 +25,5 @@
     </div>
   </div>
 </nav>
+
+{% include 'includes/modals/modal_registration_form.html' %}
