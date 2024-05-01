@@ -1,7 +1,45 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from accounts.forms import User
+User = get_user_model()
+
+
+class LoginUserView(TestCase):
+    def setUp(self) -> None:
+        self.url = reverse('login')
+        self.email = 'heisenberg@test.com'
+        self.password = 'qwe123!@#'
+        self.data = {
+            'email': self.email,
+            'password': self.password,
+        }
+        self.user = User.objects.create_user(**self.data)
+
+    def test_view_logins_user_correctly(self):
+        response = self.client.post(self.url, self.data)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_doesnt_login_user_if_credentials_are_invalid(self):
+        response = self.client.post(self.url, {})
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_view_returns_emtpy_data_if_credentials_are_valid(self):
+        response = self.client.post(self.url, self.data)
+
+        data = response.json()
+
+        self.assertFalse(data, msg="Data isn't empty.")
+
+    def test_view_returns_errors_if_credentials_are_invalid(self):
+        response = self.client.post(self.url, {})
+        data = response.json()
+        errors = data.get('errors')
+
+        self.assertIsNotNone(errors)
+        self.assertTrue(errors, msg='Data is empty.')
 
 
 class RegisterUserView(TestCase):

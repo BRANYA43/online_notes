@@ -1,6 +1,18 @@
+from django.contrib.auth import login
 from django.http import JsonResponse
 
 from accounts import forms
+
+
+def login_user(request, *args, **kwargs):
+    data = request.POST
+    form = forms.UserLoginForm(request, data)
+    if form.is_valid():
+        login(request, form.cache_user)
+        return JsonResponse(data={}, status=200)
+    else:
+        data = {'errors': form.errors}
+        return JsonResponse(data=data, status=400)
 
 
 def register_user(request, *args, **kwargs):
