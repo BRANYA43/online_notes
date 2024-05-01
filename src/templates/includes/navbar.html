@@ -9,7 +9,7 @@
               {{ user.email }}
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Sing Out</a></li>
+              <li><a name="logout_link" class="dropdown-item" href="{% url 'logout' %}">Sing Out</a></li>
               <li><a class="dropdown-item" href="#">Delete Account</a></li>
             </ul>
           </li>

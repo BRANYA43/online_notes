@@ -28,6 +28,22 @@ $(document).ready(function(){
         alert.html(msg);
     }
 
+    $('#navbar [name="logout_link"]').click(function(event){
+        event.preventDefault();
+
+        send_ajax_request(
+        data={},
+        type='GET',
+        url=$(this).attr('href'),
+        success=function(response) {
+            window.location.reload();
+            console.log(response);
+        },
+        error=function(xhr, status, error) {
+            console.error(errors);
+        });
+    });
+
     $('#login_form').submit(function(event){
         event.preventDefault();
 
