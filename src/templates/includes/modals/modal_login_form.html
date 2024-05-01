@@ -7,7 +7,7 @@
         <h1 class="modal-title fs-5" id="modal_login_form_label">Login Form</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-
+      {% include 'includes/alerts/error.html' %}
       <form id="login_form" action="{% url 'login' %}" method="post" class="form">
 
         {% csrf_token %}

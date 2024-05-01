@@ -6,7 +6,7 @@
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="modal_registration_form_label">Registration Form</h1>
       </div>
-
+      {% include 'includes/alerts/error.html' %}
       <form id="registration_form" action="{% url 'register' %}" method="post" class="form">
 
         {% csrf_token %}

@@ -10,6 +10,24 @@ $(document).ready(function(){
         });
     };
 
+    function make_error_msg(errors) {
+        var msg = ''
+        for (var field in errors) {
+            msg = errors[field][0] + '\n';
+        }
+        return msg
+    }
+
+    function clear_alert_msg(alert) {
+        alert.addClass('d-none');
+        alert.html('');
+    }
+
+    function set_alert_msg(alert, msg) {
+        alert.removeClass('d-none');
+        alert.html(msg);
+    }
+
     $('#login_form').submit(function(event){
         event.preventDefault();
 
@@ -22,7 +40,8 @@ $(document).ready(function(){
             console.log(response);
         },
         error=function(xhr, status, error) {
-            var errors = xhr.responseJSON.errors;
+            var msg = make_error_msg(xhr.responseJSON.errors);
+            set_alert_msg($('#modal_login_form .alert-danger'), msg);
             console.error(errors);
         });
     });
@@ -36,11 +55,13 @@ $(document).ready(function(){
         url=$(this).attr('action'),
         success=function(response) {
             $('#registration_form')[0].reset();
-            $('#modal_registration_form').modal('hide');
+            $('#modal_registration_form').modal('toggle');
+            clear_alert_msg($('#modal_registration_form .alert-danger'));
             console.log(response);
         },
         error=function(xhr, status, error) {
-            var errors = xhr.responseJSON.errors;
+            var msg = make_error_msg(xhr.responseJSON.errors);
+            set_alert_msg($('#modal_registration_form .alert-danger'), msg);
             console.error(errors);
         });
     });
