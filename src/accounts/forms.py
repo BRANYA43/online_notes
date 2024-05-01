@@ -22,17 +22,18 @@ class UserLoginForm(forms.Form):
         'invalid_login': _('Please enter a correct email and password. Note: both fields may be case-sensitive.'),
     }
 
-    def __init__(self, request=None, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.request = request
+        self.cache_user = None
 
     def clean(self):
         email = self.cleaned_data.get('email')
         password = self.cleaned_data.get('password')
 
         if email and password:
-            user = authenticate(self.request, email=email, password=password)
-            if user is None:
+            self.cache_user = authenticate(self.request, email=email, password=password)
+            if self.cache_user is None:
                 raise ValidationError(
                     self.error_messages['invalid_login'],
                     'invalid_login',

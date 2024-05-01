@@ -41,6 +41,11 @@ class UserLoginFormTest(TestCase):
             form, None, ['Please enter a correct email and password. Note: both fields may be case-sensitive.']
         )
 
+    def test_form_caches_user_if_credentials_passed_authenticating(self):
+        form = self.form_class(self.request, data=self.data)
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cache_user.pk, self.user.pk)
+
 
 class UserRegisterFormTest(TestCase):
     def setUp(self) -> None:
