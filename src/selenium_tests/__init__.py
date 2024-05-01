@@ -6,7 +6,7 @@ from typing import Callable
 from django.conf import settings
 from django.test.utils import override_settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.common import WebDriverException
+from selenium.common import WebDriverException, ElementClickInterceptedException
 from selenium.webdriver.firefox.service import Service
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium import webdriver
@@ -20,7 +20,7 @@ def wait(wait_time=5):
             while True:
                 try:
                     return fn(*args, **kwargs)
-                except (AssertionError, WebDriverException) as e:
+                except (AssertionError, WebDriverException, ElementClickInterceptedException) as e:
                     if time() - start_time > wait_time:
                         raise e
                     sleep(0.5)
