@@ -5,10 +5,9 @@
 
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="modal_registration_form_label">Registration Form</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <form action="#" method="post" class="form">
+      <form id="registration_form" action="{% url 'register' %}" method="post" class="form">
 
         {% csrf_token %}
         <div class="modal-body">
