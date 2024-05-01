@@ -10,6 +10,23 @@ $(document).ready(function(){
         });
     };
 
+    $('#login_form').submit(function(event){
+        event.preventDefault();
+
+        send_ajax_request(
+        data=$(this).serialize(),
+        type=$(this).attr('method'),
+        url=$(this).attr('action'),
+        success=function(response) {
+            window.location.reload();
+            console.log(response);
+        },
+        error=function(xhr, status, error) {
+            var errors = xhr.responseJSON.errors;
+            console.error(errors);
+        });
+    });
+
     $('#registration_form').submit(function(event){
         event.preventDefault();
 
