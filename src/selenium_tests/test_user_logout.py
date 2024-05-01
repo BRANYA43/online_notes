@@ -24,7 +24,7 @@ class UserLogoutTest(FunctionalTestCase):
         # User enters to the site.
         self.browser.get(self.live_server_url)
 
-        # User clicks on his email link in navbar.
+        # User login to the site
         navbar = self.wait_for(
             lambda: self.browser.find_element(value='navbar'),
         )
@@ -37,6 +37,7 @@ class UserLogoutTest(FunctionalTestCase):
         modal_form.find_element(value='id_password').send_keys(self.password)
         modal_form.find_element(value='login_submit_btn').click()
 
+        # User clicks on his email link in navbar.
         sleep(1)  # wait reload page!!! TODO create wait_for_dependent
         navbar = self.wait_for(
             lambda: self.browser.find_element(value='navbar'),
@@ -44,7 +45,7 @@ class UserLogoutTest(FunctionalTestCase):
         navbar.find_element(value='user').click()
 
         # In drop list user clicks on logout
-        navbar.find_element(By.NAME, 'logout_link')
+        navbar.find_element(By.NAME, 'logout_link').click()
 
         # User checks navbar to confirm he was exits from his account.
         sleep(1)  # wait reload page!!! TODO create wait_for_dependent
