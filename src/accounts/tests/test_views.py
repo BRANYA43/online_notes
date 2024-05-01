@@ -17,7 +17,11 @@ class LoginUserView(TestCase):
         self.user = User.objects.create_user(**self.data)
 
     def test_view_logins_user_correctly(self):
+        self.assertIsNone(self.client.session.get('_auth_user_id'))
+
         response = self.client.post(self.url, self.data)
+
+        self.assertEqual(self.client.session['_auth_user_id'], str(self.user.pk))
 
         self.assertEqual(response.status_code, 200)
 
