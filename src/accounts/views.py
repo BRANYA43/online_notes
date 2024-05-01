@@ -1,7 +1,12 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.http import JsonResponse
 
 from accounts import forms
+
+
+def logout_user(request, *args, **kwargs):
+    logout(request)
+    return JsonResponse(data={}, status=200)
 
 
 def login_user(request, *args, **kwargs):

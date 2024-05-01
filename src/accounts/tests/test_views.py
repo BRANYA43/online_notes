@@ -5,6 +5,27 @@ from django.urls import reverse
 User = get_user_model()
 
 
+class LogoutUserView(TestCase):
+    def setUp(self) -> None:
+        self.url = reverse('logout')
+        self.email = 'eren.yeager@test.com'
+        self.password = 'qwe123!@#'
+        self.data = {
+            'email': self.email,
+            'password': self.password,
+        }
+        self.user = User.objects.create_user(**self.data)
+        self.client.force_login(self.user)
+
+    def test_view_logout_user_correctly(self):
+        self.assertEqual(self.client.session['_auth_user_id'], str(self.user.pk))
+
+        response = self.client.get(self.url)
+
+        self.assertIsNone(self.client.session.get('_auth_user_id'))
+        self.assertEqual(response.status_code, 200)
+
+
 class LoginUserView(TestCase):
     def setUp(self) -> None:
         self.url = reverse('login')
@@ -22,7 +43,6 @@ class LoginUserView(TestCase):
         response = self.client.post(self.url, self.data)
 
         self.assertEqual(self.client.session['_auth_user_id'], str(self.user.pk))
-
         self.assertEqual(response.status_code, 200)
 
     def test_view_doesnt_login_user_if_credentials_are_invalid(self):
