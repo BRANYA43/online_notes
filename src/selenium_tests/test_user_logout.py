@@ -27,11 +27,11 @@ class UserLogoutTest(FunctionalTestCase):
         navbar.find_element(By.NAME, 'login_link').click()
 
         modal_form = self.browser.find_element(value='modal_login_form')
-        self.wait_for(
-            lambda: modal_form.find_element(value='id_email').send_keys(self.email),
+        self.send_form(
+            modal_form,
+            id_email=self.email,
+            id_password=self.password,
         )
-        modal_form.find_element(value='id_password').send_keys(self.password)
-        modal_form.find_element(value='login_submit_btn').click()
 
         # User clicks on his email link in navbar.
         user_email = self.wait_for(

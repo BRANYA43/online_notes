@@ -78,3 +78,13 @@ class FunctionalTestCase(StaticLiveServerTestCase):
 
     def get_navbar(self) -> WebElement:
         return self.browser.find_element(value='navbar')
+
+    @staticmethod
+    def send_form(form: WebElement, **inputs_with_value):
+        """
+        Send form to backend.
+        :param inputs_with_value: key as id of <input> tag and value as value of <input> tag
+        """
+        for input_, value in inputs_with_value.items():
+            form.find_element(value=input_).send_keys(value)
+        form.find_element(value='submit_btn').click()

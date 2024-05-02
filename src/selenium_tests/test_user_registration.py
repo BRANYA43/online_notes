@@ -19,10 +19,12 @@ class UserRegistrationTest(FunctionalTestCase):
 
         # User inputs credentials to appeared modal form to register.
         modal_form = self.browser.find_element(value='modal_registration_form')
-        modal_form.find_element(value='id_email').send_keys(self.email)
-        modal_form.find_element(value='id_password').send_keys(self.password)
-        modal_form.find_element(value='id_confirming_password').send_keys(self.password)
-        modal_form.find_element(value='registration_submit_btn').click()
+        self.send_form(
+            modal_form,
+            id_email=self.email,
+            id_password=self.password,
+            id_confirming_password=self.password,
+        )
 
         # User clicks on "Sing In" link in navbar.
         self.wait_for(
@@ -31,9 +33,11 @@ class UserRegistrationTest(FunctionalTestCase):
 
         # User inputs credentials to appeared modal form to login.
         modal_form = self.browser.find_element(value='modal_login_form')
-        self.wait_for(lambda: modal_form.find_element(value='id_email').send_keys(self.email))
-        modal_form.find_element(value='id_password').send_keys(self.password)
-        modal_form.find_element(value='login_submit_btn').click()
+        self.send_form(
+            modal_form,
+            id_email=self.email,
+            id_password=self.password,
+        )
 
         # User checks navbar to confirm he was entered to his account.
         email = self.wait_for(
