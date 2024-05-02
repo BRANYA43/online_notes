@@ -1,8 +1,32 @@
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.sessions.models import Session
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext as _
+
+
+class Category(models.Model):
+    worktable = models.ForeignKey(
+        verbose_name=_('worktable'),
+        to='Worktable',
+        on_delete=models.CASCADE,
+    )
+    title = models.CharField(
+        verbose_name=_('title'),
+        max_length=50,
+    )
+    color = ColorField(
+        verbose_name=_('color'),
+    )
+
+    class Meta:
+        verbose_name = _('category')
+        verbose_name_plural = _('categories')
+        ordering = ['title']
+
+    def __str__(self):
+        return self.title
 
 
 class Worktable(models.Model):

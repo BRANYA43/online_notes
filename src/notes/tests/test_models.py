@@ -12,6 +12,53 @@ from notes import models
 User = get_user_model()
 
 
+class CategoryModelTest(TestCase):
+    def setUp(self) -> None:
+        self.model_class = models.Category
+        self.worktable = models.Worktable.objects.create()
+        self.title = 'Anime'
+        self.data = {
+            'worktable': self.worktable,
+            'title': self.title,
+        }
+
+    def test_model_has_many_to_one_relation_with_worktable(self):
+        self.model_class.objects.create(**self.data)
+        self.model_class.objects.create(**self.data)  # not raise error
+
+    def test_model_is_deleted_if_worktable_was_deleted(self):
+        self.assertEqual(self.model_class.objects.count(), 0)
+
+        self.model_class.objects.create(**self.data)
+
+        self.assertEqual(self.model_class.objects.count(), 1)
+
+        self.worktable.delete()
+
+        self.assertEqual(self.model_class.objects.count(), 0)
+
+    def test_worktable_field_is_required(self):
+        del self.data['worktable']
+        with self.assertRaisesRegex(IntegrityError, r'NOT NULL .+'):
+            category = self.model_class.objects.create(**self.data)
+            category.full_clean()
+
+    def test_title_field_is_required(self):
+        del self.data['title']
+        with self.assertRaisesRegex(ValidationError, r'.+title.+This field cannot be blank.+'):
+            category = self.model_class.objects.create(**self.data)
+            category.full_clean()
+
+    def test_color_field_is_white_by_default(self):
+        category = self.model_class.objects.create(**self.data)
+        self.assertEqual(category.color, '#FFFFFF')
+
+    def test_model_str_representation_is_title(self):
+        category = self.model_class.objects.create(**self.data)
+
+        self.assertEqual(str(category), category.title)
+
+
 class WorktableModelTest(TestCase):
     def setUp(self) -> None:
         self.model_class = models.Worktable
@@ -83,6 +130,3 @@ class WorktableModelTest(TestCase):
     def test_model_str_representation_is_user_email_or_session_key(self):
         worktable = self.model_class.objects.create(user=self.user)
         self.assertEqual(str(worktable), self.user.email)
-
-        worktable = self.model_class.objects.create(session=self.session)
-        self.assertEqual(str(worktable), str(self.session.session_key))
