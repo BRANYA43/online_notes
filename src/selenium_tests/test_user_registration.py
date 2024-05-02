@@ -11,12 +11,10 @@ class UserRegistrationTest(FunctionalTestCase):
 
     def test_user_can_register(self):
         # User enters to the site.
-        self.browser.get(self.live_server_url)
+        self.enter_to_site()
 
         # User clicks on "Sing Up" link in navbar.
-        navbar = self.wait_for(
-            lambda: self.browser.find_element(value='navbar'),
-        )
+        navbar = self.wait_for(self.get_navbar)
         navbar.find_element(By.NAME, 'registration_link').click()
 
         # User inputs credentials to appeared modal form to register.
@@ -39,7 +37,7 @@ class UserRegistrationTest(FunctionalTestCase):
 
         # User checks navbar to confirm he was entered to his account.
         email = self.wait_for(
-            lambda: self.browser.find_element(value='navbar').find_element(value='user').text,
+            lambda: self.get_navbar().find_element(value='user').text,
         )
 
         self.assertEqual(email, self.email)

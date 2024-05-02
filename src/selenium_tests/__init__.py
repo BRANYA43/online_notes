@@ -8,6 +8,7 @@ from django.test.utils import override_settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.common import WebDriverException, ElementClickInterceptedException
 from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.remote.webelement import WebElement
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium import webdriver
 
@@ -71,3 +72,9 @@ class FunctionalTestCase(StaticLiveServerTestCase):
     def wait_for(fn: Callable):
         """Wait some time for a function to be completed or/and to return a value or exception."""
         return fn()
+
+    def enter_to_site(self):
+        self.browser.get(self.live_server_url)
+
+    def get_navbar(self) -> WebElement:
+        return self.browser.find_element(value='navbar')

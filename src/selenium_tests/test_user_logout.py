@@ -20,12 +20,10 @@ class UserLogoutTest(FunctionalTestCase):
 
     def test_user_can_logout(self):
         # User enters to the site.
-        self.browser.get(self.live_server_url)
+        self.enter_to_site()
 
         # User login to the site
-        navbar = self.wait_for(
-            lambda: self.browser.find_element(value='navbar'),
-        )
+        navbar = self.wait_for(self.get_navbar)
         navbar.find_element(By.NAME, 'login_link').click()
 
         modal_form = self.browser.find_element(value='modal_login_form')
@@ -37,14 +35,14 @@ class UserLogoutTest(FunctionalTestCase):
 
         # User clicks on his email link in navbar.
         user_email = self.wait_for(
-            lambda: self.browser.find_element(value='navbar').find_element(value='user'),
+            lambda: self.get_navbar().find_element(value='user'),
         )
         user_email.click()
 
         # In drop list user clicks on logout
-        self.browser.find_element(value='navbar').find_element(By.NAME, 'logout_link').click()
+        self.get_navbar().find_element(By.NAME, 'logout_link').click()
 
         # User checks navbar to confirm he was exits from his account.
         self.wait_for(
-            lambda: self.browser.find_element(value='navbar').find_element(By.NAME, 'registration_link'),
+            lambda: self.get_navbar().find_element(By.NAME, 'registration_link'),
         )
