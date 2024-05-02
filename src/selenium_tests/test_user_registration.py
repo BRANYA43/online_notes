@@ -1,5 +1,3 @@
-from time import sleep
-
 from selenium.webdriver.common.by import By
 
 from selenium_tests import FunctionalTestCase
@@ -40,10 +38,8 @@ class UserRegistrationTest(FunctionalTestCase):
         modal_form.find_element(value='login_submit_btn').click()
 
         # User checks navbar to confirm he was entered to his account.
-        sleep(1)  # wait reload page!!! TODO create wait_for_dependent
-        navbar = self.wait_for(
-            lambda: self.browser.find_element(value='navbar'),
+        email = self.wait_for(
+            lambda: self.browser.find_element(value='navbar').find_element(value='user').text,
         )
-        email = navbar.find_element(value='user').text
 
         self.assertEqual(email, self.email)
