@@ -7,7 +7,9 @@
       {% include 'includes/note_list.html' %}
   </aside>
   <div class="d-flex ms-5 flex-grow-1 me-5 mt-3">
-    <form class="d-flex flex-column flex-fill gap-3" action="#" method="post">
+
+    <form id="note_form" class="d-flex flex-column flex-fill gap-3" action="#" method="post">
+      {% csrf_token %}
       <div class="d-flex flex-row gap-3">
         <div class="input-group" style="width: 324px;">
           <span class="input-group-text" id="sort_by_category">Category:</span>
@@ -21,13 +23,16 @@
         <button type="button" class="btn btn-primary">Create New Category</button>
         <button type="button" class="btn btn-danger">Delete Category</button>
       </div>
-      <input type="text" class="form-control" placeholder="Name...">
-      <textarea class="form-control h-100" placeholder="Text..."></textarea>
+
+      <input id="id_title" type="text" class="form-control" placeholder="Title...">
+      <textarea id="id_text" class="form-control h-100" placeholder="Text..."></textarea>
+
       <div class="d-flex justify-content-center">
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button id="submit_btn" type="submit" class="btn btn-primary">Save</button>
       </div>
 
     </form>
+
   </div>
 </div>
 {% endblock %}
