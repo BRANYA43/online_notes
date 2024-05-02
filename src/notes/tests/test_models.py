@@ -12,6 +12,81 @@ from notes import models
 User = get_user_model()
 
 
+class NoteModelTest(TestCase):
+    def setUp(self) -> None:
+        self.model_class = models.Note
+        self.worktable = models.Worktable.objects.create()
+        self.title = 'How do I get mass before summer?'
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Fruit')
+        self.data = {
+            'worktable': self.worktable,
+            'title': self.title,
+        }
+
+    def test_model_has_many_to_one_relation_with_worktable(self):
+        self.model_class.objects.create(**self.data)
+        self.model_class.objects.create(**self.data)  # not raise error
+
+    def test_model_is_deleted_if_worktable_was_deleted(self):
+        self.assertEqual(self.model_class.objects.count(), 0)
+
+        self.model_class.objects.create(**self.data)
+
+        self.assertEqual(self.model_class.objects.count(), 1)
+
+        self.worktable.delete()
+
+        self.assertEqual(self.model_class.objects.count(), 0)
+
+    def test_model_has_many_to_one_relation_with_category(self):
+        self.data['category'] = self.category
+        self.model_class.objects.create(**self.data)
+        self.model_class.objects.create(**self.data)  # not raise error
+
+    def test_category_field_is_set_null_if_category_was_deleted(self):
+        self.data['category'] = self.category
+        note = self.model_class.objects.create(**self.data)
+
+        self.assertEqual(note.category.pk, self.category.pk)
+
+        self.category.delete()
+        note.refresh_from_db()
+
+        self.assertIsNone(note.category)
+
+    def test_worktable_field_is_required(self):
+        del self.data['worktable']
+        with self.assertRaisesRegex(IntegrityError, r'NOT NULL .+'):
+            note = self.model_class.objects.create(**self.data)
+            note.full_clean()
+
+    def test_category_field_isnt_required(self):
+        note = self.model_class.objects.create(**self.data)
+        note.full_clean()  # not raise error
+
+    def test_title_field_is_required(self):
+        del self.data['title']
+        with self.assertRaisesRegex(ValidationError, r'.+title.+This field cannot be blank.+'):
+            note = self.model_class.objects.create(**self.data)
+            note.full_clean()
+
+    def test_text_field_isnt_required(self):
+        note = self.model_class.objects.create(**self.data)
+        note.full_clean()  # not raise error
+
+    def test_is_archived_field_is_false_by_default(self):
+        note = self.model_class.objects.create(**self.data)
+        note.full_clean()
+
+        self.assertFalse(note.is_archived)
+
+    def test_created_field_is_set_automatically(self):
+        note = self.model_class.objects.create(**self.data)
+        note.full_clean()
+
+        self.assertAlmostEquals(note.created, timezone.now(), delta=timedelta(seconds=1))
+
+
 class CategoryModelTest(TestCase):
     def setUp(self) -> None:
         self.model_class = models.Category

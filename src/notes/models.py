@@ -6,6 +6,34 @@ from django.db import models
 from django.utils.translation import gettext as _
 
 
+class Note(models.Model):
+    worktable = models.ForeignKey(
+        verbose_name=_('worktable'),
+        to='Worktable',
+        on_delete=models.CASCADE,
+    )
+    category = models.ForeignKey(
+        verbose_name=_('category'), to='Category', on_delete=models.SET_NULL, null=True, blank=True
+    )
+    title = models.CharField(
+        verbose_name=_('title'),
+        max_length=50,
+    )
+    text = models.TextField(
+        verbose_name=_('text'),
+        null=True,
+        blank=True,
+    )
+    is_archived = models.BooleanField(
+        verbose_name=_('archived'),
+        default=False,
+    )
+    created = models.DateTimeField(
+        verbose_name=_('created'),
+        auto_now_add=True,
+    )
+
+
 class Category(models.Model):
     worktable = models.ForeignKey(
         verbose_name=_('worktable'),
