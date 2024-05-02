@@ -13,6 +13,8 @@ from selenium import webdriver
 
 
 def wait(wait_time=5):
+    """Wait some time for a function until it'll be completed and returns a value or exception."""
+
     def wrapper(fn: Callable):
         @wraps(fn)
         def wrapped(*args, **kwargs):
@@ -31,6 +33,7 @@ def wait(wait_time=5):
 
 
 def _find_geckodriver() -> str | None:
+    """Find installed geckodriver"""
     path = settings.BASE_DIR / '.wdm/drivers/geckodriver/'
     for folder, _, filenames in os.walk(path):
         if 'geckodriver' in filenames:
@@ -39,6 +42,7 @@ def _find_geckodriver() -> str | None:
 
 
 def _get_path_to_geckodriver() -> str:
+    """Return geckodriver path"""
     os.environ['WDM_LOCAL'] = '1'
     path = _find_geckodriver()
     if path is None:
@@ -65,4 +69,5 @@ class FunctionalTestCase(StaticLiveServerTestCase):
     @staticmethod
     @wait()
     def wait_for(fn: Callable):
+        """Wait some time for a function to be completed or/and to return a value or exception."""
         return fn()
