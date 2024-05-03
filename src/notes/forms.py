@@ -1,5 +1,7 @@
 from django import forms
 
+from notes import models
+
 
 class BaseCreateForm(forms.ModelForm):
     """BaseCreateForm for models that has more to one relation with a worktable"""
@@ -16,3 +18,9 @@ class BaseCreateForm(forms.ModelForm):
             note.worktable = self.request.session.worktable
         note.save()
         return note
+
+
+class CategoryCreateForm(BaseCreateForm):
+    class Meta:
+        model = models.Category
+        fields = ('title', 'color')

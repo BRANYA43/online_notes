@@ -13,6 +13,33 @@ from notes import forms, models
 User = get_user_model()
 
 
+class CategoryCreateForm(TestCase):
+    def setUp(self) -> None:
+        self.form_class = forms.CategoryCreateForm
+        self.user = User.objects.create_user(email='samurai@test.com', password='qwe123!@#')
+        self.worktable = models.Worktable.objects.create(user=self.user)
+        self.request = HttpRequest()
+        self.request.user = self.user
+
+        self.title = 'Jython'
+        self.color = '#202020'
+        self.data = {
+            'title': self.title,
+            'color': self.color,
+        }
+
+    def test_form_inherit_BaseCreateForm(self):
+        self.assertTrue(issubclass(self.form_class, forms.BaseCreateForm))
+
+    def test_form_creates_category_correctly(self):
+        form = self.form_class(request=self.request, data=self.data)
+        self.assertTrue(form.is_valid())
+
+        category = form.save()
+
+        self.assertEqual(category.pk, self.worktable.pk)
+
+
 class BaseCreateFormTest(TestCase):
     def setUp(self) -> None:
         self.form_class = self.get_test_from_class()
