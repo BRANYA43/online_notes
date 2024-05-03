@@ -4,13 +4,14 @@ from django.urls import reverse
 from django.views import generic
 
 from accounts import forms as acc_forms
-from notes import views, forms
+from notes import views, forms, models
 
 
 class HomeViewTest(TestCase):
     def setUp(self) -> None:
         self.url = reverse('home')
         self.view_class = views.HomeView
+        self.client.session.save()
 
     def test_view_inherit_expected_mixins(self):
         mixins = [generic.base.TemplateResponseMixin, generic.base.ContextMixin]
@@ -36,3 +37,19 @@ class HomeViewTest(TestCase):
                 self.assertIsInstance(form, cls)
             else:
                 self.fail(f'Missed <{cls.__name__}>.')
+
+    def test_view_context_has_worktable(self):
+        response = self.client.get(self.url)
+        self.assertIsInstance(response.context.get('worktable'), models.Worktable)
+
+    def test_view_creates_worktable_if_session_doesnt_have_it(self):
+        self.assertEqual(models.Worktable.objects.count(), 0)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(models.Worktable.objects.count(), 1)
+
+        worktable = response.context.get('worktable')
+
+        self.assertIsInstance(worktable, models.Worktable)
+        self.assertEqual(worktable.session_key, self.client.session.session_key)
