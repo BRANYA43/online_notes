@@ -86,6 +86,10 @@ class NoteModelTest(TestCase):
 
         self.assertAlmostEquals(note.created, timezone.now(), delta=timedelta(seconds=1))
 
+    def test_model_str_representation_is_title(self):
+        note = self.model_class(**self.data)
+        self.assertEqual(str(note), self.title)
+
 
 class CategoryModelTest(TestCase):
     def setUp(self) -> None:

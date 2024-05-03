@@ -33,6 +33,14 @@ class Note(models.Model):
         auto_now_add=True,
     )
 
+    class Meta:
+        verbose_name = _('note')
+        verbose_name_plural = _('notes')
+        ordering = ['-created']
+
+    def __str__(self):
+        return self.title
+
 
 class Category(models.Model):
     worktable = models.ForeignKey(
