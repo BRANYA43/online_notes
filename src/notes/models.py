@@ -98,3 +98,12 @@ class Worktable(models.Model):
             return self.user.email
         elif self.session_key:
             return str(self.session_key)
+
+    def get_all_categories(self):
+        return self.category_set.all().order_by('title')
+
+    def get_all_active_notes(self):
+        return self.note_set.filter(is_archived=False)
+
+    def get_all_archived_notes(self):
+        return self.note_set.filter(is_archived=True)
