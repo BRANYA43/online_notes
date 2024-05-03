@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views import generic
 
 from accounts import forms as acc_forms
-from notes import views
+from notes import views, forms
 
 
 class HomeViewTest(TestCase):
@@ -26,6 +26,8 @@ class HomeViewTest(TestCase):
         expected_forms = {
             'login_form': acc_forms.UserLoginForm,
             'register_form': acc_forms.UserRegisterForm,
+            'category_create_form': forms.CategoryCreateForm,
+            'note_create_form': forms.NoteCreateForm,
         }
         response = self.client.get(self.url)
 
