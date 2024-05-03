@@ -13,6 +13,42 @@ from notes import forms, models
 User = get_user_model()
 
 
+class NoteUpdateForm(TestCase):
+    def setUp(self) -> None:
+        self.form_class = forms.NoteUpdateForm
+        self.user = User.objects.create_user(email='samurai@test.com', password='qwe123!@#')
+        self.worktable = models.Worktable.objects.create(user=self.user)
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Danger!', color='#ff0000')
+        self.note = models.Note.objects.create(
+            worktable=self.worktable,
+            category=self.category,
+            title='OMG! How to understand a woman?',
+            text='1001 way to understand a women...',
+        )
+        self.data = {
+            'title': 'How to understand a man?',
+            'text': 'Man Language:\n'
+            'nod down - hi;\n'
+            "nod up - what's up;\n"
+            "nod to the left - let's step back, we need to talk;\n"
+            'nod to the right - come and look at;\n'
+            "head forward - what's wrong with you?;\n"
+            'head back - what the hell?;\n'
+            'all other times - shrug;',
+        }
+
+    def test_form_inherit_ModelForm(self):
+        self.assertTrue(issubclass(self.form_class, dj_forms.ModelForm))
+
+    def test_form_updates_note_correctly(self):
+        form = self.form_class(instance=self.note, data=self.data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        self.assertEqual(self.note.title, self.data['title'])
+        self.assertEqual(self.note.text, self.data['text'])
+
+
 class NoteCreateForm(TestCase):
     def setUp(self) -> None:
         self.form_class = forms.NoteCreateForm

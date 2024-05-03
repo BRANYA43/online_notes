@@ -36,3 +36,9 @@ class NoteCreateForm(BaseCreateForm):
     class Meta:
         model = models.Note
         fields = ('category', 'title', 'text')
+
+
+class NoteUpdateForm(forms.ModelForm):
+    class Meta:
+        model = models.Note
+        fields = ('category', 'title', 'text')
