@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
+from django.contrib.sessions.models import Session
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
@@ -186,16 +187,16 @@ class WorktableModelTest(TestCase):
             user=self.user,
         )
 
-    # def test_model_is_deleted_if_session_was_deleted(self):
-    #     self.assertEqual(self.model_class.objects.count(), 0)
-    #
-    #     self.model_class.objects.create(session_key=self.session_key)
-    #
-    #     self.assertEqual(self.model_class.objects.count(), 1)
-    #
-    #     Session.objects.get(session_key=self.session_key).delete()
-    #
-    #     self.assertEqual(self.model_class.objects.count(), 0)
+    def test_model_is_deleted_if_session_was_deleted(self):
+        self.assertEqual(self.model_class.objects.count(), 0)
+
+        self.model_class.objects.create(session_key=self.session_key)
+
+        self.assertEqual(self.model_class.objects.count(), 1)
+
+        Session.objects.get(session_key=self.session_key).delete()
+
+        self.assertEqual(self.model_class.objects.count(), 0)
 
     def test_model_has_one_to_one_relation_with_session(self):
         self.model_class.objects.create(session_key=self.session_key)
