@@ -3,6 +3,21 @@ from django.contrib import admin
 from notes import models
 
 
+@admin.register(models.Note)
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ('title', 'worktable', 'category', 'is_archived', 'created')
+    fieldsets = (
+        ('Information', {'fields': ('worktable', 'category', 'title', 'text', 'is_archived')}),
+        ('Dates', {'fields': ('created',)}),
+    )
+    readonly_fields = ('created',)
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ('worktable',)
+        return self.readonly_fields
+
+
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('title', 'color', 'worktable')
