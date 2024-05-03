@@ -13,6 +13,29 @@ from notes import forms, models
 User = get_user_model()
 
 
+class CategoryUpdateForm(TestCase):
+    def setUp(self) -> None:
+        self.form_class = forms.CategoryUpdateForm
+        self.user = User.objects.create_user(email='samurai@test.com', password='qwe123!@#')
+        self.worktable = models.Worktable.objects.create(user=self.user)
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Screeps World')
+        self.data = {
+            'title': 'Screeps World +4 CPU',
+            'color': '#202020',
+        }
+
+    def test_form_inherit_ModelForm(self):
+        self.assertTrue(issubclass(self.form_class, dj_forms.ModelForm))
+
+    def test_form_updates_category_correctly(self):
+        form = self.form_class(instance=self.category, data=self.data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        self.assertEqual(self.category.title, self.data['title'])
+        self.assertEqual(self.category.color, self.data['color'])
+
+
 class CategoryCreateForm(TestCase):
     def setUp(self) -> None:
         self.form_class = forms.CategoryCreateForm

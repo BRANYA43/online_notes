@@ -24,3 +24,9 @@ class CategoryCreateForm(BaseCreateForm):
     class Meta:
         model = models.Category
         fields = ('title', 'color')
+
+
+class CategoryUpdateForm(forms.ModelForm):
+    class Meta:
+        model = models.Category
+        fields = ('title', 'color')
