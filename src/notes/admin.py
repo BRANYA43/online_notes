@@ -44,11 +44,18 @@ class CategoryInline(admin.TabularInline):
     show_change_link = True
 
 
+class NoteInlineForWorktable(admin.StackedInline):
+    model = models.Note
+    fields = ('category', 'title', 'text')
+    extra = 1
+    show_change_link = True
+
+
 @admin.register(models.Worktable)
 class WorktableAdmin(admin.ModelAdmin):
     list_display = ('user',)
     fieldsets = (('Information', {'fields': ('user',)}),)
-    inlines = (CategoryInline,)
+    inlines = (CategoryInline, NoteInlineForWorktable)
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
