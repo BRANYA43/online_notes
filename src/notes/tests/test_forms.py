@@ -1,12 +1,8 @@
-from datetime import timedelta
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.sessions.models import Session
 from django.http import HttpRequest
 from django.test import TestCase
 from django import forms as dj_forms
-from django.utils import timezone
 
 from notes import forms, models
 
@@ -133,7 +129,7 @@ class BaseCreateFormTest(TestCase):
         self.request.user = AnonymousUser()
 
         self.user = User.objects.create_user(email='samurai@test.com', password='qwe123!@#')
-        self.session = Session.objects.create(expire_date=timezone.now() + timedelta(days=1))
+        self.session_key = self.client.session.session_key
 
     @staticmethod
     def get_test_from_class():
@@ -158,8 +154,8 @@ class BaseCreateFormTest(TestCase):
         self.assertEqual(category.pk, worktable_category.pk)
 
     def test_form_set_worktable_by_session(self):
-        self.request.session = self.session
-        worktable = models.Worktable.objects.create(session=self.session)
+        self.request.session = self.client.session
+        worktable = models.Worktable.objects.create(session_key=self.session_key)
         form = self.form_class(request=self.request, data={'title': 'Brython'})
         form.is_valid()
         category = form.save()

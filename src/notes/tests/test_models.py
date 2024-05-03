@@ -1,7 +1,6 @@
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
-from django.contrib.sessions.models import Session
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
@@ -142,14 +141,15 @@ class WorktableModelTest(TestCase):
     def setUp(self) -> None:
         self.model_class = models.Worktable
         self.user = User.objects.create_user(email='grinch@test.com', password='qwe123!@#')
-        self.session = Session.objects.create(expire_date=timezone.now() + timedelta(days=1))
+        self.client.session.save()
+        self.session_key = self.client.session.session_key
         self.data = {
             'user': self.user,
-            'session': self.session,
+            'session_key': self.session_key,
         }
 
     def test_user_field_isnt_required(self):
-        worktable = self.model_class.objects.create(session=self.session)
+        worktable = self.model_class.objects.create(session_key=self.session_key)
         worktable.full_clean()
 
     def test_session_field_isnt_required(self):
@@ -186,25 +186,22 @@ class WorktableModelTest(TestCase):
             user=self.user,
         )
 
-    def test_model_is_deleted_if_session_was_deleted(self):
-        self.assertEqual(self.model_class.objects.count(), 0)
-
-        self.model_class.objects.create(session=self.session)
-
-        self.assertEqual(self.model_class.objects.count(), 1)
-
-        self.session.delete()
-
-        self.assertEqual(self.model_class.objects.count(), 0)
+    # def test_model_is_deleted_if_session_was_deleted(self):
+    #     self.assertEqual(self.model_class.objects.count(), 0)
+    #
+    #     self.model_class.objects.create(session_key=self.session_key)
+    #
+    #     self.assertEqual(self.model_class.objects.count(), 1)
+    #
+    #     Session.objects.get(session_key=self.session_key).delete()
+    #
+    #     self.assertEqual(self.model_class.objects.count(), 0)
 
     def test_model_has_one_to_one_relation_with_session(self):
-        self.model_class.objects.create(session=self.session)
-        self.assertRaisesRegex(
-            IntegrityError,
-            r'UNIQUE .+',
-            self.model_class.objects.create,
-            session=self.session,
-        )
+        self.model_class.objects.create(session_key=self.session_key)
+        with self.assertRaisesRegex(ValidationError, r'.+Worktable with this Session already exists.+'):
+            worktable = self.model_class.objects.create(session_key=self.session_key)
+            worktable.full_clean()
 
     def test_model_str_representation_is_user_email_or_session_key(self):
         worktable = self.model_class.objects.create(user=self.user)

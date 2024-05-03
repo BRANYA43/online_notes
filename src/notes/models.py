@@ -1,6 +1,5 @@
 from colorfield.fields import ColorField
 from django.conf import settings
-from django.contrib.sessions.models import Session
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext as _
@@ -73,10 +72,10 @@ class Worktable(models.Model):
         blank=True,
         null=True,
     )
-    session = models.OneToOneField(
+    session_key = models.CharField(
         verbose_name=_('session'),
-        to=Session,
-        on_delete=models.CASCADE,
+        max_length=50,
+        unique=True,
         blank=True,
         null=True,
     )
@@ -91,11 +90,11 @@ class Worktable(models.Model):
         ordering = ['user']
 
     def clean(self):
-        if (self.user and self.session) or (not self.user and not self.session):
+        if (self.user and self.session_key) or (not self.user and not self.session_key):
             raise ValidationError(self.error_messages['invalid_user_and_session'], 'invalid_user_and_session')
 
     def __str__(self):
         if self.user:
             return self.user.email
-        elif self.session:
-            return str(self.session.session_key)
+        elif self.session_key:
+            return str(self.session_key.session_key)

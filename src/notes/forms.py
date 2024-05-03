@@ -15,7 +15,7 @@ class BaseCreateForm(forms.ModelForm):
         if self.request.user.is_authenticated:
             note.worktable = self.request.user.worktable
         else:
-            note.worktable = self.request.session.worktable
+            note.worktable = models.Worktable.objects.get(session_key=self.request.session.session_key)
         note.save()
         return note
 
