@@ -13,6 +13,33 @@ from notes import forms, models
 User = get_user_model()
 
 
+class NoteCreateForm(TestCase):
+    def setUp(self) -> None:
+        self.form_class = forms.NoteCreateForm
+        self.user = User.objects.create_user(email='samurai@test.com', password='qwe123!@#')
+        self.worktable = models.Worktable.objects.create(user=self.user)
+        self.request = HttpRequest()
+        self.request.user = self.user
+
+        self.title = 'Why do flat Earth believers are exist such many?'
+        self.data = {
+            'category': '',
+            'title': self.title,
+            'text': '',
+        }
+
+    def test_form_inherit_BaseCreateForm(self):
+        self.assertTrue(issubclass(self.form_class, forms.BaseCreateForm))
+
+    def test_form_creates_note_correctly(self):
+        form = self.form_class(request=self.request, data=self.data)
+        self.assertTrue(form.is_valid())
+
+        note = form.save()
+
+        self.assertEqual(note.pk, self.worktable.pk)
+
+
 class CategoryUpdateForm(TestCase):
     def setUp(self) -> None:
         self.form_class = forms.CategoryUpdateForm
