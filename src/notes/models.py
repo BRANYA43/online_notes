@@ -97,4 +97,4 @@ class Worktable(models.Model):
         if self.user:
             return self.user.email
         elif self.session_key:
-            return str(self.session_key.session_key)
+            return str(self.session_key)
