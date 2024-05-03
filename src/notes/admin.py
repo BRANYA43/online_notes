@@ -53,9 +53,10 @@ class NoteInlineForWorktable(admin.StackedInline):
 
 @admin.register(models.Worktable)
 class WorktableAdmin(admin.ModelAdmin):
-    list_display = ('user',)
+    list_display = ('user', 'session_key')
     fieldsets = (('Information', {'fields': ('user',)}),)
     inlines = (CategoryInline, NoteInlineForWorktable)
+    readonly_fields = ('session_key',)
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
