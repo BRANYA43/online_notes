@@ -18,10 +18,18 @@ class NoteAdmin(admin.ModelAdmin):
         return self.readonly_fields
 
 
+class NoteInlineForCategory(admin.StackedInline):
+    model = models.Note
+    fields = ('title', 'text')
+    extra = 1
+    show_change_link = True
+
+
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('title', 'color', 'worktable')
     fieldsets = (('Information', {'fields': ('worktable', 'title', 'color')}),)
+    inlines = (NoteInlineForCategory,)
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
