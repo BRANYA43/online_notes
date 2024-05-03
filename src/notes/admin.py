@@ -14,10 +14,18 @@ class CategoryAdmin(admin.ModelAdmin):
         return self.readonly_fields
 
 
+class CategoryInline(admin.TabularInline):
+    model = models.Category
+    fields = ('title', 'color')
+    extra = 1
+    show_change_link = True
+
+
 @admin.register(models.Worktable)
 class WorktableAdmin(admin.ModelAdmin):
     list_display = ('user',)
     fieldsets = (('Information', {'fields': ('user',)}),)
+    inlines = (CategoryInline,)
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
