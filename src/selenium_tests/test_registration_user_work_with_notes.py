@@ -4,6 +4,7 @@ from time import sleep
 from selenium.webdriver.common.by import By
 
 from accounts.forms import User
+from notes.models import Worktable
 from selenium_tests import FunctionalTestCase
 
 
@@ -17,7 +18,6 @@ class RegisteredUserWorkWithNotesTest(FunctionalTestCase):
             'password': self.password,
         }
         self.user = User.objects.create_user(**self.data)
-
         self.title = 'What do I do to find a job?'
         self.text = """
             I have to:
@@ -25,6 +25,11 @@ class RegisteredUserWorkWithNotesTest(FunctionalTestCase):
                 - have 5 years of experience within 1 year after finished a study;
                 - ...; 
             """
+
+        self.create_worktable_for_user()
+
+    def create_worktable_for_user(self):
+        Worktable.objects.create(user=self.user)
 
     def login_user_through_selenium(self):
         navbar = self.wait_for(self.get_navbar)
@@ -58,8 +63,10 @@ class RegisteredUserWorkWithNotesTest(FunctionalTestCase):
             lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
         )
         card_data = card.find_elements(By.TAG_NAME, 'p')
-        title = card_data[0].text
-        date = card_data[1].text
+        category = card_data[0].text
+        title = card_data[1].text
+        date = card_data[2].text
 
-        self.assertEqual(title, self.title)
-        self.assertEqual(date, datetime.now().strftime('%d.%m.$Y'))
+        self.assertEqual(category, 'Category: ---')
+        self.assertEqual(title, f'Title: {self.title}')
+        self.assertEqual(date, f'Date: {datetime.now().strftime("%d.%m.%Y")}')
