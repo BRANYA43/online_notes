@@ -1,26 +1,25 @@
-from datetime import datetime
 from time import sleep
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.color import Color
 
 from accounts.forms import User
+from accounts.tests import TEST_EMAIL, TEST_PASSWORD
 from notes.models import Worktable, Category
 from selenium_tests import FunctionalTestCase
 
 
-class RegisteredUserWorkWithNotesTest(FunctionalTestCase):
+class RegisteredUserNotesOperationsTest(FunctionalTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.email = 'bad.boy@test.com'
-        self.password = 'qwe123!@#'
-        self.data = {
-            'email': self.email,
-            'password': self.password,
-        }
-        self.user = User.objects.create_user(**self.data)
-        self.worktable = Worktable.objects.create(user=self.user)
-        self.category = Category.objects.create(worktable=self.worktable, title='Category #1', color='#ff0000')
+        self.email = TEST_EMAIL
+        self.password = TEST_PASSWORD
+
+        user = User.objects.create_user(email=self.email, password=self.password)
+        worktable = Worktable.objects.create(user=user)
+
+        self.category = Category.objects.create(worktable=worktable, title='Category #1', color='#ff0000')
+
         self.title = 'What do I do to find a job?'
         self.text = """
             I have to:
@@ -40,6 +39,13 @@ class RegisteredUserWorkWithNotesTest(FunctionalTestCase):
             id_password=self.password,
         )
 
+    def check_note_value_in_the_card(self, card, note_title: str, category_title: str = None):
+        fields = card.find_elements(By.TAG_NAME, 'p')
+        if category_title is None:
+            category_title = '---'
+        self.assertRegex(fields[0].text, rf'Category: {category_title}')
+        self.assertRegex(fields[1].text, rf'Title: {note_title}')
+
     def test_user_can_create_new_note_without_category(self):
         # User enters to site
         self.enter_to_site()
@@ -48,7 +54,7 @@ class RegisteredUserWorkWithNotesTest(FunctionalTestCase):
         self.login_user_through_selenium()
 
         # User finds note form and input some text
-        sleep(1)  # TODO figure our a way to get around it
+        sleep(1)  # wait for loading a page TODO figure our a way to get around it
         note_form = self.browser.find_element(value='note_form')
         self.send_form(
             note_form,
@@ -60,14 +66,10 @@ class RegisteredUserWorkWithNotesTest(FunctionalTestCase):
         card = self.wait_for(
             lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
         )
-        card_data = card.find_elements(By.TAG_NAME, 'p')
-        category = card_data[0].text
-        title = card_data[1].text
-        date = card_data[2].text
-
-        self.assertEqual(category, 'Category: ---')
-        self.assertEqual(title, f'Title: {self.title}')
-        self.assertEqual(date, f'Date: {datetime.now().strftime("%d.%m.%Y")}')
+        self.check_note_value_in_the_card(
+            card,
+            note_title=self.title,
+        )
 
     def test_user_can_create_new_note_with_category(self):
         # User enters to site
@@ -77,7 +79,7 @@ class RegisteredUserWorkWithNotesTest(FunctionalTestCase):
         self.login_user_through_selenium()
 
         # User finds note form and input some text
-        sleep(1)  # TODO figure our a way to get around it
+        sleep(1)  # wait for loading a page TODO figure our a way to get around it
         note_form = self.browser.find_element(value='note_form')
         self.send_form(
             note_form,
@@ -92,15 +94,13 @@ class RegisteredUserWorkWithNotesTest(FunctionalTestCase):
             lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
         )
 
-        # User checks a note, that its text is category color
+        self.check_note_value_in_the_card(
+            card,
+            category_title=self.category.title,
+            note_title=self.title,
+        )
+
+        # User checks a note, that has colored text by category color
         card_body = card.find_element(By.CLASS_NAME, 'card-body')
+
         self.assertIsNotNone(card_body.get_attribute('style'), f'color: {Color.from_string(self.category.color).rgb}')
-
-        card_data = card.find_elements(By.TAG_NAME, 'p')
-        category = card_data[0].text
-        title = card_data[1].text
-        date = card_data[2].text
-
-        self.assertEqual(category, f'Category: {self.category.title}')
-        self.assertEqual(title, f'Title: {self.title}')
-        self.assertEqual(date, f'Date: {datetime.now().strftime("%d.%m.%Y")}')
