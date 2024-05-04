@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from selenium.webdriver.common.by import By
 
+from notes.models import Worktable
 from selenium_tests import FunctionalTestCase
 
 
@@ -17,6 +18,10 @@ class UserLogoutTest(FunctionalTestCase):
             'password': self.password,
         }
         self.user = User.objects.create_user(**self.data)
+        self.create_worktable_for_user()
+
+    def create_worktable_for_user(self):
+        Worktable.objects.create(user=self.user)
 
     def test_user_can_logout(self):
         # User enters to the site.
