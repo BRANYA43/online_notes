@@ -56,9 +56,3 @@ class WorktableAdmin(admin.ModelAdmin):
     list_display = ('user', 'session_key')
     fieldsets = (('Information', {'fields': ('user', 'session_key')}),)
     inlines = (CategoryInline, NoteInlineForWorktable)
-    readonly_fields = ('session_key',)
-
-    def get_readonly_fields(self, request, obj=None):
-        if obj:
-            return self.readonly_fields + ('user',)
-        return self.readonly_fields
