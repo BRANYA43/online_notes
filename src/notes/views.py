@@ -1,9 +1,33 @@
 from django import views
+from django.http import JsonResponse
+from django.urls import reverse
 from django.views import generic
-
 
 from accounts import forms as acc_forms
 from notes import forms, models
+
+
+def create_new_note(request, *args, **kwargs):
+    form = forms.NoteCreateForm(request=request, data=request.POST)
+
+    if form.is_valid():
+        note = form.save()
+        data = {
+            'url': reverse('update_note', args=[note.id]),
+            'note': {
+                'title': note.title,
+                'date': note.created.strftime('%d.%m.%Y'),
+            },
+        }
+        if note.category:
+            data['category'] = {
+                'title': note.category.title,
+                'color': note.category.color,
+            }
+
+        return JsonResponse(data=data, status=201)
+    else:
+        return JsonResponse(data={'errors': form.errors}, status=400)
 
 
 class HomeView(views.View, generic.base.ContextMixin, generic.base.TemplateResponseMixin):
