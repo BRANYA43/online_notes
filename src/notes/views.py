@@ -63,7 +63,7 @@ class HomeView(views.View, generic.base.ContextMixin, generic.base.TemplateRespo
 
     def get_context_data(self, **kwargs):
         kwargs['login_form'] = self.form_classes['login_form'](self.request)
-        kwargs['register_form'] = self.form_classes['register_form']()
+        kwargs['register_form'] = self.form_classes['register_form'](self.request)
         kwargs['category_create_form'] = self.form_classes['category_create_form'](self.request)
         kwargs['note_create_form'] = self.form_classes['note_create_form'](self.request)
         kwargs['worktable'] = self.get_worktable()
