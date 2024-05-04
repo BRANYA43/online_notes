@@ -65,10 +65,12 @@ class HomeView(views.View, generic.base.ContextMixin, generic.base.TemplateRespo
         kwargs['worktable'] = self.get_worktable()
         return super().get_context_data(**kwargs)
 
-    def get_worktable(self):
+    def get_worktable(self) -> models.Worktable:
         if self.request.user.is_authenticated:
             return self.request.user.worktable
         else:
+            if self.request.session.session_key is None:
+                self.request.session.save()
             return models.Worktable.objects.get_or_create(session_key=self.request.session.session_key)[0]
 
     def get(self, request, *args, **kwargs):

@@ -1,3 +1,4 @@
+from django.contrib.sessions.models import Session
 from django.test import TestCase
 
 from django.urls import reverse
@@ -130,7 +131,6 @@ class HomeViewTest(TestCase):
     def setUp(self) -> None:
         self.url = reverse('home')
         self.view_class = views.HomeView
-        self.client.session.save()
 
     def test_view_inherit_expected_mixins(self):
         mixins = [generic.base.TemplateResponseMixin, generic.base.ContextMixin]
@@ -160,6 +160,13 @@ class HomeViewTest(TestCase):
     def test_view_context_has_worktable(self):
         response = self.client.get(self.url)
         self.assertIsInstance(response.context.get('worktable'), models.Worktable)
+
+    def test_view_creates_session_if_session_key_is_none(self):
+        self.assertEqual(Session.objects.count(), 0)
+
+        self.client.get(self.url)
+
+        self.assertEqual(Session.objects.count(), 1)
 
     def test_view_creates_worktable_if_session_doesnt_have_it(self):
         self.assertEqual(models.Worktable.objects.count(), 0)
