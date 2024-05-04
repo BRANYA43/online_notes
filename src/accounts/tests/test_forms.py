@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.forms import ModelForm
 
 from accounts import forms
+from notes import models as n_models
 
 User = get_user_model()
 
@@ -49,6 +50,9 @@ class UserLoginFormTest(TestCase):
 
 class UserRegisterFormTest(TestCase):
     def setUp(self) -> None:
+        self.request = HttpRequest()
+        self.request.session = self.client.session
+        self.worktable = n_models.Worktable.objects.create(session_key=self.client.session.session_key)
         self.form_class = forms.UserRegisterForm
         self.email = 'god.yato@test.com'
         self.password = 'qwe123!@#'
@@ -63,26 +67,26 @@ class UserRegisterFormTest(TestCase):
 
     def test_form_is_invalid_if_confirming_password_and_password_are_match(self):
         self.data['confirming_password'] = 'unmatch_password'
-        form = self.form_class(data=self.data)
+        form = self.form_class(request=self.request, data=self.data)
         self.assertFalse(form.is_valid())
         self.assertFormError(form, 'confirming_password', ["The passwords didn't match."])
 
     def test_form_is_invalid_if_password_is_empty(self):
         self.data['password'] = ''
-        form = self.form_class(data=self.data)
+        form = self.form_class(request=self.request, data=self.data)
         self.assertFalse(form.is_valid())
         self.assertFormError(form, 'password', ['This field is required.'])
 
     def test_form_is_invalid_if_confirming_password_is_empty(self):
         self.data['confirming_password'] = ''
-        form = self.form_class(data=self.data)
+        form = self.form_class(request=self.request, data=self.data)
         self.assertFalse(form.is_valid())
         self.assertFormError(form, 'confirming_password', ['This field is required.'])
 
     def test_form_creates_user_correctly(self):
         self.assertEqual(User.objects.count(), 0)
 
-        form = self.form_class(data=self.data)
+        form = self.form_class(request=self.request, data=self.data)
         self.assertTrue(form.is_valid())
         user = form.save()
 
@@ -94,8 +98,16 @@ class UserRegisterFormTest(TestCase):
     def test_form_doesnt_save_user_to_db_if_commit_is_false(self):
         self.assertEqual(User.objects.count(), 0)
 
-        form = self.form_class(data=self.data)
+        form = self.form_class(request=self.request, data=self.data)
         self.assertTrue(form.is_valid())
         form.save(commit=False)
 
         self.assertEqual(User.objects.count(), 0)
+
+    def test_form_binds_worktable_to_user(self):
+        form = self.form_class(request=self.request, data=self.data)
+        form.is_valid()
+        user = form.save()
+        self.worktable.refresh_from_db()
+
+        self.assertEqual(user.id, self.worktable.user.id)

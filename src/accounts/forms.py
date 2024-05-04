@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
+from notes.models import Worktable
+
 User = get_user_model()
 
 
@@ -64,6 +66,10 @@ class UserRegisterForm(forms.ModelForm):
         model = User
         fields = ('email',)
 
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
     def clean_confirming_password(self):
         password = self.cleaned_data.get('password')
         confirming_password = self.cleaned_data.get('confirming_password')
@@ -72,9 +78,16 @@ class UserRegisterForm(forms.ModelForm):
             raise ValidationError(self.error_messages['password_mismatch'], 'password_mismatch')
         return confirming_password
 
+    def bind_worktable_to_user(self, user):
+        worktable = Worktable.objects.get(session_key=self.request.session.session_key)
+        worktable.session_key = None
+        worktable.user = user
+        worktable.save()
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data['password'])
         if commit:
             user.save()
+            self.bind_worktable_to_user(user)
         return user
