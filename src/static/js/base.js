@@ -106,6 +106,7 @@ $(document).ready(function(){
             $('#registration_form')[0].reset();
             $('#modal_registration_form').modal('toggle');
             clear_alert_msg($('#modal_registration_form .alert-danger'));
+            $('#user_registered_success_alert').removeClass('d-none');
             console.log(response);
         },
         error=function(xhr, status, error) {
