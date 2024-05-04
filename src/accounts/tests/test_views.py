@@ -18,11 +18,11 @@ class LogoutUserView(TestCase):
         self.client.force_login(self.user)
 
     def test_view_logout_user_correctly(self):
-        self.assertEqual(self.client.session['_auth_user_id'], str(self.user.pk))
+        self.assertEqual(self.client.session_key['_auth_user_id'], str(self.user.pk))
 
         response = self.client.get(self.url)
 
-        self.assertIsNone(self.client.session.get('_auth_user_id'))
+        self.assertIsNone(self.client.session_key.get('_auth_user_id'))
         self.assertEqual(response.status_code, 200)
 
 
@@ -38,11 +38,11 @@ class LoginUserView(TestCase):
         self.user = User.objects.create_user(**self.data)
 
     def test_view_logins_user_correctly(self):
-        self.assertIsNone(self.client.session.get('_auth_user_id'))
+        self.assertIsNone(self.client.session_key.get('_auth_user_id'))
 
         response = self.client.post(self.url, self.data)
 
-        self.assertEqual(self.client.session['_auth_user_id'], str(self.user.pk))
+        self.assertEqual(self.client.session_key['_auth_user_id'], str(self.user.pk))
         self.assertEqual(response.status_code, 200)
 
     def test_view_doesnt_login_user_if_credentials_are_invalid(self):
