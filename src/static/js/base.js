@@ -28,6 +28,39 @@ $(document).ready(function(){
         alert.html(msg);
     }
 
+    function add_new_note_to_list(data) {
+        $('#note_list').prepend(`
+            <div class="card" data-url="${data.url}" data-category-id="${data.category ? data.category.id : ''}">
+              <div class="card-body" style="${data.category ? 'color: ' + data.category.color + ';' : ''}">
+                <p class="card-subtitle">Category: ${data.category ? data.category.title : '---'}</p>
+                <p class="card-subtitle">Title: ${data.note.title}</p>
+                <p class="card-subtitle">Date: ${data.note.date}</p>
+              </div>
+                <div class="card-footer d-flex justify-content-end gap-2">
+                  <button class="btn btn-outline-secondary btn-sm" type="button">E</button>
+                  <button class="btn btn-outline-secondary btn-sm" type="button">A</button>
+                  <button class="btn btn-outline-secondary btn-sm" type="button">X</button>
+                </div>
+            </div>
+        `);
+    }
+
+    $('#note_form').submit(function(event){
+        event.preventDefault();
+
+        send_ajax_request(
+            data=$(this).serialize(),
+            type=$(this).attr('method'),
+            url=$(this).attr('action'),
+            success=function(response) {
+                var form = $('#note_form')
+                form.attr('action', response.url)
+                add_new_note_to_list(response)
+                console.log(response);
+            },
+        );
+    });
+
     $('#navbar [name="logout_link"]').click(function(event){
         event.preventDefault();
 
@@ -58,7 +91,7 @@ $(document).ready(function(){
         error=function(xhr, status, error) {
             var msg = make_error_msg(xhr.responseJSON.errors);
             set_alert_msg($('#modal_login_form .alert-danger'), msg);
-            console.error(errors);
+            console.error(xhr.responseJSON.errors);
         });
     });
 
