@@ -7,6 +7,28 @@ from accounts import forms as acc_forms
 from notes import forms, models
 
 
+def update_note(request, id, *args, **kwargs):
+    note = models.Note.objects.get(id=id)
+    form = forms.NoteUpdateForm(instance=note, data=request.POST)
+    if form.is_valid():
+        note = form.save()
+        data = {
+            'note': {
+                'title': note.title,
+            }
+        }
+        if note.category:
+            data['category'] = {
+                'title': note.category.title,
+                'color': note.category.color,
+            }
+
+        return JsonResponse(data=data, status=200)
+
+    else:
+        return JsonResponse(data={'errors': form.errors}, status=400)
+
+
 def create_new_note(request, *args, **kwargs):
     form = forms.NoteCreateForm(request=request, data=request.POST)
 

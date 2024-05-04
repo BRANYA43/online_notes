@@ -8,6 +8,56 @@ from accounts import forms as acc_forms
 from notes import views, forms, models
 
 
+class UpdateNoteView(TestCase):
+    def setUp(self) -> None:
+        self.client.session.save()
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Category #1')
+        self.note = models.Note.objects.create(worktable=self.worktable, title='Note #1')
+
+        self.url = reverse('update_note', args=[self.note.id])
+        self.title = 'Note #2'
+        self.text = 'Some Text'
+        self.data = {'category': self.category.id, 'title': self.title, 'text': self.text}
+        self.expected_date = {
+            'note': {'title': self.title},
+            'category': {'title': self.category.title, 'color': self.category.color},
+        }
+
+    def test_view_updates_note_correctly(self):
+        response = self.client.post(self.url, self.data)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.note.refresh_from_db()
+
+        self.assertEqual(self.note.category.id, self.category.id)
+        self.assertEqual(self.note.title, self.title)
+        self.assertEqual(self.note.text, self.text)
+
+    def test_view_returns_data_with_category(self):
+        response = self.client.post(self.url, self.data)
+        data = response.json()
+
+        self.assertDictEqual(data, self.expected_date)
+
+    def test_view_returns_data_without_category(self):
+        del self.data['category']
+        del self.expected_date['category']
+
+        response = self.client.post(self.url, self.data)
+        data = response.json()
+
+        self.assertDictEqual(data, self.expected_date)
+
+    def test_view_returns_error_data(self):
+        response = self.client.post(self.url, {})
+        data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue(data.get('errors'))
+
+
 class CreateNewNoteView(TestCase):
     def setUp(self) -> None:
         self.url = reverse('create_note')
