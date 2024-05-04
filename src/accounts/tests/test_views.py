@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from notes import models as n_models
+
+from accounts.tests import TEST_EMAIL, TEST_PASSWORD
+from notes import models as notes_models
 
 User = get_user_model()
 
@@ -9,11 +11,9 @@ User = get_user_model()
 class LogoutUserView(TestCase):
     def setUp(self) -> None:
         self.url = reverse('logout')
-        self.email = 'eren.yeager@test.com'
-        self.password = 'qwe123!@#'
         self.data = {
-            'email': self.email,
-            'password': self.password,
+            'email': TEST_EMAIL,
+            'password': TEST_PASSWORD,
         }
         self.user = User.objects.create_user(**self.data)
         self.client.force_login(self.user)
@@ -23,19 +23,18 @@ class LogoutUserView(TestCase):
 
         response = self.client.get(self.url)
 
-        self.assertIsNone(self.client.session.get('_auth_user_id'))
         self.assertEqual(response.status_code, 200)
+        self.assertIsNone(self.client.session.get('_auth_user_id'))
 
 
 class LoginUserView(TestCase):
     def setUp(self) -> None:
         self.url = reverse('login')
-        self.email = 'heisenberg@test.com'
-        self.password = 'qwe123!@#'
         self.data = {
-            'email': self.email,
-            'password': self.password,
+            'email': TEST_EMAIL,
+            'password': TEST_PASSWORD,
         }
+
         self.user = User.objects.create_user(**self.data)
 
     def test_view_logins_user_correctly(self):
@@ -53,7 +52,6 @@ class LoginUserView(TestCase):
 
     def test_view_returns_emtpy_data_if_credentials_are_valid(self):
         response = self.client.post(self.url, self.data)
-
         data = response.json()
 
         self.assertFalse(data, msg="Data isn't empty.")
@@ -70,13 +68,13 @@ class LoginUserView(TestCase):
 class RegisterUserView(TestCase):
     def setUp(self) -> None:
         self.url = reverse('register')
-        self.worktable = n_models.Worktable.objects.create(session_key=self.client.session.session_key)
-        self.email = 'fin.and.jake@test.com'
-        self.password = 'qwe123!@#'
+
+        self.worktable = notes_models.Worktable.objects.create(session_key=self.client.session.session_key)
+
         self.data = {
-            'email': self.email,
-            'password': self.password,
-            'confirming_password': self.password,
+            'email': TEST_EMAIL,
+            'password': TEST_PASSWORD,
+            'confirming_password': TEST_PASSWORD,
         }
 
     def test_view_registers_user_correctly(self):
@@ -88,8 +86,9 @@ class RegisterUserView(TestCase):
         self.assertEqual(User.objects.count(), 1)
 
         user = User.objects.first()
-        self.assertEqual(user.email, self.email)
-        self.assertTrue(user.check_password(self.password))
+
+        self.assertEqual(user.email, self.data['email'])
+        self.assertTrue(user.check_password(self.data['password']))
 
     def test_view_doesnt_register_user_if_credentials_is_invalid(self):
         self.assertEqual(User.objects.count(), 0)
@@ -108,14 +107,15 @@ class RegisterUserView(TestCase):
 
         response = self.client.post(self.url, self.data)
 
-        self.assertEqual(User.objects.count(), 1)
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(User.objects.count(), 1)
 
     def test_view_returns_errors_if_credentials_are_invalid(self):
         response = self.client.post(self.url, {})
         data = response.json()
         errors = data.get('errors')
 
+        self.assertEqual(response.status_code, 400)
         self.assertIsNotNone(errors)
         self.assertTrue(errors, msg='Data is empty.')
 
@@ -123,4 +123,5 @@ class RegisterUserView(TestCase):
         response = self.client.post(self.url, self.data)
         data = response.json()
 
+        self.assertEqual(response.status_code, 201)
         self.assertFalse(data, msg="Data isn't empty.")
