@@ -22,7 +22,7 @@ def login_user(request, *args, **kwargs):
 
 def register_user(request, *args, **kwargs):
     data = request.POST
-    form = forms.UserRegisterForm(data)
+    form = forms.UserRegisterForm(request, data)
     if form.is_valid():
         form.save()
         return JsonResponse(data={}, status=201)

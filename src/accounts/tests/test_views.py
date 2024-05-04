@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from notes import models as n_models
 
 User = get_user_model()
 
@@ -18,11 +19,11 @@ class LogoutUserView(TestCase):
         self.client.force_login(self.user)
 
     def test_view_logout_user_correctly(self):
-        self.assertEqual(self.client.session_key['_auth_user_id'], str(self.user.pk))
+        self.assertEqual(self.client.session['_auth_user_id'], str(self.user.pk))
 
         response = self.client.get(self.url)
 
-        self.assertIsNone(self.client.session_key.get('_auth_user_id'))
+        self.assertIsNone(self.client.session.get('_auth_user_id'))
         self.assertEqual(response.status_code, 200)
 
 
@@ -38,11 +39,11 @@ class LoginUserView(TestCase):
         self.user = User.objects.create_user(**self.data)
 
     def test_view_logins_user_correctly(self):
-        self.assertIsNone(self.client.session_key.get('_auth_user_id'))
+        self.assertIsNone(self.client.session.get('_auth_user_id'))
 
         response = self.client.post(self.url, self.data)
 
-        self.assertEqual(self.client.session_key['_auth_user_id'], str(self.user.pk))
+        self.assertEqual(self.client.session['_auth_user_id'], str(self.user.pk))
         self.assertEqual(response.status_code, 200)
 
     def test_view_doesnt_login_user_if_credentials_are_invalid(self):
@@ -69,6 +70,7 @@ class LoginUserView(TestCase):
 class RegisterUserView(TestCase):
     def setUp(self) -> None:
         self.url = reverse('register')
+        self.worktable = n_models.Worktable.objects.create(session_key=self.client.session.session_key)
         self.email = 'fin.and.jake@test.com'
         self.password = 'qwe123!@#'
         self.data = {
