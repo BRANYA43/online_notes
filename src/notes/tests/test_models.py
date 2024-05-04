@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from django.test import TestCase
 from django.utils import timezone
 
+from accounts.tests import TEST_EMAIL, TEST_PASSWORD
 from notes import models
 
 User = get_user_model()
@@ -15,44 +16,14 @@ User = get_user_model()
 class NoteModelTest(TestCase):
     def setUp(self) -> None:
         self.model_class = models.Note
-        self.worktable = models.Worktable.objects.create()
-        self.title = 'How do I get mass before summer?'
+
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
         self.category = models.Category.objects.create(worktable=self.worktable, title='Fruit')
+
         self.data = {
             'worktable': self.worktable,
-            'title': self.title,
+            'title': 'How do I get mass before summer?',
         }
-
-    def test_model_has_many_to_one_relation_with_worktable(self):
-        self.model_class.objects.create(**self.data)
-        self.model_class.objects.create(**self.data)  # not raise error
-
-    def test_model_is_deleted_if_worktable_was_deleted(self):
-        self.assertEqual(self.model_class.objects.count(), 0)
-
-        self.model_class.objects.create(**self.data)
-
-        self.assertEqual(self.model_class.objects.count(), 1)
-
-        self.worktable.delete()
-
-        self.assertEqual(self.model_class.objects.count(), 0)
-
-    def test_model_has_many_to_one_relation_with_category(self):
-        self.data['category'] = self.category
-        self.model_class.objects.create(**self.data)
-        self.model_class.objects.create(**self.data)  # not raise error
-
-    def test_category_field_is_set_null_if_category_was_deleted(self):
-        self.data['category'] = self.category
-        note = self.model_class.objects.create(**self.data)
-
-        self.assertEqual(note.category.pk, self.category.pk)
-
-        self.category.delete()
-        note.refresh_from_db()
-
-        self.assertIsNone(note.category)
 
     def test_worktable_field_is_required(self):
         del self.data['worktable']
@@ -86,24 +57,9 @@ class NoteModelTest(TestCase):
 
         self.assertAlmostEquals(note.created, timezone.now(), delta=timedelta(seconds=1))
 
-    def test_model_str_representation_is_title(self):
-        note = self.model_class(**self.data)
-        self.assertEqual(str(note), self.title)
-
-
-class CategoryModelTest(TestCase):
-    def setUp(self) -> None:
-        self.model_class = models.Category
-        self.worktable = models.Worktable.objects.create()
-        self.title = 'Anime'
-        self.data = {
-            'worktable': self.worktable,
-            'title': self.title,
-        }
-
     def test_model_has_many_to_one_relation_with_worktable(self):
         self.model_class.objects.create(**self.data)
-        self.model_class.objects.create(**self.data)  # not raise error
+        self.model_class.objects.create(**self.data)  # not raise
 
     def test_model_is_deleted_if_worktable_was_deleted(self):
         self.assertEqual(self.model_class.objects.count(), 0)
@@ -115,6 +71,38 @@ class CategoryModelTest(TestCase):
         self.worktable.delete()
 
         self.assertEqual(self.model_class.objects.count(), 0)
+
+    def test_model_has_many_to_one_relation_with_category(self):
+        self.data['category'] = self.category
+        self.model_class.objects.create(**self.data)
+        self.model_class.objects.create(**self.data)  # not raise error
+
+    def test_category_field_is_set_null_if_category_was_deleted(self):
+        self.data['category'] = self.category
+        note = self.model_class.objects.create(**self.data)
+
+        self.assertEqual(note.category.pk, self.category.pk)
+
+        self.category.delete()
+        note.refresh_from_db()
+
+        self.assertIsNone(note.category)
+
+    def test_model_str_representation_is_title(self):
+        note = self.model_class(**self.data)
+        self.assertEqual(str(note), self.data['title'])
+
+
+class CategoryModelTest(TestCase):
+    def setUp(self) -> None:
+        self.model_class = models.Category
+
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+
+        self.data = {
+            'worktable': self.worktable,
+            'title': 'Anime',
+        }
 
     def test_worktable_field_is_required(self):
         del self.data['worktable']
@@ -132,6 +120,21 @@ class CategoryModelTest(TestCase):
         category = self.model_class.objects.create(**self.data)
         self.assertEqual(category.color, '#FFFFFF')
 
+    def test_model_has_many_to_one_relation_with_worktable(self):
+        self.model_class.objects.create(**self.data)
+        self.model_class.objects.create(**self.data)  # not raise error
+
+    def test_model_is_deleted_if_worktable_was_deleted(self):
+        self.assertEqual(self.model_class.objects.count(), 0)
+
+        self.model_class.objects.create(**self.data)
+
+        self.assertEqual(self.model_class.objects.count(), 1)
+
+        self.worktable.delete()
+
+        self.assertEqual(self.model_class.objects.count(), 0)
+
     def test_model_str_representation_is_title(self):
         category = self.model_class.objects.create(**self.data)
 
@@ -141,13 +144,10 @@ class CategoryModelTest(TestCase):
 class WorktableModelTest(TestCase):
     def setUp(self) -> None:
         self.model_class = models.Worktable
-        self.user = User.objects.create_user(email='grinch@test.com', password='qwe123!@#')
+
+        self.user = User.objects.create_user(email=TEST_EMAIL, password=TEST_PASSWORD)
         self.client.session.save()
         self.session_key = self.client.session.session_key
-        self.data = {
-            'user': self.user,
-            'session_key': self.session_key,
-        }
 
     def test_user_field_isnt_required(self):
         worktable = self.model_class.objects.create(session_key=self.session_key)
@@ -164,7 +164,7 @@ class WorktableModelTest(TestCase):
 
     def test_model_isnt_created_if_session_and_user_fields_are_set(self):
         with self.assertRaises(ValidationError):
-            worktable = self.model_class.objects.create(**self.data)
+            worktable = self.model_class.objects.create(session_key=self.session_key, user=self.user)
             worktable.full_clean()
 
     def test_model_is_deleted_if_user_was_deleted(self):
@@ -200,6 +200,7 @@ class WorktableModelTest(TestCase):
 
     def test_model_has_one_to_one_relation_with_session(self):
         self.model_class.objects.create(session_key=self.session_key)
+
         with self.assertRaisesRegex(ValidationError, r'.+Worktable with this Session already exists.+'):
             worktable = self.model_class.objects.create(session_key=self.session_key)
             worktable.full_clean()

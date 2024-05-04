@@ -10,35 +10,37 @@ from notes import views, forms, models
 
 class UpdateNoteView(TestCase):
     def setUp(self) -> None:
-        self.client.session.save()
         self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
         self.category = models.Category.objects.create(worktable=self.worktable, title='Category #1')
         self.note = models.Note.objects.create(worktable=self.worktable, title='Note #1')
 
         self.url = reverse('update_note', args=[self.note.id])
-        self.title = 'Note #2'
-        self.text = 'Some Text'
-        self.data = {'category': self.category.id, 'title': self.title, 'text': self.text}
+
+        self.data = {'category': self.category.id, 'title': 'Note #2', 'text': 'Some Text'}
         self.expected_date = {
-            'note': {'title': self.title},
-            'category': {'title': self.category.title, 'color': self.category.color},
+            'note': {
+                'title': self.data['title'],
+            },
+            'category': {
+                'title': self.category.title,
+                'color': self.category.color,
+            },
         }
 
     def test_view_updates_note_correctly(self):
         response = self.client.post(self.url, self.data)
-
-        self.assertEqual(response.status_code, 200)
-
         self.note.refresh_from_db()
 
-        self.assertEqual(self.note.category.id, self.category.id)
-        self.assertEqual(self.note.title, self.title)
-        self.assertEqual(self.note.text, self.text)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.note.category.id, self.data['category'])
+        self.assertEqual(self.note.title, self.data['title'])
+        self.assertEqual(self.note.text, self.data['text'])
 
     def test_view_returns_data_with_category(self):
         response = self.client.post(self.url, self.data)
         data = response.json()
 
+        self.assertEqual(response.status_code, 200)
         self.assertDictEqual(data, self.expected_date)
 
     def test_view_returns_data_without_category(self):
@@ -48,34 +50,37 @@ class UpdateNoteView(TestCase):
         response = self.client.post(self.url, self.data)
         data = response.json()
 
+        self.assertEqual(response.status_code, 200)
         self.assertDictEqual(data, self.expected_date)
 
     def test_view_returns_error_data(self):
         response = self.client.post(self.url, {})
         data = response.json()
+        errors = data.get('errors')
 
         self.assertEqual(response.status_code, 400)
-        self.assertTrue(data.get('errors'))
+        self.assertIsNotNone(errors)
+        self.assertTrue(errors, msg='Data is empty.')
 
 
 class CreateNewNoteView(TestCase):
     def setUp(self) -> None:
         self.url = reverse('create_note')
-        self.client.session.save()
+
         self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
         self.category = models.Category.objects.create(worktable=self.worktable, title='Category #1')
-        self.title = 'Note #1'
-        self.text = 'Some text'
 
-        self.data = {
-            'category': self.category.id,
-            'title': self.title,
-            'text': self.text,
-        }
+        self.data = {'category': self.category.id, 'title': 'Note #1', 'text': 'Some text'}
 
         self.expected_data = {
-            'note': {'title': self.title, 'date': timezone.now().strftime('%d.%m.%Y')},
-            'category': {'title': self.category.title, 'color': self.category.color},
+            'note': {
+                'title': self.data['title'],
+                'date': timezone.now().strftime('%d.%m.%Y'),
+            },
+            'category': {
+                'title': self.category.title,
+                'color': self.category.color,
+            },
         }
 
     def test_view_creates_note_correctly(self):
@@ -89,8 +94,8 @@ class CreateNewNoteView(TestCase):
         note = models.Note.objects.first()
 
         self.assertEqual(note.category.pk, self.category.pk)
-        self.assertEqual(note.title, self.title)
-        self.assertEqual(note.text, self.text)
+        self.assertEqual(note.title, self.data['title'])
+        self.assertEqual(note.text, self.data['text'])
 
     def test_view_returns_expected_data_with_category(self):
         response = self.client.post(self.url, self.data)
@@ -98,6 +103,7 @@ class CreateNewNoteView(TestCase):
         note = models.Note.objects.first()
         self.expected_data['url'] = reverse('update_note', args=[note.id])
 
+        self.assertEqual(response.status_code, 201)
         self.assertDictEqual(data, self.expected_data)
 
     def test_view_returns_expected_data_without_category(self):
@@ -105,10 +111,11 @@ class CreateNewNoteView(TestCase):
         del self.expected_data['category']
 
         response = self.client.post(self.url, self.data)
+        data = response.json()
         note = models.Note.objects.first()
         self.expected_data['url'] = reverse('update_note', args=[note.id])
-        data = response.json()
 
+        self.assertEqual(response.status_code, 201)
         self.assertDictEqual(data, self.expected_data)
 
     def test_view_returns_error_data(self):

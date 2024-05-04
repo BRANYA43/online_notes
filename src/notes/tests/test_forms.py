@@ -4,23 +4,32 @@ from django.http import HttpRequest
 from django.test import TestCase
 from django import forms as dj_forms
 
+from accounts.tests import TEST_EMAIL, TEST_PASSWORD
 from notes import forms, models
 
 User = get_user_model()
 
 
+def get_test_request(client) -> HttpRequest:
+    request = HttpRequest()
+    request.session = client.session
+    request.user = AnonymousUser()
+    return request
+
+
 class NoteUpdateForm(TestCase):
     def setUp(self) -> None:
         self.form_class = forms.NoteUpdateForm
-        self.user = User.objects.create_user(email='samurai@test.com', password='qwe123!@#')
-        self.worktable = models.Worktable.objects.create(user=self.user)
-        self.category = models.Category.objects.create(worktable=self.worktable, title='Danger!', color='#ff0000')
+
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Danger', color='#ff0000')
         self.note = models.Note.objects.create(
             worktable=self.worktable,
             category=self.category,
             title='OMG! How to understand a woman?',
             text='1001 way to understand a women...',
         )
+
         self.data = {
             'title': 'How to understand a man?',
             'text': 'Man Language:\n'
@@ -37,6 +46,9 @@ class NoteUpdateForm(TestCase):
         self.assertTrue(issubclass(self.form_class, dj_forms.ModelForm))
 
     def test_form_updates_note_correctly(self):
+        self.assertNotEqual(self.note.title, self.data['title'])
+        self.assertNotEqual(self.note.text, self.data['text'])
+
         form = self.form_class(instance=self.note, data=self.data)
         self.assertTrue(form.is_valid())
         form.save()
@@ -48,15 +60,14 @@ class NoteUpdateForm(TestCase):
 class NoteCreateForm(TestCase):
     def setUp(self) -> None:
         self.form_class = forms.NoteCreateForm
-        self.user = User.objects.create_user(email='samurai@test.com', password='qwe123!@#')
-        self.worktable = models.Worktable.objects.create(user=self.user)
-        self.request = HttpRequest()
-        self.request.user = self.user
 
-        self.title = 'Why do flat Earth believers are exist such many?'
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+
+        self.request = get_test_request(self.client)
+
         self.data = {
             'category': '',
-            'title': self.title,
+            'title': 'Why do flat Earth believers are exist such many?',
             'text': '',
         }
 
@@ -64,22 +75,28 @@ class NoteCreateForm(TestCase):
         self.assertTrue(issubclass(self.form_class, forms.BaseCreateForm))
 
     def test_form_creates_note_correctly(self):
+        self.assertEqual(models.Note.objects.count(), 0)
+
         form = self.form_class(request=self.request, data=self.data)
         self.assertTrue(form.is_valid())
-
         note = form.save()
 
-        self.assertEqual(note.pk, self.worktable.pk)
+        self.assertEqual(models.Note.objects.count(), 1)
+        self.assertEqual(note.worktable.pk, self.worktable.pk)
+        self.assertEqual(note.title, self.data['title'])
+        self.assertIsNone(note.category)
+        self.assertFalse(note.text)
 
 
 class CategoryUpdateForm(TestCase):
     def setUp(self) -> None:
         self.form_class = forms.CategoryUpdateForm
-        self.user = User.objects.create_user(email='samurai@test.com', password='qwe123!@#')
-        self.worktable = models.Worktable.objects.create(user=self.user)
-        self.category = models.Category.objects.create(worktable=self.worktable, title='Screeps World')
+
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Category #1')
+
         self.data = {
-            'title': 'Screeps World +4 CPU',
+            'title': 'Category #2',
             'color': '#202020',
         }
 
@@ -87,6 +104,9 @@ class CategoryUpdateForm(TestCase):
         self.assertTrue(issubclass(self.form_class, dj_forms.ModelForm))
 
     def test_form_updates_category_correctly(self):
+        self.assertNotEqual(self.category.title, self.data['title'])
+        self.assertNotEqual(self.category.color, self.data['color'])
+
         form = self.form_class(instance=self.category, data=self.data)
         self.assertTrue(form.is_valid())
         form.save()
@@ -98,38 +118,39 @@ class CategoryUpdateForm(TestCase):
 class CategoryCreateForm(TestCase):
     def setUp(self) -> None:
         self.form_class = forms.CategoryCreateForm
-        self.user = User.objects.create_user(email='samurai@test.com', password='qwe123!@#')
-        self.worktable = models.Worktable.objects.create(user=self.user)
-        self.request = HttpRequest()
-        self.request.user = self.user
 
-        self.title = 'Jython'
-        self.color = '#202020'
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+
+        self.request = get_test_request(self.client)
+
         self.data = {
-            'title': self.title,
-            'color': self.color,
+            'title': 'Jython',
+            'color': '#202020',
         }
 
     def test_form_inherit_BaseCreateForm(self):
         self.assertTrue(issubclass(self.form_class, forms.BaseCreateForm))
 
     def test_form_creates_category_correctly(self):
+        self.assertEqual(models.Category.objects.count(), 0)
+
         form = self.form_class(request=self.request, data=self.data)
         self.assertTrue(form.is_valid())
-
         category = form.save()
 
-        self.assertEqual(category.pk, self.worktable.pk)
+        self.assertEqual(models.Category.objects.count(), 1)
+        self.assertEqual(category.worktable.pk, self.worktable.pk)
+        self.assertEqual(category.title, self.data['title'])
+        self.assertEqual(category.color, self.data['color'])
 
 
 class BaseCreateFormTest(TestCase):
     def setUp(self) -> None:
         self.form_class = self.get_test_from_class()
-        self.request = HttpRequest()
-        self.request.user = AnonymousUser()
 
-        self.user = User.objects.create_user(email='samurai@test.com', password='qwe123!@#')
-        self.session_key = self.client.session.session_key
+        self.request = get_test_request(self.client)
+
+        self.user = User.objects.create_user(email=TEST_EMAIL, password=TEST_PASSWORD)
 
     @staticmethod
     def get_test_from_class():
@@ -146,19 +167,18 @@ class BaseCreateFormTest(TestCase):
     def test_form_set_worktable_by_user(self):
         self.request.user = self.user
         worktable = models.Worktable.objects.create(user=self.user)
+
         form = self.form_class(request=self.request, data={'title': 'Cython'})
         form.is_valid()
         category = form.save()
-        worktable_category = worktable.category_set.first()
 
-        self.assertEqual(category.pk, worktable_category.pk)
+        self.assertEqual(category.worktable.pk, worktable.pk)
 
     def test_form_set_worktable_by_session(self):
-        self.request.session = self.client.session
-        worktable = models.Worktable.objects.create(session_key=self.session_key)
+        worktable = models.Worktable.objects.create(session_key=self.request.session.session_key)
+
         form = self.form_class(request=self.request, data={'title': 'Brython'})
         form.is_valid()
         category = form.save()
-        worktable_category = worktable.category_set.first()
 
-        self.assertEqual(category.pk, worktable_category.pk)
+        self.assertEqual(category.worktable.pk, worktable.pk)

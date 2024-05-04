@@ -7,7 +7,7 @@ from accounts import forms as acc_forms
 from notes import forms, models
 
 
-def update_note(request, id, *args, **kwargs):
+def update_note(request, id):
     note = models.Note.objects.get(id=id)
     form = forms.NoteUpdateForm(instance=note, data=request.POST)
     if form.is_valid():
@@ -22,16 +22,14 @@ def update_note(request, id, *args, **kwargs):
                 'title': note.category.title,
                 'color': note.category.color,
             }
-
         return JsonResponse(data=data, status=200)
 
     else:
         return JsonResponse(data={'errors': form.errors}, status=400)
 
 
-def create_new_note(request, *args, **kwargs):
+def create_new_note(request):
     form = forms.NoteCreateForm(request=request, data=request.POST)
-
     if form.is_valid():
         note = form.save()
         data = {
@@ -62,10 +60,8 @@ class HomeView(views.View, generic.base.ContextMixin, generic.base.TemplateRespo
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['login_form'] = self.form_classes['login_form'](self.request)
-        kwargs['register_form'] = self.form_classes['register_form'](self.request)
-        kwargs['category_create_form'] = self.form_classes['category_create_form'](self.request)
-        kwargs['note_create_form'] = self.form_classes['note_create_form'](self.request)
+        for form_key, form in self.form_classes.items():
+            kwargs[form_key] = form(self.request)
         kwargs['worktable'] = self.get_worktable()
         return super().get_context_data(**kwargs)
 
