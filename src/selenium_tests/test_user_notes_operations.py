@@ -1,5 +1,3 @@
-from time import sleep
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.color import Color
 
@@ -39,6 +37,8 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             id_password=self.password,
         )
 
+        self.wait_for(lambda: self.get_navbar().find_element(value='user'))
+
     def check_note_value_in_the_card(self, card, note_title: str, category_title: str = None):
         fields = card.find_elements(By.TAG_NAME, 'p')
         if category_title is None:
@@ -54,7 +54,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         self.login_user_through_selenium()
 
         # User finds note form and input some text
-        sleep(1)  # wait for loading a page TODO figure our a way to get around it
         note_form = self.browser.find_element(value='note_form')
         self.send_form(
             note_form,
@@ -79,7 +78,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         self.login_user_through_selenium()
 
         # User finds note form and input some text
-        sleep(1)  # wait for loading a page TODO figure our a way to get around it
         note_form = self.browser.find_element(value='note_form')
         self.send_form(
             note_form,
