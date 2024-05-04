@@ -9,6 +9,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.common import WebDriverException, ElementClickInterceptedException
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.select import Select
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium import webdriver
 
@@ -80,11 +81,15 @@ class FunctionalTestCase(StaticLiveServerTestCase):
         return self.browser.find_element(value='navbar')
 
     @staticmethod
-    def send_form(form: WebElement, **inputs_with_value):
+    def send_form(form: WebElement, select_fields=(), **inputs_with_value):
         """
         Send form to backend.
+        :param select_fields: keys as ids for <input> tags
         :param inputs_with_value: key as id of <input> tag and value as value of <input> tag
         """
         for input_, value in inputs_with_value.items():
-            form.find_element(value=input_).send_keys(value)
+            if input_ in select_fields:
+                Select(form.find_element(value=input_)).select_by_value(value)
+            else:
+                form.find_element(value=input_).send_keys(value)
         form.find_element(value='submit_btn').click()
