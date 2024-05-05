@@ -45,6 +45,28 @@ $(document).ready(function(){
         `);
     }
 
+    $('a#edit').click(function(event){
+        event.preventDefault();
+
+        send_ajax_request(
+            data={},
+            type='GET',
+            url=$(this).attr('href'),
+            success=function(response) {
+                var form = $('form#note_form');
+                form.attr('action', response.url);
+                form.find('#id_title').val(response.note.title);
+                form.find('#id_text').val(response.note.text);
+                if(response.category) {
+                    form.find('#id_category').val(response.category.id);
+                }
+                console.log(response)
+            },
+            error=function(xhr, error, status) {
+                console.error(error);
+        });
+    });
+
     $('#note_form').submit(function(event){
         event.preventDefault();
 
