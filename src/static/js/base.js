@@ -53,12 +53,19 @@ $(document).ready(function(){
             type=$(this).attr('method'),
             url=$(this).attr('action'),
             success=function(response) {
-                add_new_note_to_list(response)
-                var form = $('#note_form')
-                form.attr('action', response.url)
+                var form = $('#note_form');
+                if(form.attr('action').includes('create')) {
+                    form.attr('action', response.url);
+                    add_new_note_to_list(response)
+                }
+                else if(form.attr('action').includes('update')) {
+                    $(`#${response.note.id} p:contains('Title')`).html(`Title: ${response.note.title}`)
+                }
                 console.log(response);
             },
-        );
+            error=function(xhr, status, error) {
+                console.error(error);
+        });
     });
 
     $('#navbar [name="logout_link"]').click(function(event){
