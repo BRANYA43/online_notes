@@ -30,7 +30,7 @@ $(document).ready(function(){
 
     function add_new_note_to_list(data) {
         $('#note_list').prepend(`
-            <div class="card" data-url="${data.url}" data-category-id="${data.category ? data.category.id : ''}">
+            <div id="${data.note.id}" class="card" data-url="${data.url}" data-category-id="${data.category ? data.category.id : ''}">
               <div class="card-body" style="${data.category ? 'color: ' + data.category.color + ';' : ''}">
                 <p class="card-subtitle">Category: ${data.category ? data.category.title : '---'}</p>
                 <p class="card-subtitle">Title: ${data.note.title}</p>
@@ -53,9 +53,9 @@ $(document).ready(function(){
             type=$(this).attr('method'),
             url=$(this).attr('action'),
             success=function(response) {
+                add_new_note_to_list(response)
                 var form = $('#note_form')
                 form.attr('action', response.url)
-                add_new_note_to_list(response)
                 console.log(response);
             },
         );
