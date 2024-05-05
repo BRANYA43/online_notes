@@ -4,7 +4,7 @@ from selenium.webdriver.support.color import Color
 
 from accounts.forms import User
 from accounts.tests import TEST_EMAIL, TEST_PASSWORD
-from notes.models import Worktable, Category
+from notes.models import Worktable, Category, Note
 from selenium_tests import FunctionalTestCase
 
 
@@ -15,9 +15,9 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         self.password = TEST_PASSWORD
 
         user = User.objects.create_user(email=self.email, password=self.password)
-        worktable = Worktable.objects.create(user=user)
+        self.worktable = Worktable.objects.create(user=user)
 
-        self.category = Category.objects.create(worktable=worktable, title='Category #1', color='#ff0000')
+        self.category = Category.objects.create(worktable=self.worktable, title='Category #1', color='#ff0000')
 
         self.title = 'What do I do to find a job?'
         self.text = """
@@ -136,6 +136,50 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks a note list to confirms that title changed
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=new_title,
+        )
+
+    def test_user_can_edit_choice_note_from_note_list(self):
+        note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User sees a note in the note list and click on edit button
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=note.title,
+        )
+        card.find_element(value='edit').click()
+
+        # User sees a full form by info from note
+        self.wait_for(
+            lambda: self.assertEqual(
+                self.browser.find_element(value='note_form').find_element(value='id_title').text,
+                note.title,
+            )
+        )
+
+        # User changes a title
+        new_title = 'Changed Title'
+        note_form = self.browser.find_element(value='note_form')
+        self.send_form(
+            note_form,
+            id_title=new_title,
+        )
+
+        # User checks a note in the note list
         card = self.wait_for(
             lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
         )
@@ -291,6 +335,47 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks a note list to confirms that title changed
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=new_title,
+        )
+
+    def test_user_can_edit_choice_note_from_note_list(self):
+        note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User sees a note in the note list and click on edit button
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=note.title,
+        )
+        card.find_element(value='edit').click()
+
+        # User sees a full form by info from note
+        self.wait_for(
+            lambda: self.assertEqual(
+                self.browser.find_element(value='note_form').find_element(value='id_title').text,
+                note.title,
+            )
+        )
+
+        # User changes a title
+        new_title = 'Changed Title'
+        note_form = self.browser.find_element(value='note_form')
+        self.send_form(
+            note_form,
+            id_title=new_title,
+        )
+
+        # User checks a note in the note list
         card = self.wait_for(
             lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
         )
