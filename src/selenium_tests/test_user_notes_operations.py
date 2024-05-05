@@ -159,13 +159,9 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
                 - ...; 
             """
 
-    def prepare_for_test(self):
-        # Enter to site to create worktable for anonymous user
+    def get_worktable(self):
         self.enter_to_site()
-
-        # Create category
-        worktable = Worktable.objects.first()
-        self.category = Category.objects.create(worktable=worktable, title='Category #1', color='#ff0000')
+        return Worktable.objects.first()
 
     def check_note_value_in_the_card(self, card, note_title: str, category_title: str = None):
         fields = card.find_elements(By.TAG_NAME, 'p')
@@ -196,7 +192,8 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
     def test_user_can_create_new_note_with_category(self):
-        self.prepare_for_test()
+        worktable = self.get_worktable()
+        category = Category.objects.create(worktable=worktable, title='Category #1', color='#ff0000')
 
         # User enter to site
         self.enter_to_site()
@@ -206,7 +203,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         self.send_form(
             note_form,
             select_fields=('id_category',),
-            id_category=str(self.category.id),
+            id_category=str(category.id),
             id_title=self.title,
             id_text=self.text,
         )
@@ -218,14 +215,15 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         self.check_note_value_in_the_card(
             card,
-            category_title=self.category.title,
+            category_title=category.title,
             note_title=self.title,
         )
 
         # User checks a note, that has colored text by category color
         card_body = card.find_element(By.CLASS_NAME, 'card-body')
+        color = Color.from_string(category.color).rgb
 
-        self.assertIsNotNone(card_body.get_attribute('style'), f'color: {Color.from_string(self.category.color).rgb}')
+        self.assertIsNotNone(card_body.get_attribute('style'), f'color: {color}')
 
     def test_each_user_sees_only_his_notes_and_doesnt_see_notes_of_others(self):
         rick_note_title = 'How did rick become pickle?'
