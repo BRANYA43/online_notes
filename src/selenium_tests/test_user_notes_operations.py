@@ -1,3 +1,4 @@
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.color import Color
 
@@ -155,7 +156,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
     def test_user_can_create_new_note_with_category(self):
-        self.prepare_for_test()
+        self.prepare_category_for_test()
 
         # User enter to site
         self.enter_to_site()
@@ -185,3 +186,40 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         card_body = card.find_element(By.CLASS_NAME, 'card-body')
 
         self.assertIsNotNone(card_body.get_attribute('style'), f'color: {Color.from_string(self.category.color).rgb}')
+
+    def test_each_user_sees_only_his_notes_and_doesnt_see_notes_of_others(self):
+        rick_note_title = 'How did rick become pickle?'
+
+        # Rick enter to site
+        self.enter_to_site()
+
+        # Rick finds note form and input some text
+        note_form = self.browser.find_element(value='note_form')
+        self.send_form(
+            note_form,
+            id_title=rick_note_title,
+            id_text='',
+        )
+
+        # Rick checks a note list, that have a created new note.
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+
+        self.check_note_value_in_the_card(
+            card,
+            note_title=rick_note_title,
+        )
+
+        # Rick exits from site
+        self.browser.quit()
+
+        # Prepare new browser for Morty
+        self.browser = self.get_browser()
+
+        # Morty enters to site
+        self.enter_to_site()
+
+        # Morty checks a note list and doesn't see a note that was created by Rick
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card')
