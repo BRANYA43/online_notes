@@ -42,3 +42,21 @@ class FunctionalTestCaseTest(FunctionalTestCase):
         end = time()
 
         self.assertAlmostEqual(end - start, 5, delta=0.5)
+
+    def test_wait_for_method_returns_expected_value_if_expected_value_is_equal_fn_result(self):
+        def foo():
+            return 1
+
+        result = self.wait_for(foo, expected_value=1)
+        self.assertEqual(result, 1)
+
+    def test_wait_for_method_raises_error_if_expected_value_isnt_equal_fn_result(self):
+        def foo():
+            return 2
+
+        self.assertRaises(
+            AssertionError,
+            self.wait_for,
+            foo,
+            expected_value=1,
+        )
