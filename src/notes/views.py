@@ -7,6 +7,28 @@ from accounts import forms as acc_forms
 from notes import forms, models
 
 
+def retrieve_note(request, id):
+    try:
+        note = models.Note.objects.get(id=id)
+        data = {
+            'url': reverse('update_note', args=[note.id]),
+            'note': {
+                'title': note.title,
+                'text': note.text,
+            },
+        }
+        if note.category:
+            data['category'] = {
+                'id': note.category.id,
+                'title': note.category.title,
+                'color': note.category.color,
+            }
+        return JsonResponse(data=data, status=200)
+
+    except models.Note.DoesNotExist:
+        return JsonResponse(data={'errors': [f'Not found such note by id={id}']}, status=404)
+
+
 def update_note(request, id):
     note = models.Note.objects.get(id=id)
     form = forms.NoteUpdateForm(instance=note, data=request.POST)

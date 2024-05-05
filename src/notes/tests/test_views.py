@@ -9,6 +9,58 @@ from accounts import forms as acc_forms
 from notes import views, forms, models
 
 
+class RetrieveNoteView(TestCase):
+    def setUp(self) -> None:
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Category #1')
+        self.note = models.Note.objects.create(
+            worktable=self.worktable,
+            title='Note #1',
+            text='Some Text',
+            category=self.category,
+        )
+
+        self.url = reverse('retrieve_note', args=[self.note.id])
+
+        self.expected_date = {
+            'url': reverse('update_note', args=[self.note.id]),
+            'note': {'title': self.note.title, 'text': self.note.text},
+            'category': {
+                'id': self.category.id,
+                'title': self.category.title,
+                'color': self.category.color,
+            },
+        }
+
+    def test_view_returns_data_with_category(self):
+        response = self.client.get(self.url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(data, self.expected_date)
+
+    def test_view_returns_data_without_category(self):
+        self.note.category = None
+        self.note.save()
+        del self.expected_date['category']
+
+        response = self.client.get(self.url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(data, self.expected_date)
+
+    def test_view_returns_error_data_if_note_doesnt_exist(self):
+        non_existent_id = 999_999_999
+        url = reverse('retrieve_note', args=[non_existent_id])
+
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, 404)
+        self.assertRegex(data['errors'][0], rf'Not found such note by id={non_existent_id}')
+
+
 class UpdateNoteView(TestCase):
     def setUp(self) -> None:
         self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
