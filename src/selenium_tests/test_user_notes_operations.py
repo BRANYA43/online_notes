@@ -104,6 +104,46 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         self.assertIsNotNone(card_body.get_attribute('style'), f'color: {Color.from_string(self.category.color).rgb}')
 
+    def test_user_can_edit_recently_created_note_without_choosing_it_in_note_list(self):
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User finds note form and input some text
+        note_form = self.browser.find_element(value='note_form')
+        self.send_form(
+            note_form,
+            id_title=self.title,
+            id_text=self.text,
+        )
+        # User checks a note list, that have a created new note.
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=self.title,
+        )
+
+        # User changes the title of a recently created note in the same form
+        new_title = 'New title for a recently created note'
+        note_form = self.browser.find_element(value='note_form')
+        self.send_form(
+            note_form,
+            id_title=new_title,
+        )
+
+        # User checks a note list to confirms that title changed
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=new_title,
+        )
+
 
 class AnonymousUserNotesOperationsTest(FunctionalTestCase):
     def setUp(self) -> None:
@@ -223,3 +263,40 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         # Morty checks a note list and doesn't see a note that was created by Rick
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card')
+
+    def test_user_can_edit_recently_created_note_without_choosing_it_in_note_list(self):
+        # User enters to site
+        self.enter_to_site()
+
+        # User finds note form and input some text
+        note_form = self.browser.find_element(value='note_form')
+        self.send_form(
+            note_form,
+            id_title=self.title,
+            id_text=self.text,
+        )
+        # User checks a note list, that have a created new note.
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=self.title,
+        )
+
+        # User changes the title of a recently created note in the same form
+        new_title = 'New title for a recently created note'
+        note_form = self.browser.find_element(value='note_form')
+        self.send_form(
+            note_form,
+            id_title=new_title,
+        )
+
+        # User checks a note list to confirms that title changed
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=new_title,
+        )
