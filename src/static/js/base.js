@@ -37,9 +37,9 @@ $(document).ready(function(){
                 <p class="card-subtitle">Date: ${data.note.date}</p>
               </div>
                 <div class="card-footer d-flex justify-content-end gap-2">
-                  <button class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="edit"></i></button>
-                  <button class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="archive"></i></button>
-                  <button class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="trash-2"></i></button>
+                  <a class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="edit"></i></a>
+                  <a class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="archive"></i></a>
+                  <a class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="trash-2"></i></a>
                 </div>
             </div>
         `);
