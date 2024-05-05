@@ -16,9 +16,9 @@
             <p class="card-subtitle">Date: {{ note.created|date:"d.m.Y" }}</p>
           </div>
             <div class="card-footer d-flex justify-content-end gap-2">
-              <button class="btn btn-outline-secondary btn-sm" type="button">E</button>
-              <button class="btn btn-outline-secondary btn-sm" type="button">A</button>
-              <button class="btn btn-outline-secondary btn-sm" type="button">X</button>
+              <button class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="edit"></i></button>
+              <button class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="archive"></i></button>
+              <button class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="trash-2"></i></button>
             </div>
         </div>
     {% endfor %}
