@@ -156,7 +156,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
     def test_user_can_create_new_note_with_category(self):
-        self.prepare_category_for_test()
+        self.prepare_for_test()
 
         # User enter to site
         self.enter_to_site()
