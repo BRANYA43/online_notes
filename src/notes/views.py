@@ -14,6 +14,7 @@ def update_note(request, id):
         note = form.save()
         data = {
             'note': {
+                'id': note.id,
                 'title': note.title,
             }
         }
@@ -35,6 +36,7 @@ def create_new_note(request):
         data = {
             'url': reverse('update_note', args=[note.id]),
             'note': {
+                'id': note.id,
                 'title': note.title,
                 'date': note.created.strftime('%d.%m.%Y'),
             },

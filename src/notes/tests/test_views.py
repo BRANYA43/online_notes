@@ -20,6 +20,7 @@ class UpdateNoteView(TestCase):
         self.data = {'category': self.category.id, 'title': 'Note #2', 'text': 'Some Text'}
         self.expected_date = {
             'note': {
+                'id': self.note.id,
                 'title': self.data['title'],
             },
             'category': {
@@ -103,6 +104,7 @@ class CreateNewNoteView(TestCase):
         data = response.json()
         note = models.Note.objects.first()
         self.expected_data['url'] = reverse('update_note', args=[note.id])
+        self.expected_data['note']['id'] = note.id
 
         self.assertEqual(response.status_code, 201)
         self.assertDictEqual(data, self.expected_data)
@@ -115,6 +117,7 @@ class CreateNewNoteView(TestCase):
         data = response.json()
         note = models.Note.objects.first()
         self.expected_data['url'] = reverse('update_note', args=[note.id])
+        self.expected_data['note']['id'] = note.id
 
         self.assertEqual(response.status_code, 201)
         self.assertDictEqual(data, self.expected_data)
