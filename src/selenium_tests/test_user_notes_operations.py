@@ -165,10 +165,8 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees a full form by info from note
         self.wait_for(
-            lambda: self.assertEqual(
-                self.browser.find_element(value='note_form').find_element(value='id_title').text,
-                note.title,
-            )
+            lambda: self.browser.find_element(value='note_form').find_element(value='id_title').get_attribute('value'),
+            note.title,
         )
 
         # User changes a title
@@ -344,7 +342,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
     def test_user_can_edit_choice_note_from_note_list(self):
-        note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
+        note = Note.objects.create(worktable=self.get_worktable(), title='Note #1', text='Some Text')
 
         # User enters to site
         self.enter_to_site()
@@ -361,10 +359,8 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees a full form by info from note
         self.wait_for(
-            lambda: self.assertEqual(
-                self.browser.find_element(value='note_form').find_element(value='id_title').text,
-                note.title,
-            )
+            lambda: self.browser.find_element(value='note_form').find_element(value='id_title').get_attribute('value'),
+            note.title,
         )
 
         # User changes a title
