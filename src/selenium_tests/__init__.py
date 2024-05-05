@@ -91,5 +91,8 @@ class FunctionalTestCase(StaticLiveServerTestCase):
             if input_ in select_fields:
                 Select(form.find_element(value=input_)).select_by_value(value)
             else:
-                form.find_element(value=input_).send_keys(value)
+                input_elem = form.find_element(value=input_)
+                if input_elem.get_attribute('value'):
+                    input_elem.clear()
+                input_elem.send_keys(value)
         form.find_element(value='submit_btn').click()
