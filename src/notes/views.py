@@ -181,3 +181,10 @@ class NotesView(BaseView):
     extra_form_classes = {
         'note_create_form': forms.NoteCreateForm,
     }
+
+
+class CategoryView(BaseView):
+    template_name = 'categories.html'
+    extra_form_classes = {
+        'category_create_form': forms.CategoryCreateForm,
+    }

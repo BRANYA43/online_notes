@@ -452,3 +452,25 @@ class NotesViewTest(TestCase):
                 self.assertIsInstance(form, cls)
             else:
                 self.fail(f'Missed <{cls.__name__}>.')
+
+
+class CategoriesViewTest(TestCase):
+    def setUp(self) -> None:
+        self.url = reverse('categories')
+
+    def test_view_uses_expected_template(self):
+        response = self.client.get(self.url)
+
+        self.assertTemplateUsed(response, 'categories.html')
+
+    def test_view_context_has_expected_forms(self):
+        expected_forms = {
+            'category_create_form': forms.CategoryCreateForm,
+        }
+        response = self.client.get(self.url)
+
+        for key, cls in expected_forms.items():
+            if (form := response.context.get(key)) is not None:
+                self.assertIsInstance(form, cls)
+            else:
+                self.fail(f'Missed <{cls.__name__}>.')
