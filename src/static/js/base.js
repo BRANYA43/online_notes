@@ -45,6 +45,45 @@ $(document).ready(function(){
         `);
     }
 
+    function add_new_category_to_list(data) {
+        $('#category_list').append(`
+          <div id="${data.category.id}" class="card">
+            <div class="card-body" style="color: ${data.category.color}">
+              <p class="card-subtitle">Title: ${data.category.title}</p>
+            </div>
+            <div class="card-footer d-flex justify-content-end gap-2">
+              <a id="edit" href="${data.urls.retrieve}" class="btn btn-outline-secondary btn-sm"><i data-feather="edit"></i></a>
+              <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm"><i data-feather="trash-2"></i></a>
+            </div>
+          </div>
+        `);
+    }
+
+    $('form#category_form').submit(function(event) {
+        event.preventDefault();
+
+        send_ajax_request(
+            data=$(this).serialize(),
+            type=$(this).attr('method'),
+            url=$(this).attr('action'),
+            success=function(response) {
+                var form = $('form#category_form');
+                if(form.attr('action').includes('create')) {
+                    form.attr('action', response.urls.update);
+                    add_new_category_to_list(response);
+                }
+                else if(form.attr('action').includes('update')) {
+                    $(`#${response.category.id} p:contains('Title')`).html(`Title: ${response.category.title}`);
+                    $(`#${response.category.id}`).find('.card-body').css('color', response.category.color);
+                }
+                console.log(response);
+            },
+            error=function(xhr, status, error){
+                console.error(error);
+            }
+        );
+    });
+
     $('#note_list').on('click', '#archive', function(event) {
         event.preventDefault();
 
