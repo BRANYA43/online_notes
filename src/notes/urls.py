@@ -8,4 +8,5 @@ urlpatterns = [
     path('create/', views.create_new_note, name='create_note'),
     path('update/<id>/', views.update_note, name='update_note'),
     path('retrieve/<id>/', views.retrieve_note, name='retrieve_note'),
+    path('archive/<id>/', views.archive_note, name='archive_note'),
 ]  # type: ignore

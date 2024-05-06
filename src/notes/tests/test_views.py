@@ -9,6 +9,34 @@ from accounts import forms as acc_forms
 from notes import views, forms, models
 
 
+class ArchiveNoteView(TestCase):
+    def setUp(self) -> None:
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        self.note = models.Note.objects.create(
+            worktable=self.worktable,
+            title='Note #1',
+        )
+
+        self.url = reverse('archive_note', args=[self.note.id])
+
+    def test_view_archives_note(self):
+        response = self.client.get(self.url)
+        self.note.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(self.note.is_archived)
+
+    def test_view_returns_error_data_if_note_doesnt_exist(self):
+        non_existent_id = 999_999_999
+        url = reverse('archive_note', args=[non_existent_id])
+
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, 404)
+        self.assertRegex(data['errors'][0], rf'Not found such note by id={non_existent_id}')
+
+
 class RetrieveNoteView(TestCase):
     def setUp(self) -> None:
         self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
