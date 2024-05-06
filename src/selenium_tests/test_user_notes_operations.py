@@ -133,6 +133,8 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         note_form = self.browser.find_element(value='note_form')
         self.send_form(
             note_form,
+            select_fields=('id_category',),
+            id_category=str(self.category.id),
             id_title=new_title,
         )
 
@@ -142,8 +144,15 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
         self.check_note_value_in_the_card(
             card,
+            category_title=self.category.title,
             note_title=new_title,
         )
+
+        # User checks a note, that has colored text by category color
+        color = Color.from_string(self.category.color)
+        card_body = card.find_element(By.CLASS_NAME, 'card-body')
+
+        self.assertEqual(card_body.get_attribute('style'), f'color: {color.rgb};')
 
     def test_user_can_edit_choice_note_from_note_list(self):
         note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
@@ -175,6 +184,8 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         note_form = self.browser.find_element(value='note_form')
         self.send_form(
             note_form,
+            select_fields=('id_category',),
+            id_category=str(self.category.id),
             id_title=new_title,
         )
 
@@ -184,8 +195,15 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
         self.check_note_value_in_the_card(
             card,
+            category_title=self.category.title,
             note_title=new_title,
         )
+
+        # User checks a note, that has colored text by category color
+        color = Color.from_string(self.category.color)
+        card_body = card.find_element(By.CLASS_NAME, 'card-body')
+
+        self.assertEqual(card_body.get_attribute('style'), f'color: {color.rgb};')
 
 
 class AnonymousUserNotesOperationsTest(FunctionalTestCase):
