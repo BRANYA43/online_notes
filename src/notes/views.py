@@ -11,7 +11,7 @@ def delete_note(request, id):
     try:
         note = models.Note.objects.get(id=id)
         note.delete()
-        return JsonResponse(data={}, status=200)
+        return JsonResponse(data={'note': {'id': int(id)}}, status=200)
     except models.Note.DoesNotExist:
         return JsonResponse(data={'errors': [f'Not found such note by id={id}']}, status=404)
 

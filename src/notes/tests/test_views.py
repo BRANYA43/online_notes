@@ -19,13 +19,17 @@ class DeleteNoteView(TestCase):
 
         self.url = reverse('delete_note', args=[self.note.id])
 
-    def test_view_deletes_note(self):
+        self.expected_data = {'note': {'id': self.note.id}}
+
+    def test_view_deletes_note_correctly(self):
         self.assertEqual(models.Note.objects.count(), 1)
 
         response = self.client.get(self.url)
+        data = response.json()
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(models.Note.objects.count(), 0)
+        self.assertDictEqual(data, self.expected_data)
 
     def test_view_returns_error_data_if_note_doesnt_exist(self):
         non_existent_id = 999_999_999
