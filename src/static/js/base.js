@@ -45,7 +45,7 @@ $(document).ready(function(){
         `);
     }
 
-    $('#note_list').on('click', '#delete', function delete_note(event){
+    $('#note_list').on('click', '#delete', function (event){
         event.preventDefault();
 
         send_ajax_request(
@@ -66,7 +66,7 @@ $(document).ready(function(){
         });
     });
 
-    $('a#edit').click(function(event){
+    $('#note_list').on('click', '#edit', function(event) {
         event.preventDefault();
 
         send_ajax_request(
