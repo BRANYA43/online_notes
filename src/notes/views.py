@@ -61,10 +61,15 @@ def create_category(request):
     if form.is_valid():
         category = form.save()
         data = {
+            'urls': {
+                'update': reverse('update_category', args=[category.id]),
+                'retrieve': reverse('retrieve_category', args=[category.id]),
+                'delete': reverse('delete_category', args=[category.id]),
+            },
             'category': {
                 'id': category.id,
                 'title': category.title,
-            }
+            },
         }
         return JsonResponse(data=data, status=201)
     else:

@@ -157,10 +157,15 @@ class CreateCategoryView(TestCase):
         data = response.json()
         category = models.Category.objects.first()
         expected_data = {
+            'urls': {
+                'update': reverse('update_category', args=[category.id]),
+                'retrieve': reverse('retrieve_category', args=[category.id]),
+                'delete': reverse('delete_category', args=[category.id]),
+            },
             'category': {
                 'id': category.id,
                 'title': category.title,
-            }
+            },
         }
 
         self.assertDictEqual(data, expected_data)
