@@ -59,6 +59,26 @@ $(document).ready(function(){
         `);
     }
 
+    $('#category_list').on('click', '#edit', function(event) {
+        event.preventDefault();
+
+        send_ajax_request(
+            data={},
+            type='GET',
+            url=$(this).attr('href'),
+            success=function(response) {
+                var form = $('form#category_form');
+                form.attr('action', response.urls.update);
+                form.find('#id_title').val(response.category.title);
+                form.find('#id_color').val(response.category.color);
+                console.log(response)
+            },
+            error=function(xhr, error, status) {
+                console.error(error);
+        });
+
+    });
+
     $('form#category_form').submit(function(event) {
         event.preventDefault();
 
