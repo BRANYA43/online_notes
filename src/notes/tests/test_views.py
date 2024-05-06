@@ -52,12 +52,16 @@ class ArchiveNoteView(TestCase):
 
         self.url = reverse('archive_note', args=[self.note.id])
 
-    def test_view_archives_note(self):
+        self.expected_data = {'note': {'id': self.note.id}}
+
+    def test_view_archives_note_correctly(self):
         response = self.client.get(self.url)
+        data = response.json()
         self.note.refresh_from_db()
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(self.note.is_archived)
+        self.assertDictEqual(data, self.expected_data)
 
     def test_view_returns_error_data_if_note_doesnt_exist(self):
         non_existent_id = 999_999_999
