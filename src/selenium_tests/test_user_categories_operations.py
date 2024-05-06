@@ -49,6 +49,54 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
             color=self.color,
         )
 
+    def test_user_can_edit_recently_created_note(self):
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User finds a categories link and click on it
+        self.get_navbar().find_element(By.NAME, 'categories_link').click()
+
+        # User finds category form and input some data
+        category_form = self.browser.find_element(value='category_form')
+        self.send_form(
+            category_form,
+            id_title=self.title,
+            id_color=self.color,
+        )
+
+        # User checks a category list, that has a created new category
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_category_card(
+            card,
+            title=self.title,
+            color=self.color,
+        )
+
+        # User changes the title and color of a recently created note in the same form
+        new_title = 'New Category title'
+        new_color = '#FF0000'
+        category_form = self.browser.find_element(value='category_form')
+        self.send_form(
+            category_form,
+            id_title=new_title,
+            id_color=new_color,
+        )
+
+        # User checks a category list to confirms that title and color changed
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_category_card(
+            card,
+            title=new_title,
+            color=new_color,
+        )
+
 
 class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
     def setUp(self) -> None:
@@ -79,4 +127,49 @@ class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
             card,
             title=self.title,
             color=self.color,
+        )
+
+    def test_user_can_edit_recently_created_note(self):
+        # User enters to site
+        self.enter_to_site()
+
+        # User finds a categories link and click on it
+        self.get_navbar().find_element(By.NAME, 'categories_link').click()
+
+        # User finds category form and input some data
+        category_form = self.browser.find_element(value='category_form')
+        self.send_form(
+            category_form,
+            id_title=self.title,
+            id_color=self.color,
+        )
+
+        # User checks a category list, that has a created new category
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_category_card(
+            card,
+            title=self.title,
+            color=self.color,
+        )
+
+        # User changes the title and color of a recently created note in the same form
+        new_title = 'New Category title'
+        new_color = '#FF0000'
+        category_form = self.browser.find_element(value='category_form')
+        self.send_form(
+            category_form,
+            id_title=new_title,
+            id_color=new_color,
+        )
+
+        # User checks a category list to confirms that title and color changed
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_category_card(
+            card,
+            title=new_title,
+            color=new_color,
         )
