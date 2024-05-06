@@ -7,6 +7,27 @@ from accounts import forms as acc_forms
 from notes import forms, models
 
 
+def update_category(request, id):
+    try:
+        category = models.Category.objects.get(id=id)
+        form = forms.CategoryUpdateForm(instance=category, data=request.POST)
+        if form.is_valid():
+            category = form.save()
+            data = {
+                'category': {
+                    'id': category.id,
+                    'title': category.title,
+                    'color': category.color,
+                }
+            }
+            return JsonResponse(data=data, status=200)
+        else:
+            return JsonResponse(data={'errors': form.errors}, status=400)
+
+    except models.Category.DoesNotExist:
+        return JsonResponse(data={'errors': [f'Not found such category by id={id}']}, status=404)
+
+
 def create_category(request):
     form = forms.CategoryCreateForm(request, request.POST)
     if form.is_valid():

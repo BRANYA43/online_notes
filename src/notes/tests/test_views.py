@@ -9,6 +9,59 @@ from accounts import forms as acc_forms
 from notes import views, forms, models
 
 
+class UpdateCategoryView(TestCase):
+    def setUp(self) -> None:
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Category #1')
+
+        self.url = reverse('update_category', args=[self.category.id])
+
+        self.data = {
+            'title': 'New Category Title',
+            'color': '#FF00FF',
+        }
+
+        self.expected_data = {
+            'category': {
+                'id': self.category.id,
+                'title': self.data['title'],
+                'color': self.data['color'],
+            }
+        }
+
+    def test_view_updates_category_correctly(self):
+        response = self.client.post(self.url, self.data)
+        self.category.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.category.title, self.data['title'])
+        self.assertEqual(self.category.color, self.data['color'])
+
+    def test_view_returns_expected_data(self):
+        response = self.client.post(self.url, self.data)
+        data = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(data, self.expected_data)
+
+    def test_returns_error_data_if_form_is_invalid(self):
+        response = self.client.post(self.url, {})
+        data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue(data['errors'])
+
+    def test_view_returns_error_if_category_doesnt_exist(self):
+        non_existent_id = 999_999_999
+        url = reverse('update_category', args=[non_existent_id])
+
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, 404)
+        self.assertRegex(data['errors'][0], rf'Not found such category by id={non_existent_id}')
+
+
 class CreateCategoryView(TestCase):
     def setUp(self) -> None:
         self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
