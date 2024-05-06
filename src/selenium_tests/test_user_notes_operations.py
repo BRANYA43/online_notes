@@ -100,9 +100,10 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks a note, that has colored text by category color
+        color = Color.from_string(self.category.color)
         card_body = card.find_element(By.CLASS_NAME, 'card-body')
 
-        self.assertIsNotNone(card_body.get_attribute('style'), f'color: {Color.from_string(self.category.color).rgb}')
+        self.assertEqual(card_body.get_attribute('style'), f'color: {color.rgb};')
 
     def test_user_can_edit_recently_created_note_without_choosing_it_in_note_list(self):
         # User enters to site
@@ -262,10 +263,10 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks a note, that has colored text by category color
+        color = Color.from_string(category.color)
         card_body = card.find_element(By.CLASS_NAME, 'card-body')
-        color = Color.from_string(category.color).rgb
 
-        self.assertIsNotNone(card_body.get_attribute('style'), f'color: {color}')
+        self.assertEqual(card_body.get_attribute('style'), f'color: {color.rgb};')
 
     def test_each_user_sees_only_his_notes_and_doesnt_see_notes_of_others(self):
         rick_note_title = 'How did rick become pickle?'
