@@ -7,11 +7,14 @@ from django.conf import settings
 from django.test.utils import override_settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.common import WebDriverException, ElementClickInterceptedException
+from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium import webdriver
+
+from notes.models import Worktable
 
 
 def wait(wait_time=5):
@@ -103,3 +106,20 @@ class FunctionalTestCase(StaticLiveServerTestCase):
                     input_elem.clear()
                 input_elem.send_keys(value)
         form.find_element(value='submit_btn').click()
+
+    def login_user_through_selenium(self):
+        navbar = self.wait_for(self.get_navbar)
+        navbar.find_element(By.NAME, 'login_link').click()
+
+        modal_form = self.browser.find_element(value='modal_login_form')
+        self.send_form(
+            modal_form,
+            id_email=self.email,
+            id_password=self.password,
+        )
+
+        self.wait_for(lambda: self.get_navbar().find_element(value='user'))
+
+    def get_worktable(self):
+        self.enter_to_site()
+        return Worktable.objects.first()

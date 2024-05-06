@@ -27,19 +27,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
                 - ...; 
             """
 
-    def login_user_through_selenium(self):
-        navbar = self.wait_for(self.get_navbar)
-        navbar.find_element(By.NAME, 'login_link').click()
-
-        modal_form = self.browser.find_element(value='modal_login_form')
-        self.send_form(
-            modal_form,
-            id_email=self.email,
-            id_password=self.password,
-        )
-
-        self.wait_for(lambda: self.get_navbar().find_element(value='user'))
-
     def check_note_value_in_the_card(self, card, note_title: str, category_title: str = None):
         fields = card.find_elements(By.TAG_NAME, 'p')
         if category_title is None:
@@ -258,9 +245,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 class AnonymousUserNotesOperationsTest(FunctionalTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.email = TEST_EMAIL
-        self.password = TEST_PASSWORD
-
         self.title = 'What do I do to find a job?'
         self.text = """
             I have to:
@@ -268,10 +252,6 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
                 - have 5 years of experience within 1 year after finished a study;
                 - ...; 
             """
-
-    def get_worktable(self):
-        self.enter_to_site()
-        return Worktable.objects.first()
 
     def check_note_value_in_the_card(self, card, note_title: str, category_title: str = None):
         fields = card.find_elements(By.TAG_NAME, 'p')
