@@ -81,7 +81,11 @@ $(document).ready(function(){
                     add_new_note_to_list(response)
                 }
                 else if(form.attr('action').includes('update')) {
-                    $(`#${response.note.id} p:contains('Title')`).html(`Title: ${response.note.title}`)
+                    if(response.category) {
+                        $(`#${response.note.id} p:contains('Category')`).html(`Category: ${response.category.title}`);
+                        $(`#${response.note.id}`).find('.card-body').css('color', response.category.color);
+                    }
+                    $(`#${response.note.id} p:contains('Title')`).html(`Title: ${response.note.title}`);
                 }
                 console.log(response);
             },
