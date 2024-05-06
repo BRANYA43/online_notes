@@ -17,8 +17,8 @@
           </div>
             <div class="card-footer d-flex justify-content-end gap-2">
               <a id="edit" href="{% url 'retrieve_note' note.id %}" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="edit"></i></a>
-              <a id="archive" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="archive"></i></a>
-              <a id="remove" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="trash-2"></i></a>
+              <a id="archive" href="{% url 'archive_note' note.id %}" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="archive"></i></a>
+              <a id="delete" href="{% url 'delete_note' note.id %}" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="trash-2"></i></a>
             </div>
         </div>
     {% endfor %}

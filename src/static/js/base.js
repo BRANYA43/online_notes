@@ -30,16 +30,16 @@ $(document).ready(function(){
 
     function add_new_note_to_list(data) {
         $('#note_list').prepend(`
-            <div id="${data.note.id}" class="card" data-url="${data.url}" data-category-id="${data.category ? data.category.id : ''}">
+            <div id="${data.note.id}" class="card" data-category-id="${data.category ? data.category.id : ''}">
               <div class="card-body" style="${data.category ? 'color: ' + data.category.color + ';' : ''}">
                 <p class="card-subtitle">Category: ${data.category ? data.category.title : '---'}</p>
                 <p class="card-subtitle">Title: ${data.note.title}</p>
                 <p class="card-subtitle">Date: ${data.note.date}</p>
               </div>
                 <div class="card-footer d-flex justify-content-end gap-2">
-                  <a id="edit" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="edit"></i></a>
-                  <a id="archive" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="archive"></i></a>
-                  <a id="remove" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="trash-2"></i></a>
+                  <a id="edit" href="${data.urls.retrieve}" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="edit"></i></a>
+                  <a id="archive" href="${data.urls.archive}" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="archive"></i></a>
+                  <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="trash-2"></i></a>
                 </div>
             </div>
         `);
@@ -54,7 +54,7 @@ $(document).ready(function(){
             url=$(this).attr('href'),
             success=function(response) {
                 var form = $('form#note_form');
-                form.attr('action', response.url);
+                form.attr('action', response.urls.update);
                 form.find('#id_title').val(response.note.title);
                 form.find('#id_text').val(response.note.text);
                 if(response.category) {
@@ -77,8 +77,8 @@ $(document).ready(function(){
             success=function(response) {
                 var form = $('#note_form');
                 if(form.attr('action').includes('create')) {
-                    form.attr('action', response.url);
-                    add_new_note_to_list(response)
+                    form.attr('action', response.urls.update);
+                    add_new_note_to_list(response);
                 }
                 else if(form.attr('action').includes('update')) {
                     if(response.category) {
