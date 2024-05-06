@@ -5,9 +5,9 @@ from notes import views
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
-    path('create/', views.create_new_note, name='create_note'),
-    path('update/<id>/', views.update_note, name='update_note'),
-    path('retrieve/<id>/', views.retrieve_note, name='retrieve_note'),
-    path('archive/<id>/', views.archive_note, name='archive_note'),
-    path('delete/<id>/', views.delete_note, name='delete_note'),
+    path('note/create/', views.create_new_note, name='create_note'),
+    path('note/update/<id>/', views.update_note, name='update_note'),
+    path('note/retrieve/<id>/', views.retrieve_note, name='retrieve_note'),
+    path('note/archive/<id>/', views.archive_note, name='archive_note'),
+    path('note/delete/<id>/', views.delete_note, name='delete_note'),
 ]  # type: ignore
