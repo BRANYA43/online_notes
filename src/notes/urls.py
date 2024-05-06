@@ -9,4 +9,5 @@ urlpatterns = [
     path('update/<id>/', views.update_note, name='update_note'),
     path('retrieve/<id>/', views.retrieve_note, name='retrieve_note'),
     path('archive/<id>/', views.archive_note, name='archive_note'),
+    path('delete/<id>/', views.delete_note, name='delete_note'),
 ]  # type: ignore
