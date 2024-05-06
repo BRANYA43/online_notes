@@ -147,6 +147,34 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
             color=new_color,
         )
 
+    def test_user_can_deletes_choice_category_from_list(self):
+        Category.objects.create(worktable=self.worktable, title=self.title, color=self.color)
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User finds a categories link and click on it
+        self.get_navbar().find_element(By.NAME, 'categories_link').click()
+
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_category_card(
+            card,
+            title=self.title,
+            color=self.color,
+        )
+        card.find_element(value='delete').click()
+
+        # User sees empty note list
+        self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card'),
+            expected_value=[],
+        )
+
 
 class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
     def setUp(self) -> None:
@@ -269,4 +297,29 @@ class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
             card,
             title=new_title,
             color=new_color,
+        )
+
+    def test_user_can_deletes_choice_category_from_list(self):
+        Category.objects.create(worktable=self.get_worktable(), title=self.title, color=self.color)
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User finds a categories link and click on it
+        self.get_navbar().find_element(By.NAME, 'categories_link').click()
+
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_category_card(
+            card,
+            title=self.title,
+            color=self.color,
+        )
+        card.find_element(value='delete').click()
+
+        # User sees empty note list
+        self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card'),
+            expected_value=[],
         )
