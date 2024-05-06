@@ -7,6 +7,7 @@ from django.conf import settings
 from django.test.utils import override_settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.common import WebDriverException, ElementClickInterceptedException
+from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.remote.webelement import WebElement
@@ -90,18 +91,22 @@ class FunctionalTestCase(StaticLiveServerTestCase):
     def get_navbar(self) -> WebElement:
         return self.browser.find_element(value='navbar')
 
-    @staticmethod
-    def send_form(form: WebElement, select_fields=(), **inputs_with_value):
+    def send_form(self, form: WebElement, select_fields=(), **inputs_with_value):
         """
         Send form to backend.
         :param select_fields: keys as ids for <input> tags
         :param inputs_with_value: key as id of <input> tag and value as value of <input> tag
         """
         for input_, value in inputs_with_value.items():
+            input_elem = form.find_element(value=input_)
             if input_ in select_fields:
-                Select(form.find_element(value=input_)).select_by_value(value)
+                Select(input_elem).select_by_value(value)
+            elif input_ == 'id_color':
+                action = ActionChains(self.browser)
+                action.move_to_element(input_elem).click().key_down(Keys.CONTROL).send_keys('a').key_up(
+                    Keys.CONTROL
+                ).send_keys(value).perform()
             else:
-                input_elem = form.find_element(value=input_)
                 if input_elem.get_attribute('value'):
                     input_elem.clear()
                 input_elem.send_keys(value)
