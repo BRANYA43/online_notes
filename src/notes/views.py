@@ -30,7 +30,9 @@ def retrieve_note(request, id):
     try:
         note = models.Note.objects.get(id=id)
         data = {
-            'url': reverse('update_note', args=[note.id]),
+            'urls': {
+                'update': reverse('update_note', args=[note.id]),
+            },
             'note': {
                 'title': note.title,
                 'text': note.text,
@@ -75,7 +77,12 @@ def create_new_note(request):
     if form.is_valid():
         note = form.save()
         data = {
-            'url': reverse('update_note', args=[note.id]),
+            'urls': {
+                'update': reverse('update_note', args=[note.id]),
+                'retrieve': reverse('retrieve_note', args=[note.id]),
+                'archive': reverse('archive_note', args=[note.id]),
+                'delete': reverse('delete_note', args=[note.id]),
+            },
             'note': {
                 'id': note.id,
                 'title': note.title,

@@ -80,7 +80,7 @@ class RetrieveNoteView(TestCase):
         self.url = reverse('retrieve_note', args=[self.note.id])
 
         self.expected_date = {
-            'url': reverse('update_note', args=[self.note.id]),
+            'urls': {'update': reverse('update_note', args=[self.note.id])},
             'note': {'title': self.note.title, 'text': self.note.text},
             'category': {
                 'id': self.category.id,
@@ -194,6 +194,14 @@ class CreateNewNoteView(TestCase):
             },
         }
 
+    def add_urls_to_expected_data(self, id):
+        self.expected_data['urls'] = {
+            'update': reverse('update_note', args=[id]),
+            'retrieve': reverse('retrieve_note', args=[id]),
+            'archive': reverse('archive_note', args=[id]),
+            'delete': reverse('delete_note', args=[id]),
+        }
+
     def test_view_creates_note_correctly(self):
         self.assertEqual(models.Note.objects.count(), 0)
 
@@ -212,7 +220,7 @@ class CreateNewNoteView(TestCase):
         response = self.client.post(self.url, self.data)
         data = response.json()
         note = models.Note.objects.first()
-        self.expected_data['url'] = reverse('update_note', args=[note.id])
+        self.add_urls_to_expected_data(note.id)
         self.expected_data['note']['id'] = note.id
 
         self.assertEqual(response.status_code, 201)
@@ -225,7 +233,7 @@ class CreateNewNoteView(TestCase):
         response = self.client.post(self.url, self.data)
         data = response.json()
         note = models.Note.objects.first()
-        self.expected_data['url'] = reverse('update_note', args=[note.id])
+        self.add_urls_to_expected_data(note.id)
         self.expected_data['note']['id'] = note.id
 
         self.assertEqual(response.status_code, 201)
