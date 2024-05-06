@@ -11,6 +11,7 @@ from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.color import Color
 from selenium.webdriver.support.select import Select
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium import webdriver
@@ -128,3 +129,11 @@ class FunctionalTestCase(StaticLiveServerTestCase):
     def get_worktable(self):
         self.enter_to_site()
         return Worktable.objects.first()
+
+    def check_category_card(self, card, title, color='#FFFFFF'):
+        color = Color.from_string(color)
+        title_field = card.find_element(By.TAG_NAME, 'p')
+        self.assertRegex(title_field.text, rf'Title: {title}')
+
+        card_body = card.find_element(By.CLASS_NAME, 'card-body')
+        self.assertEqual(card_body.get_attribute('style'), f'color: {color.rgb};')
