@@ -9,6 +9,48 @@ from accounts import forms as acc_forms
 from notes import views, forms, models
 
 
+class CreateCategoryView(TestCase):
+    def setUp(self) -> None:
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+
+        self.url = reverse('create_category')
+
+        self.data = {'title': 'Category #1', 'color': '#FF0000'}
+
+    def test_view_creates_category_correctly(self):
+        self.assertEqual(models.Category.objects.count(), 0)
+
+        response = self.client.post(self.url, self.data)
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(models.Category.objects.count(), 1)
+
+        category = models.Category.objects.first()
+
+        self.assertEqual(category.title, self.data['title'])
+        self.assertEqual(category.color, self.data['color'])
+
+    def test_view_returns_expected_data(self):
+        response = self.client.post(self.url, self.data)
+        data = response.json()
+        category = models.Category.objects.first()
+        expected_data = {
+            'category': {
+                'id': category.id,
+                'title': category.title,
+            }
+        }
+
+        self.assertDictEqual(data, expected_data)
+
+    def test_view_returns_error_data(self):
+        response = self.client.post(self.url, {})
+        data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue(data.get('errors'))
+
+
 class DeleteNoteView(TestCase):
     def setUp(self) -> None:
         self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)

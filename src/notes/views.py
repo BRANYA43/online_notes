@@ -7,6 +7,21 @@ from accounts import forms as acc_forms
 from notes import forms, models
 
 
+def create_category(request):
+    form = forms.CategoryCreateForm(request, request.POST)
+    if form.is_valid():
+        category = form.save()
+        data = {
+            'category': {
+                'id': category.id,
+                'title': category.title,
+            }
+        }
+        return JsonResponse(data=data, status=201)
+    else:
+        return JsonResponse(data={'errors': form.errors}, status=400)
+
+
 def delete_note(request, id):
     try:
         note = models.Note.objects.get(id=id)
