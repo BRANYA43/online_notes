@@ -37,13 +37,34 @@ $(document).ready(function(){
                 <p class="card-subtitle">Date: ${data.note.date}</p>
               </div>
                 <div class="card-footer d-flex justify-content-end gap-2">
-                  <a id="edit" href="${data.urls.retrieve}" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="edit"></i></a>
-                  <a id="archive" href="${data.urls.archive}" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="archive"></i></a>
-                  <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm" type="button"><i data-feather="trash-2"></i></a>
+                  <a id="edit" href="${data.urls.retrieve}" class="btn btn-outline-secondary btn-sm" ><i data-feather="edit"></i></a>
+                  <a id="archive" href="${data.urls.archive}" class="btn btn-outline-secondary btn-sm" ><i data-feather="archive"></i></a>
+                  <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm"><i data-feather="trash-2"></i></a>
                 </div>
             </div>
         `);
     }
+
+    $('#note_list').on('click', '#delete', function delete_note(event){
+        event.preventDefault();
+
+        send_ajax_request(
+            data={},
+            type='GET',
+            url=$(this).attr('href'),
+            success=function(response) {
+                var form = $('form#note_form');
+                if(form.attr('action').includes('update') && form.attr('action').includes(`${response.note.id}`)){
+                    form.trigger('reset');
+                    form.attr('action', form.attr('data-create-url'));
+                }
+                $(`#${response.note.id}`).remove();
+            },
+            error=function(xhr, status, error){
+                console.error(error);
+
+        });
+    });
 
     $('a#edit').click(function(event){
         event.preventDefault();

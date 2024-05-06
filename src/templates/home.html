@@ -9,7 +9,7 @@
   </aside>
   <div class="d-flex ms-5 flex-grow-1 me-5 mt-3">
 
-    <form id="note_form" class="d-flex flex-column flex-fill gap-3" action="{% url 'create_note' %}" method="post">
+    <form id="note_form" class="d-flex flex-column flex-fill gap-3" data-create-url="{% url 'create_note' %}" action="{% url 'create_note' %}" method="post">
       {% csrf_token %}
       <div class="d-flex flex-row gap-3">
         <div class="input-group">
