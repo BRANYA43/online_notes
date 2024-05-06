@@ -45,6 +45,27 @@ $(document).ready(function(){
         `);
     }
 
+    $('#note_list').on('click', '#archive', function(event) {
+        event.preventDefault();
+
+        send_ajax_request(
+            data={},
+            type='GET',
+            url=$(this).attr('href'),
+            success=function(response) {
+                var form = $('form#note_form');
+                if(form.attr('action').includes('update') && form.attr('action').includes(`${response.note.id}`)){
+                    form.trigger('reset');
+                    form.attr('action', form.attr('data-create-url'));
+                }
+                $(`#${response.note.id}`).remove();
+            },
+            error=function(xhr, status, error){
+                console.error(error);
+
+        });
+    });
+
     $('#note_list').on('click', '#delete', function (event){
         event.preventDefault();
 
