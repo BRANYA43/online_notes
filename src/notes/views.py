@@ -69,6 +69,7 @@ def create_category(request):
             'category': {
                 'id': category.id,
                 'title': category.title,
+                'color': category.color,
             },
         }
         return JsonResponse(data=data, status=201)

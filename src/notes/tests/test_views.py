@@ -165,6 +165,7 @@ class CreateCategoryView(TestCase):
             'category': {
                 'id': category.id,
                 'title': category.title,
+                'color': category.color,
             },
         }
 
