@@ -7,6 +7,25 @@ from accounts import forms as acc_forms
 from notes import forms, models
 
 
+def retrieve_category(request, id):
+    try:
+        category = models.Category.objects.get(id=id)
+        data = {
+            'urls': {
+                'update': reverse('update_category', args=[category.id]),
+            },
+            'category': {
+                'id': category.id,
+                'title': category.title,
+                'color': category.color,
+            },
+        }
+        return JsonResponse(data=data, status=200)
+
+    except models.Category.DoesNotExist:
+        return JsonResponse(data={'errors': [f'Not found such category by id={id}']}, status=404)
+
+
 def delete_category(request, id):
     try:
         category = models.Category.objects.get(id=id)
