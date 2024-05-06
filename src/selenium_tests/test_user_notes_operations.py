@@ -205,6 +205,31 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         self.assertEqual(card_body.get_attribute('style'), f'color: {color.rgb};')
 
+    def test_user_can_deletes_choice_note_from_note_list(self):
+        note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User sees a note in the note list and click on edit button
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=note.title,
+        )
+        card.find_element(value='delete').click()
+
+        # User sees empty note list
+        self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_elements(By.CLASS_NAME, 'card'),
+            expected_value=[],
+        )
+
 
 class AnonymousUserNotesOperationsTest(FunctionalTestCase):
     def setUp(self) -> None:
@@ -397,4 +422,26 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         self.check_note_value_in_the_card(
             card,
             note_title=new_title,
+        )
+
+    def test_user_can_deletes_choice_note_from_note_list(self):
+        note = Note.objects.create(worktable=self.get_worktable(), title='Note #1', text='Some Text')
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User sees a note in the note list and click on edit button
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=note.title,
+        )
+        card.find_element(value='delete').click()
+
+        # User sees empty note list
+        self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_elements(By.CLASS_NAME, 'card'),
+            expected_value=[],
         )
