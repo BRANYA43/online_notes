@@ -7,6 +7,15 @@ from accounts import forms as acc_forms
 from notes import forms, models
 
 
+def delete_category(request, id):
+    try:
+        category = models.Category.objects.get(id=id)
+        category.delete()
+        return JsonResponse(data={'category': {'id': int(id)}}, status=200)
+    except models.Category.DoesNotExist:
+        return JsonResponse(data={'errors': [f'Not found such category by id={id}']}, status=404)
+
+
 def update_category(request, id):
     try:
         category = models.Category.objects.get(id=id)

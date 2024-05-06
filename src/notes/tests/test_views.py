@@ -9,6 +9,41 @@ from accounts import forms as acc_forms
 from notes import views, forms, models
 
 
+class DeleteCategoryView(TestCase):
+    def setUp(self) -> None:
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Category #1')
+
+        self.url = reverse('delete_category', args=[self.category.id])
+
+        self.expected_data = {'category': {'id': self.category.id}}
+
+    def test_view_deletes_category_correctly(self):
+        self.assertEqual(models.Category.objects.count(), 1)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(models.Category.objects.count(), 0)
+
+    def test_view_returns_expected_data(self):
+        response = self.client.get(self.url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(data, self.expected_data)
+
+    def test_view_returns_error_data_if_category_doesnt_exist(self):
+        non_existent_id = 999_999_999
+        url = reverse('delete_category', args=[non_existent_id])
+
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(response.status_code, 404)
+        self.assertRegex(data['errors'][0], rf'Not found such category by id={non_existent_id}')
+
+
 class UpdateCategoryView(TestCase):
     def setUp(self) -> None:
         self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)

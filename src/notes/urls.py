@@ -12,4 +12,5 @@ urlpatterns = [
     path('note/delete/<id>/', views.delete_note, name='delete_note'),
     path('category/create/', views.create_category, name='create_category'),
     path('category/update/<id>/', views.update_category, name='update_category'),
+    path('category/delete/<id>/', views.delete_category, name='delete_category'),
 ]  # type: ignore
