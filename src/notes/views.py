@@ -145,16 +145,20 @@ def create_new_note(request):
         return JsonResponse(data={'errors': form.errors}, status=400)
 
 
-class HomeView(views.View, generic.base.ContextMixin, generic.base.TemplateResponseMixin):
-    template_name = 'home.html'
+class BaseView(views.View, generic.base.ContextMixin, generic.base.TemplateResponseMixin):
+    template_name = 'base.html'
     form_classes = {
         'login_form': acc_forms.UserLoginForm,
         'register_form': acc_forms.UserRegisterForm,
-        'category_create_form': forms.CategoryCreateForm,
-        'note_create_form': forms.NoteCreateForm,
     }
+    extra_form_classes: dict = {}
+
+    def get_extra_forms(self) -> dict:
+        return {form_key: form(self.request) for form_key, form in self.extra_form_classes.items()}
 
     def get_context_data(self, **kwargs):
+        if self.extra_form_classes:
+            kwargs.update(self.get_extra_forms())
         for form_key, form in self.form_classes.items():
             kwargs[form_key] = form(self.request)
         kwargs['worktable'] = self.get_worktable()
@@ -170,3 +174,10 @@ class HomeView(views.View, generic.base.ContextMixin, generic.base.TemplateRespo
 
     def get(self, request, *args, **kwargs):
         return self.render_to_response(self.get_context_data())
+
+
+class NotesView(BaseView):
+    template_name = 'home.html'
+    extra_form_classes = {
+        'note_create_form': forms.NoteCreateForm,
+    }
