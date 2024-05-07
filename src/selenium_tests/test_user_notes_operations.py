@@ -235,10 +235,13 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
         card.find_element(value='archive').click()
 
-        # User sees empty note list
+        # User sees changing of archiving button
         self.wait_for(
-            lambda: self.browser.find_element(value='note_list').find_elements(By.CLASS_NAME, 'card'),
-            expected_value=[],
+            lambda: self.browser.find_element(value='note_list')
+            .find_element(By.CLASS_NAME, 'card')
+            .find_element(value='archive')
+            .get_attribute('class'),
+            included_value='btn-secondary',
         )
 
 
@@ -466,8 +469,11 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
         card.find_element(value='archive').click()
 
-        # User sees empty note list
+        # User sees changing of archiving button
         self.wait_for(
-            lambda: self.browser.find_element(value='note_list').find_elements(By.CLASS_NAME, 'card'),
-            expected_value=[],
+            lambda: self.browser.find_element(value='note_list')
+            .find_element(By.CLASS_NAME, 'card')
+            .find_element(value='archive')
+            .get_attribute('class'),
+            included_value='btn-secondary',
         )
