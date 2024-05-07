@@ -1,6 +1,35 @@
 import re
 from collections import Counter
 
+from django.db.models import QuerySet
+from django.urls import reverse
+
+
+def serialize_filter_qs(qs: QuerySet) -> list[dict]:
+    data = []
+    for note, category in zip(qs.values('id', 'title', 'created'), qs.values('category__title', 'category__color')):
+        note['created'] = note['created'].strftime('%d.%m.%Y')
+
+        category['title'] = category.pop('category__title')
+        category['color'] = category.pop('category__color')
+
+        urls = {
+            'update': reverse('update_note', args=[note['id']]),
+            'retrieve': reverse('retrieve_note', args=[note['id']]),
+            'archive': reverse('archive_note', args=[note['id']]),
+            'delete': reverse('delete_note', args=[note['id']]),
+        }
+
+        data.append(
+            {
+                'urls': urls,
+                'note': note,
+                'category': category if category['title'] else None,
+            }
+        )
+
+    return data
+
 
 def count_words_in_text(text: str, unique=False) -> int:
     """

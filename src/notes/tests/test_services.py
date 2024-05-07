@@ -1,6 +1,50 @@
-from unittest import TestCase
+from django.test import TestCase
 
-from notes import services
+from django.urls import reverse
+
+from notes import services, models
+
+
+class SerializeFilterQS(TestCase):
+    def setUp(self) -> None:
+        self.service_fn = services.serialize_filter_qs
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Category #1')
+        self.note = models.Note.objects.create(worktable=self.worktable, title='Note #1', category=self.category)
+
+        self.expected_data = [
+            {
+                'urls': {
+                    'update': reverse('update_note', args=[self.note.id]),
+                    'retrieve': reverse('retrieve_note', args=[self.note.id]),
+                    'archive': reverse('archive_note', args=[self.note.id]),
+                    'delete': reverse('delete_note', args=[self.note.id]),
+                },
+                'note': {
+                    'id': self.note.id,
+                    'title': self.note.title,
+                    'created': self.note.created.strftime('%d.%m.%Y'),
+                },
+                'category': {
+                    'title': self.category.title,
+                    'color': self.category.color,
+                },
+            }
+        ]
+
+    def test_service_serializes_filter_qs_correctly_if_note_has_category(self):
+        data = self.service_fn(models.Note.objects.all())
+
+        self.assertListEqual(data, self.expected_data)
+
+    def test_service_serializes_filter_qs_correctly_if_note_doesnt_have_category(self):
+        self.note.category = None
+        self.note.save()
+        self.expected_data[0]['category'] = None
+
+        data = self.service_fn(models.Note.objects.all())
+
+        self.assertListEqual(data, self.expected_data)
 
 
 class CountAllWordsInTextTest(TestCase):
