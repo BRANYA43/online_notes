@@ -7,12 +7,10 @@ from notes import models
 
 class NoteFilters(filters.FilterSet):
     class Status(dj_models.IntegerChoices):
-        NONE = 0, '---'
         ACTIVE = 1, _('active')
         ARCHIVED = 2, _('archived')
 
     class IncreasingAndDecreasing(dj_models.IntegerChoices):
-        NONE = 0, '---'
         INCREASING = 1, _('by increasing')
         DECREASING = 2, _('by decreasing')
 
