@@ -1,39 +1,29 @@
+{% load django_bootstrap5 %}
 <div id="sort_panel">
-  <form action="#" method="get">
-    <div class="input-group mb-3">
-      <input type="search" class="form-control" placeholder="Search..." aria-label="" aria-describedby="search_btn">
-      <button class="input-group-text btn btn-outline-primary" id="search_btn">Search</button>
-    </div>
+  <form id="filter_form" class="form" action="{% url 'filter_notes' %}" method="get">
+    {% csrf_token %}
     <div class="d-flex flex-column mb-4 gap-2">
       <h6>Sort by:</h6>
-      <div class="input-group">
-        <span class="input-group-text" id="sort_by_category">Category:</span>
-        <select class="form-select" aria-describedby="sort_by_category">
-          <option selected>---</option>
-          <option class="text-primary" value="1">Category #1</option>
-          <option class="text-success" value="2">Category #2</option>
-          <option class="text-warning" value="3">Category #3</option>
-        </select>
+      <div class="input-group input-group-sm">
+        <span class="input-group-text" id="sort_by_status">Status:</span>
+        {% bootstrap_field filter_form.status show_label='skip' size='sm' wrapper_class='flex-fill' %}
       </div>
-      <div class="d-flex gap-2">
-
-        <div class="input-group">
-          <span class="input-group-text" id="sort_by_date">Date:</span>
-          <select class="form-select" aria-describedby="sort_by_date">
-            <option selected>---</option>
-            <option class="text-primary" value="1">Earlier</option>
-            <option class="text-success" value="2">Later</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <span class="input-group-text" id="sort_by_quantity_words">Word:</span>
-          <select class="form-select" aria-describedby="sort_by_quantity_words">
-            <option selected>---</option>
-            <option class="text-primary" value="1">Less Quantity</option>
-            <option class="text-success" value="2">More Quantity</option>
-          </select>
-        </div>
-
+      <div class="input-group input-group-sm">
+        <span class="input-group-text" id="sort_by_category">Category:</span>
+        {% bootstrap_field filter_form.category show_label='skip' size='sm' wrapper_class='flex-fill' %}
+      </div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-text" id="sort_by_words">Words:</span>
+        {% bootstrap_field filter_form.words show_label='skip' size='sm' wrapper_class='flex-fill' %}
+      </div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-text" id="sort_by_unique_words">Unique Words:</span>
+        {% bootstrap_field filter_form.unique_words show_label='skip' size='sm' wrapper_class='flex-fill' %}
+      </div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-text" id="sort_by_date_range">Date Range:</span>
+        <input id="{{ filter_form.created.auto_id }}_0" class="form-control form-control-sm" type="text" name="create_after" placeholder="Start" aria-describedby="sort_by_date_range">
+        <input id="{{ filter_form.created.auto_id }}_1" class="form-control form-control-sm" type="text" name="create_before" placeholder="End" aria-describedby="sort_by_date_range">
       </div>
     </div>
   </form>
