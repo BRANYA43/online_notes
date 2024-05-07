@@ -11,13 +11,13 @@ class BaseCreateForm(forms.ModelForm):
         self.request = request
 
     def save(self, commit=True):
-        note = super().save(commit=False)
+        obj = super().save(commit=False)
         if self.request.user.is_authenticated:
-            note.worktable = self.request.user.worktable
+            obj.worktable = self.request.user.worktable
         else:
-            note.worktable = models.Worktable.objects.get(session_key=self.request.session.session_key)
-        note.save()
-        return note
+            obj.worktable = models.Worktable.objects.get(session_key=self.request.session.session_key)
+        obj.save()
+        return obj
 
 
 class CategoryCreateForm(BaseCreateForm):
