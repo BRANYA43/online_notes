@@ -4,7 +4,13 @@ from django.urls import reverse
 from django.views import generic
 
 from accounts import forms as acc_forms
-from notes import forms, models
+from notes import forms, models, filters, services
+
+
+def filter_notes(request):
+    filter_ = filters.NoteFilters(request.GET)
+    data = services.serialize_filter_qs(filter_.qs)
+    return JsonResponse(data=data, status=200, safe=False)
 
 
 def retrieve_category(request, id):

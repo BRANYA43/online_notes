@@ -4,6 +4,7 @@ from notes import views
 
 
 urlpatterns = [
+    path('notes/filter/', views.filter_notes, name='filter_notes'),
     path('note/create/', views.create_new_note, name='create_note'),
     path('note/update/<id>/', views.update_note, name='update_note'),
     path('note/retrieve/<id>/', views.retrieve_note, name='retrieve_note'),

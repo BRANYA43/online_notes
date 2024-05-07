@@ -6,7 +6,38 @@ from django.utils import timezone
 from django.views import generic
 
 from accounts import forms as acc_forms
-from notes import views, forms, models
+from notes import views, forms, models, filters, services
+
+
+class FilterNotesViewTest(TestCase):
+    def setUp(self) -> None:
+        self.url = reverse('filter_notes')
+
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        self.category = models.Category.objects.create(worktable=self.worktable, title='Category #1')
+
+        models.Note.objects.bulk_create(
+            [
+                models.Note(
+                    worktable=self.worktable,
+                    title=f'Note #{n}',
+                    category=category,
+                    words=n * 10,
+                    unique_words=n,
+                    is_archived=True if n == 3 else False,
+                )
+                for n, category in enumerate((self.category, self.category, None), start=1)
+            ]
+        )
+
+    def test_view_filters_notes_correctly(self):
+        expected_data = services.serialize_filter_qs(models.Note.objects.filter(is_archived=False))
+        response = self.client.get(self.url, data={'status': filters.NoteFilters.Status.ACTIVE})
+        data = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data), 2)
+        self.assertListEqual(data, expected_data)
 
 
 class RetrieveCategoryView(TestCase):
