@@ -16,12 +16,7 @@
       <div class="d-flex flex-row gap-3">
         <div class="input-group">
           <span class="input-group-text" id="sort_by_category">Category:</span>
-          <select id="{{ note_create_form.category.auto_id }}" name="category" class="form-select" aria-describedby="sort_by_category">
-            <option value="" selected>---</option>
-            {% for category in worktable.get_all_categories %}
-                <option style="color={{ category.color }}" value="{{ category.id }}">{{ category.title }}</option>
-            {% endfor %}
-          </select>
+          {% bootstrap_field filter_form.category show_label='skip' wrapper_class='flex-fill' %}
         </div>
       </div>
 
