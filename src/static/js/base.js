@@ -133,12 +133,17 @@ $(document).ready(function(){
             type='GET',
             url=$(this).attr('href'),
             success=function(response) {
-                var form = $('form#note_form');
-                if(form.attr('action').includes('update') && form.attr('action').includes(`${response.note.id}`)){
-                    form.trigger('reset');
-                    form.attr('action', form.attr('data-create-url'));
+                var archiving_btn = $(`#${response.note.id} #archive`)
+                if(archiving_btn.hasClass('btn-outline-secondary')) {
+                    $(`#${response.note.id} #archive`).removeClass('btn-outline-secondary');
+                    $(`#${response.note.id} #archive`).addClass('btn-secondary');
                 }
-                $(`#${response.note.id}`).remove();
+                else if(archiving_btn.hasClass('btn-secondary')) {
+                    $(`#${response.note.id} #archive`).removeClass('btn-secondary');
+                    $(`#${response.note.id} #archive`).addClass('btn-outline-secondary');
+                }
+
+                console.log(response)
             },
             error=function(xhr, status, error){
                 console.error(error);
