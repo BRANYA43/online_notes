@@ -222,20 +222,10 @@ class WorktableModelTest(TestCase):
         for category, expected_title in zip(worktable.get_all_categories(), category_titles):
             self.assertEqual(category.title, expected_title)
 
-    def test_get_all_active_notes_method_returns_only_all_worktable_active_notes(self):
+    def test_get_all_notes_method_returns_only_all_worktable_active_notes(self):
         notes_titles = ('#1', '#2', '#3')
         worktable = self.model_class.objects.create(user=self.user)
         models.Note.objects.bulk_create([models.Note(worktable=worktable, title=title) for title in notes_titles])
 
-        for note, expected_title in zip(worktable.get_all_active_notes().order_by('title'), notes_titles):
-            self.assertEqual(note.title, expected_title)
-
-    def test_get_all_archived_notes_method_returns_only_all_worktable_active_notes(self):
-        notes_titles = ('#1', '#2', '#3')
-        worktable = self.model_class.objects.create(user=self.user)
-        models.Note.objects.bulk_create(
-            [models.Note(worktable=worktable, title=title, is_archived=True) for title in notes_titles],
-        )
-
-        for note, expected_title in zip(worktable.get_all_active_notes().order_by('title'), notes_titles):
+        for note, expected_title in zip(worktable.get_all_notes().order_by('title'), notes_titles):
             self.assertEqual(note.title, expected_title)
