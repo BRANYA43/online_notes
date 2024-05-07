@@ -4,6 +4,21 @@ from django.test import TestCase
 from notes import models
 
 
+class SetQuantityOfAllWordsTest(TestCase):
+    def setUp(self) -> None:
+        self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        self.data = {
+            'worktable': self.worktable,
+            'title': 'Note #1',
+            'text': 'Bananas, bananas, bananas, Pickles',
+        }
+
+    def test_signal_set_words_and_unique_words_fields_for_note(self):
+        note = models.Note.objects.create(**self.data)
+        self.assertEqual(note.words, 4)
+        self.assertEqual(note.unique_words, 1)
+
+
 class DeleteWorktableAfterDeletingSessionSignalTest(TestCase):
     def setUp(self) -> None:
         self.client.session.save()
