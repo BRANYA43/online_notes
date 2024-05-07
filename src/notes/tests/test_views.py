@@ -233,6 +233,18 @@ class ArchiveNoteView(TestCase):
         self.assertTrue(self.note.is_archived)
         self.assertDictEqual(data, self.expected_data)
 
+    def test_view_unarchives_note_if_it_was_archived(self):
+        self.note.is_archived = True
+        self.note.save()
+
+        response = self.client.get(self.url)
+        data = response.json()
+        self.note.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(self.note.is_archived)
+        self.assertDictEqual(data, self.expected_data)
+
     def test_view_returns_error_data_if_note_doesnt_exist(self):
         non_existent_id = 999_999_999
         url = reverse('archive_note', args=[non_existent_id])

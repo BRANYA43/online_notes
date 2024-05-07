@@ -89,7 +89,7 @@ def delete_note(request, id):
 def archive_note(request, id):
     try:
         note = models.Note.objects.get(id=id)
-        note.is_archived = True
+        note.is_archived = not note.is_archived
         note.save()
         return JsonResponse(data={'note': {'id': int(id)}}, status=200)
     except models.Note.DoesNotExist:
