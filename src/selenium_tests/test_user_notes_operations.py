@@ -244,6 +244,57 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             included_value='btn-secondary',
         )
 
+    def test_user_can_create_new_note_after_work_with_another_note(self):
+        note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User sees a note in the note list and click on edit button
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=note.title,
+        )
+        card.find_element(value='edit').click()
+
+        # User sees a full form by info from note
+        self.wait_for(
+            lambda: self.browser.find_element(value='note_form').find_element(value='id_title').get_attribute('value'),
+            note.title,
+        )
+
+        # User clicks on create new button to create new note
+        self.browser.find_element(value='create_new').click()
+
+        # User sees the empty form
+        self.wait_for(
+            lambda: self.browser.find_element(value='note_form').find_element(value='id_title').get_attribute('value'),
+            '',
+        )
+
+        # User enters new data
+        new_title = 'New Note Title'
+        note_form = self.browser.find_element(value='note_form')
+        self.send_form(
+            note_form,
+            id_title=new_title,
+        )
+
+        # User checks a new note in the note list
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=new_title,
+        )
+
 
 class AnonymousUserNotesOperationsTest(FunctionalTestCase):
     def setUp(self) -> None:
@@ -476,4 +527,52 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
             .find_element(value='archive')
             .get_attribute('class'),
             included_value='btn-secondary',
+        )
+
+    def test_user_can_create_new_note_after_work_with_another_note(self):
+        note = Note.objects.create(worktable=self.get_worktable(), title='Note #1', text='Some Text')
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User sees a note in the note list and click on edit button
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=note.title,
+        )
+        card.find_element(value='edit').click()
+
+        # User sees a full form by info from note
+        self.wait_for(
+            lambda: self.browser.find_element(value='note_form').find_element(value='id_title').get_attribute('value'),
+            note.title,
+        )
+
+        # User clicks on create new button to create new note
+        self.browser.find_element(value='create_new').click()
+
+        # User sees the empty form
+        self.wait_for(
+            lambda: self.browser.find_element(value='note_form').find_element(value='id_title').get_attribute('value'),
+            '',
+        )
+
+        # User enters new data
+        new_title = 'New Note Title'
+        note_form = self.browser.find_element(value='note_form')
+        self.send_form(
+            note_form,
+            id_title=new_title,
+        )
+
+        # User checks a new note in the note list
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_note_value_in_the_card(
+            card,
+            note_title=new_title,
         )
