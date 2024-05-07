@@ -59,6 +59,14 @@ $(document).ready(function(){
         `);
     }
 
+    $(document).on('click', '#create_new', function(event) {
+        event.preventDefault();
+
+        var form = $(`form${$(this).attr('data-form')}`)
+        form.trigger('reset');
+        form.attr('action', form.attr('data-create-url'));
+    });
+
     $('#category_list').on('click', '#delete', function(event) {
         event.preventDefault();
 
