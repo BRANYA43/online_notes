@@ -45,6 +45,34 @@ class NoteModelTest(TestCase):
         note = self.model_class.objects.create(**self.data)
         note.full_clean()  # not raise error
 
+    def test_words_field_is_0_by_default(self):
+        note = self.model_class()
+
+        self.assertEqual(note.words, 0)
+
+    def test_words_field_cannot_be_negative_integer(self):
+        self.assertRaisesRegex(
+            IntegrityError,
+            r'CHECK .+',
+            self.model_class.objects.create,
+            words=-1,
+            **self.data,
+        )
+
+    def test_unique_words_field_is_0_by_default(self):
+        note = self.model_class()
+
+        self.assertEqual(note.unique_words, 0)
+
+    def test_unique_words_field_cannot_be_negative_integer(self):
+        self.assertRaisesRegex(
+            IntegrityError,
+            r'CHECK .+',
+            self.model_class.objects.create,
+            unique_words=-1,
+            **self.data,
+        )
+
     def test_is_archived_field_is_false_by_default(self):
         note = self.model_class.objects.create(**self.data)
         note.full_clean()

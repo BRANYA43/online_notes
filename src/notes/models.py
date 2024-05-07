@@ -23,6 +23,14 @@ class Note(models.Model):
         null=True,
         blank=True,
     )
+    words = models.PositiveIntegerField(
+        verbose_name=_('Quantity of words in text'),
+        default=0,
+    )
+    unique_words = models.PositiveIntegerField(
+        verbose_name=_('Quantity of unique words in text'),
+        default=0,
+    )
     is_archived = models.BooleanField(
         verbose_name=_('archived'),
         default=False,
