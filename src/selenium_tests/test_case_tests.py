@@ -43,7 +43,7 @@ class FunctionalTestCaseTest(FunctionalTestCase):
 
         self.assertAlmostEqual(end - start, 5, delta=0.5)
 
-    def test_wait_for_method_returns_expected_value_if_expected_value_is_equal_fn_result(self):
+    def test_wait_for_method_returns_result_if_expected_value_is_equal_fn_result(self):
         def foo():
             return 1
 
@@ -59,4 +59,22 @@ class FunctionalTestCaseTest(FunctionalTestCase):
             self.wait_for,
             foo,
             expected_value=1,
+        )
+
+    def test_wait_for_method_returns_result_if_included_value_is_in_returned_result(self):
+        def foo():
+            return 'Hello World!'
+
+        result = self.wait_for(foo, included_value='World')
+        self.assertEqual(result, foo())
+
+    def test_wait_for_method_raises_error_if_included_value_isnt_in_returned_result(self):
+        def foo():
+            return 'Hello World!'
+
+        self.assertRaises(
+            AssertionError,
+            self.wait_for,
+            foo,
+            included_value='non existent value',
         )

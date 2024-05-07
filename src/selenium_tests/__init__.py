@@ -74,16 +74,23 @@ class FunctionalTestCase(StaticLiveServerTestCase):
         return Service(executable_path=path)
 
     @wait()
-    def wait_for(self, fn: Callable, expected_value=None):
+    def wait_for(self, fn: Callable, expected_value=None, included_value=None):
         """
         Wait for a function until it's completed or/and returns a value or exception.
-        if expected_value is set, wait for a function until returned value is
-        equal expected value or until it return exception.
+        If expected_value is set, wait for a function until the returned value is equal
+        expected_value or until it returns exception.
+        If included_value is set, wait for a function until the returned value has
+        included_value in or until it returns exception.
         """
         if expected_value is not None:
             result = fn()
             self.assertEqual(result, expected_value)
             return result
+        elif included_value is not None:
+            result = fn()
+            self.assertIn(included_value, result)
+            return result
+
         return fn()
 
     def enter_to_site(self):
