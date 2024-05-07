@@ -28,8 +28,8 @@ $(document).ready(function(){
         alert.html(msg);
     }
 
-    function add_new_note_to_list(data) {
-        $('#note_list').prepend(`
+    function get_note_to_list(data) {
+        return `
             <div id="${data.note.id}" class="card" data-category-id="${data.category ? data.category.id : ''}">
               <div class="card-body" style="${data.category ? 'color: ' + data.category.color + ';' : ''}">
                 <p class="card-subtitle">Category: ${data.category ? data.category.title : '---'}</p>
@@ -42,7 +42,7 @@ $(document).ready(function(){
                   <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm"><i data-feather="trash-2"></i></a>
                 </div>
             </div>
-        `);
+        `
     }
 
     function add_new_category_to_list(data) {
@@ -213,7 +213,7 @@ $(document).ready(function(){
                 var form = $('#note_form');
                 if(form.attr('action').includes('create')) {
                     form.attr('action', response.urls.update);
-                    add_new_note_to_list(response);
+                    $('#note_list').prepend(get_note_to_list(response));
                 }
                 else if(form.attr('action').includes('update')) {
                     if(response.category) {
