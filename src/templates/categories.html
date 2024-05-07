@@ -6,9 +6,11 @@
   <aside class="d-flex flex-column w-25 ms-5 mt-3">
       {% include 'includes/category_list.html' %}
   </aside>
-  <div class="d-flex ms-5 flex-grow-1 me-5 mt-3">
+  <div class="d-flex ms-5 flex-column flex-grow-1 me-5 mt-3 gap-3">
+    <div class="d-flex justify-content-end">
+      <button id="create_new" data-form="#category_form" class="btn btn-primary" type="button">Create New</button>
+    </div>
     <form id="category_form" class="d-flex flex-column flex-fill gap-3" data-create-url="{% url 'create_category' %}" action="{% url 'create_category' %}" method="post">
-      <h6>Category:</h6>
       {% csrf_token %}
 
       <div class="d-flex flex-row gap-2">
