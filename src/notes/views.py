@@ -1,3 +1,5 @@
+import inspect
+
 from django import views
 from django.http import JsonResponse
 from django.urls import reverse
@@ -184,14 +186,26 @@ class BaseView(views.View, generic.base.ContextMixin, generic.base.TemplateRespo
     }
     extra_form_classes: dict = {}
 
-    def get_extra_forms(self) -> dict:
-        return {form_key: form(self.request) for form_key, form in self.extra_form_classes.items()}
+    def get_extra_forms(self, **kwargs) -> dict:
+        kwargs = {}
+        for form_key, form in self.extra_form_classes.items():
+            if 'request' in inspect.signature(form.__init__).parameters:
+                kwargs[form_key] = form(self.request)
+            else:
+                kwargs[form_key] = form()
+
+        return kwargs
 
     def get_context_data(self, **kwargs):
         if self.extra_form_classes:
             kwargs.update(self.get_extra_forms())
+
         for form_key, form in self.form_classes.items():
-            kwargs[form_key] = form(self.request)
+            if 'request' in inspect.signature(form.__init__).parameters:
+                kwargs[form_key] = form(self.request)
+            else:
+                kwargs[form_key] = form()
+
         kwargs['worktable'] = self.get_worktable()
         return super().get_context_data(**kwargs)
 
