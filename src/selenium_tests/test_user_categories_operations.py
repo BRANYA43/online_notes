@@ -175,6 +175,64 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
             expected_value=[],
         )
 
+    def test_user_can_create_new_category_after_work_with_another_note(self):
+        category = Category.objects.create(worktable=self.worktable, title='Category #1')
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User finds a categories link and click on it
+        self.get_navbar().find_element(By.NAME, 'categories_link').click()
+
+        # User sees a category in the category list and click on edit button
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_category_card(
+            card,
+            title=category.title,
+        )
+        card.find_element(value='edit').click()
+
+        # User sees a full form by info from category
+        self.wait_for(
+            lambda: self.browser.find_element(value='category_form')
+            .find_element(value='id_title')
+            .get_attribute('value'),
+            category.title,
+        )
+
+        # User clicks on create new button to create new category
+        self.browser.find_element(value='create_new').click()
+
+        # User sees the empty form
+        self.wait_for(
+            lambda: self.browser.find_element(value='category_form')
+            .find_element(value='id_title')
+            .get_attribute('value'),
+            '',
+        )
+
+        # User enters new data
+        new_title = 'New Note Title'
+        note_form = self.browser.find_element(value='category_form')
+        self.send_form(
+            note_form,
+            id_title=new_title,
+        )
+
+        # User checks a new category in the note list
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card')[1],
+        )
+        self.check_category_card(
+            card,
+            title=new_title,
+        )
+
 
 class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
     def setUp(self) -> None:
@@ -322,4 +380,59 @@ class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
         self.wait_for(
             lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card'),
             expected_value=[],
+        )
+
+    def test_user_can_create_new_category_after_work_with_another_note(self):
+        category = Category.objects.create(worktable=self.get_worktable(), title='Category #1')
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User finds a categories link and click on it
+        self.get_navbar().find_element(By.NAME, 'categories_link').click()
+
+        # User sees a category in the category list and click on edit button
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
+        )
+        self.check_category_card(
+            card,
+            title=category.title,
+        )
+        card.find_element(value='edit').click()
+
+        # User sees a full form by info from category
+        self.wait_for(
+            lambda: self.browser.find_element(value='category_form')
+            .find_element(value='id_title')
+            .get_attribute('value'),
+            category.title,
+        )
+
+        # User clicks on create new button to create new category
+        self.browser.find_element(value='create_new').click()
+
+        # User sees the empty form
+        self.wait_for(
+            lambda: self.browser.find_element(value='category_form')
+            .find_element(value='id_title')
+            .get_attribute('value'),
+            '',
+        )
+
+        # User enters new data
+        new_title = 'New Note Title'
+        note_form = self.browser.find_element(value='category_form')
+        self.send_form(
+            note_form,
+            id_title=new_title,
+        )
+
+        # User checks a new category in the note list
+        card = self.wait_for(
+            lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card')[1],
+        )
+        self.check_category_card(
+            card,
+            title=new_title,
         )
