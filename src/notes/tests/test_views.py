@@ -527,6 +527,7 @@ class NotesViewTest(TestCase):
     def test_view_context_has_expected_forms(self):
         expected_forms = {
             'note_create_form': forms.NoteCreateForm,
+            'filter_form': forms.NoteFiltersForm,
         }
         response = self.client.get(self.url)
 

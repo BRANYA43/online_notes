@@ -225,6 +225,7 @@ class NotesView(BaseView):
     template_name = 'home.html'
     extra_form_classes = {
         'note_create_form': forms.NoteCreateForm,
+        'filter_form': forms.NoteFiltersForm,
     }
 
 
