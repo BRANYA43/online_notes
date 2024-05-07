@@ -201,9 +201,12 @@ class WorktableModelTest(TestCase):
     def test_model_has_one_to_one_relation_with_session(self):
         self.model_class.objects.create(session_key=self.session_key)
 
-        with self.assertRaisesRegex(ValidationError, r'.+Worktable with this Session already exists.+'):
-            worktable = self.model_class.objects.create(session_key=self.session_key)
-            worktable.full_clean()
+        self.assertRaisesRegex(
+            IntegrityError,
+            r'UNIQUE .+',
+            self.model_class.objects.create,
+            session_key=self.session_key,
+        )
 
     def test_model_str_representation_is_user_email_or_session_key(self):
         worktable = self.model_class.objects.create(user=self.user)
