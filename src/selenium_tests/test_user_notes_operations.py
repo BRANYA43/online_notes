@@ -238,34 +238,27 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             expected_value=[],
         )
 
+    def test_user_can_archive_chosen_note(self):
+        Note.objects.create(worktable=self.worktable, title=self.title)
 
-#
-#     def test_user_can_archive_choice_note_from_note_list(self):
-#         note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
-#         # User enters to site
-#         self.enter_to_site()
-#
-#         # User logins to site
-#         self.login_user_through_selenium()
-#
-#         # User sees a note in the note list and click on archive button
-#         card = self.wait_for(
-#             lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
-#         )
-#         self.check_note_card(
-#             card,
-#             title=note.title,
-#         )
-#         card.find_element(value='archive').click()
-#
-#         # User sees changing of archiving button
-#         self.wait_for(
-#             lambda: self.browser.find_element(value='note_list')
-#             .find_element(By.CLASS_NAME, 'card')
-#             .find_element(value='archive')
-#             .get_attribute('class'),
-#             included_value='btn-secondary',
-#         )
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User clicks on "archive" button of chosen note
+        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
+        cards = self.get_cards_form_note_list()
+        self.click_on_archive_button(cards[0])
+
+        # User sees changing color of archive button
+        self.wait_for(
+            lambda: self.get_cards_form_note_list()[0].find_element(value='archive').get_attribute('class'),
+            included_value='btn-secondary',
+        )
+
+
 #
 #     def test_user_can_create_new_note_after_work_with_another_note(self):
 #         note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
