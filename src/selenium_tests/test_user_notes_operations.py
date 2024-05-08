@@ -61,6 +61,55 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             color=self.category.color,
         )
 
+    def test_user_can_create_two_new_notes(self):
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User inputs data to the note form
+        self.send_form(
+            form=self.get_note_form(),
+            id_title=self.title,
+        )
+
+        # User checks existing of a new note in the note list
+        cards = self.wait_for(self.get_cards_form_note_list)
+        self.check_note_card(
+            card=cards[0],
+            title=self.title,
+        )
+
+        # User click on "Create new"
+        self.click_on_create_new_button()
+
+        # User see clean note form
+        self.wait_for(
+            lambda: self.get_note_form().find_element(value='id_title').get_attribute('value'),
+            expected_value='',
+        )
+
+        # User inputs data to the note form for second new note
+        second_title = 'Second Note'
+        self.send_form(
+            form=self.get_note_form(),
+            id_title=second_title,
+        )
+
+        # User checks existing of two new notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=2,
+        )
+
+        cards = self.get_cards_form_note_list()
+        for card, title in zip(cards, (second_title, self.title)):
+            self.check_note_card(
+                card=card,
+                title=title,
+            )
+
 
 #     def test_user_can_edit_recently_created_note_without_choosing_it_in_note_list(self):
 #         # User enters to site
