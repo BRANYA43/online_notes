@@ -59,6 +59,30 @@ $(document).ready(function(){
         `);
     }
 
+    function get_note_list(data) {
+        note_list = ''
+        for(var note of data) {
+            note_list += get_note_to_list(note);
+        }
+        return note_list
+    }
+
+    $('#filter_form').on('change',  ['select', 'input'], function(){
+        var form = $('#filter_form')
+        send_ajax_request(
+            data=form.serialize(),
+            type=form.attr('method'),
+            url=form.attr('action'),
+            success=function(response){
+                $('#note_list').html(get_note_list(response))
+            },
+            error=function(xhr, status, error){
+                console.log(error)
+
+        });
+    });
+
+
     $(document).on('click', '#create_new', function(event) {
         event.preventDefault();
 
