@@ -137,6 +137,15 @@ class FunctionalTestCase(StaticLiveServerTestCase):
         self.enter_to_site()
         return Worktable.objects.first()
 
+    def get_note_form(self) -> WebElement:
+        return self.browser.find_element(value='note_form')
+
+    def get_note_list(self) -> WebElement:
+        return self.browser.find_element(value='note_list')
+
+    def get_cards_form_note_list(self) -> list[WebElement]:
+        return self.get_note_list().find_elements(By.CLASS_NAME, 'card')
+
     def check_category_card(self, card, title, color='#FFFFFF'):
         color = Color.from_string(color)
         title_field = card.find_element(By.TAG_NAME, 'p')
