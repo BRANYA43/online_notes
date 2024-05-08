@@ -29,6 +29,7 @@ $(document).ready(function(){
     }
 
     function get_note_to_list(data) {
+        console.log(feather.icons)
         return `
             <div id="${data.note.id}" class="card" data-category-id="${data.category ? data.category.id : ''}">
               <div class="card-body" style="${data.category ? 'color: ' + data.category.color + ';' : ''}">
@@ -37,9 +38,9 @@ $(document).ready(function(){
                 <p class="card-subtitle">Date: ${data.note.created}</p>
               </div>
                 <div class="card-footer d-flex justify-content-end gap-2">
-                  <a id="edit" href="${data.urls.retrieve}" class="btn btn-outline-secondary btn-sm" ><i data-feather="edit"></i></a>
-                  <a id="archive" href="${data.urls.archive}" class="btn btn-outline-secondary btn-sm" ><i data-feather="archive"></i></a>
-                  <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm"><i data-feather="trash-2"></i></a>
+                  <a id="edit" href="${data.urls.retrieve}" class="btn btn-outline-secondary btn-sm" >${feather.icons.edit.toSvg()}</a>
+                  <a id="archive" href="${data.urls.archive}" class="btn btn-outline-secondary btn-sm" >${feather.icons.archive.toSvg()}</i></a>
+                  <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm">${feather.icons['trash-2'].toSvg()}</a>
                 </div>
             </div>
         `
@@ -52,8 +53,8 @@ $(document).ready(function(){
               <p class="card-subtitle">Title: ${data.category.title}</p>
             </div>
             <div class="card-footer d-flex justify-content-end gap-2">
-              <a id="edit" href="${data.urls.retrieve}" class="btn btn-outline-secondary btn-sm"><i data-feather="edit"></i></a>
-              <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm"><i data-feather="trash-2"></i></a>
+              <a id="edit" href="${data.urls.retrieve}" class="btn btn-outline-secondary btn-sm">${feather.icons.edit.toSvg()}</i></a>
+              <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm"><${feather.icons['trash-2'].toSvg()}</i></a>
             </div>
           </div>
         `);
