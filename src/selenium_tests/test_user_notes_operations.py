@@ -50,32 +50,22 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         # User logins to site
         self.login_user_through_selenium()
 
-        # User finds note form and input some text
-        note_form = self.browser.find_element(value='note_form')
+        # User inputs data to the note form
         self.send_form(
-            note_form,
+            form=self.get_note_form(),
             select_fields=('id_category',),
             id_category=str(self.category.id),
             id_title=self.title,
-            id_text=self.text,
         )
 
-        # User checks left side and sees a note list, that have a created new note.
-        card = self.wait_for(
-            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
+        # User checks existing of a new note in the note list
+        cards = self.wait_for(self.get_cards_form_note_list)
+        self.check_note_card(
+            card=cards[0],
+            category=self.category.title,
+            title=self.title,
+            color=self.category.color,
         )
-
-        self.check_note_value_in_the_card(
-            card,
-            category_title=self.category.title,
-            note_title=self.title,
-        )
-
-        # User checks a note, that has colored text by category color
-        color = Color.from_string(self.category.color)
-        card_body = card.find_element(By.CLASS_NAME, 'card-body')
-
-        self.assertEqual(card_body.get_attribute('style'), f'color: {color.rgb};')
 
     def test_user_can_edit_recently_created_note_without_choosing_it_in_note_list(self):
         # User enters to site
