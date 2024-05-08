@@ -96,7 +96,7 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
                 title=title,
             )
 
-    def test_user_can_edit_note_after_its_creation_in_same_form(self):
+    def test_user_can_edit_category_after_its_creation_in_same_form(self):
         # User enters to site
         self.enter_to_site()
 
@@ -127,7 +127,7 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
             color=self.new_color,
         )
 
-    def test_user_can_look_at_chosen_note_data(self):
+    def test_user_can_look_at_chosen_category_data(self):
         Category.objects.create(worktable=self.worktable, title=self.title, color=self.color)
 
         # User enters to site
@@ -141,7 +141,7 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
         cards = self.get_cards_from_category_list()
         self.click_on_edit_button(cards[0])
 
-        # User sees title and text of chosen note
+        # User sees title and text of chosen category
         self.wait_for(
             lambda: self.get_category_form().find_element(value='id_title').get_attribute('value'),
             expected_value=self.title,
@@ -151,54 +151,43 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
             self.color,
         )
 
-    def test_user_can_edit_choice_category_from_category_list(self):
-        category = Category.objects.create(worktable=self.worktable, title=self.title, color=self.color)
+    def test_user_can_edit_chosen_category(self):
+        Category.objects.create(worktable=self.worktable, title=self.title, color=self.color)
 
         # User enters to site
         self.enter_to_site()
 
-        # User logins to site
-        self.login_user_through_selenium()
+        # User follows to a categories page
+        self.follow_to_categories_page()
 
-        # User finds a categories link and click on it
-        self.get_navbar().find_element(By.NAME, 'categories_link').click()
+        # User clicks on "edit" button of chosen category
+        self.wait_for(lambda: len(self.get_cards_from_category_list()), expected_value=1)
+        cards = self.get_cards_from_category_list()
+        self.click_on_edit_button(cards[0])
 
-        card = self.wait_for(
-            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
-        )
-        self.check_category_card(
-            card,
-            title=self.title,
-            color=self.color,
-        )
-        card.find_element(value='edit').click()
-
-        # User sees a full form by info from retrieved category
+        # User sees title and text of chosen category
         self.wait_for(
-            lambda: self.browser.find_element(value='category_form')
-            .find_element(value='id_title')
-            .get_attribute('value'),
-            category.title,
+            lambda: self.get_category_form().find_element(value='id_title').get_attribute('value'),
+            expected_value=self.title,
+        )
+        self.assertEqual(
+            self.get_category_form().find_element(value='id_color').get_attribute('value'),
+            self.color,
         )
 
-        # User changes a title
-        new_title = 'New Category title'
-        new_color = '#FF0000'
-        category_form = self.browser.find_element(value='category_form')
+        # User edits category data
         self.send_form(
-            category_form,
-            id_title=new_title,
-            id_color=new_color,
+            form=self.get_category_form(),
+            id_title=self.new_title,
+            id_color=self.new_color,
         )
 
-        # User checks a category list to confirms that title and color changed
-        card = self.wait_for(
-            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
-        )
+        # User checks updating of a category data in the category list
+        cards = self.wait_for(self.get_cards_from_category_list)
         self.check_category_card(
-            card,
-            title=new_title,
-            color=new_color,
+            card=cards[0],
+            title=self.new_title,
+            color=self.new_color,
         )
 
     def test_user_can_deletes_choice_category_from_list(self):
