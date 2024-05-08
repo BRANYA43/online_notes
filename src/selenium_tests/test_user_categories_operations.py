@@ -83,7 +83,7 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
             id_title=second_title,
         )
 
-        # User checks existing of two new notes in the category list
+        # User checks existing of two new categorys in the category list
         self.wait_for(
             lambda: len(self.get_cards_from_category_list()),
             expected_value=2,
@@ -190,35 +190,27 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
             color=self.new_color,
         )
 
-    def test_user_can_deletes_choice_category_from_list(self):
+    def test_user_can_deletes_chosen_category(self):
         Category.objects.create(worktable=self.worktable, title=self.title, color=self.color)
 
         # User enters to site
         self.enter_to_site()
 
-        # User logins to site
-        self.login_user_through_selenium()
+        # User follows to a categories page
+        self.follow_to_categories_page()
 
-        # User finds a categories link and click on it
-        self.get_navbar().find_element(By.NAME, 'categories_link').click()
-
-        card = self.wait_for(
-            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
-        )
-        self.check_category_card(
-            card,
-            title=self.title,
-            color=self.color,
-        )
-        card.find_element(value='delete').click()
+        # User clicks on "delete" button of chosen category
+        self.wait_for(lambda: len(self.get_cards_from_category_list()), expected_value=1)
+        cards = self.get_cards_from_category_list()
+        self.click_on_delete_button(cards[0])
 
         # User sees empty category list
         self.wait_for(
-            lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card'),
+            lambda: self.get_cards_from_category_list(),
             expected_value=[],
         )
 
-    def test_user_can_create_new_category_after_work_with_another_note(self):
+    def test_user_can_create_new_category_after_work_with_another_category(self):
         category = Category.objects.create(worktable=self.worktable, title='Category #1')
 
         # User enters to site
@@ -261,9 +253,9 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
 
         # User enters new data
         new_title = 'New category Title'
-        note_form = self.browser.find_element(value='category_form')
+        category_form = self.browser.find_element(value='category_form')
         self.send_form(
-            note_form,
+            category_form,
             id_title=new_title,
         )
 
@@ -308,7 +300,7 @@ class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
             color=self.color,
         )
 
-    def test_user_can_edit_recently_created_note(self):
+    def test_user_can_edit_recently_created_category(self):
         # User enters to site
         self.enter_to_site()
 
@@ -425,7 +417,7 @@ class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
             expected_value=[],
         )
 
-    def test_user_can_create_new_category_after_work_with_another_note(self):
+    def test_user_can_create_new_category_after_work_with_another_category(self):
         category = Category.objects.create(worktable=self.get_worktable(), title='Category #1')
 
         # User enters to site
@@ -465,9 +457,9 @@ class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
 
         # User enters new data
         new_title = 'New Category Title'
-        note_form = self.browser.find_element(value='category_form')
+        category_form = self.browser.find_element(value='category_form')
         self.send_form(
-            note_form,
+            category_form,
             id_title=new_title,
         )
 
