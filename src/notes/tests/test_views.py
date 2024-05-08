@@ -32,7 +32,7 @@ class FilterNotesViewTest(TestCase):
 
     def test_view_filters_notes_correctly(self):
         expected_data = services.serialize_filter_qs(models.Note.objects.filter(is_archived=False))
-        response = self.client.get(self.url, data={'status': filters.NoteFilters.Status.ACTIVE})
+        response = self.client.get(self.url, data={'status': filters.NoteFilter.Status.ACTIVE})
         data = response.json()
 
         self.assertEqual(response.status_code, 200)

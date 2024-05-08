@@ -22,7 +22,7 @@ class NoteFilterTest(TestCase):
                     unique_words=n,
                     is_archived=True if n == 3 else False,
                 )
-                for n, category in enumerate((self.category, self.category, None), start=1)
+                for n, category in enumerate((self.category, self.category, None))
             ]
         )
 
@@ -75,7 +75,7 @@ class NoteFilterTest(TestCase):
         self.assertEqual(filter_.qs.count(), 3)
         self.assertQuerySetEqual(filter_.qs, expected_qs)
 
-    def test_filter_filters_ntoes_by_range_created_date(self):
+    def test_filter_filters_notes_by_range_created_date(self):
         note = models.Note.objects.first()
         note.created = timezone.now() + timedelta(days=2)
         note.save()
