@@ -29,7 +29,6 @@ $(document).ready(function(){
     }
 
     function get_note_to_list(data) {
-        console.log(feather.icons)
         return `
             <div id="${data.note.id}" class="card" data-category-id="${data.category ? data.category.id : ''}">
               <div class="card-body" style="${data.category ? 'color: ' + data.category.color + ';' : ''}">
@@ -68,7 +67,8 @@ $(document).ready(function(){
         return note_list
     }
 
-    $('#filter_form').on('change',  ['select', 'input'], function(){
+    function send_ajax_filter_request() {
+
         var form = $('#filter_form')
         send_ajax_request(
             data=form.serialize(),
@@ -81,7 +81,18 @@ $(document).ready(function(){
                 console.log(error)
 
         });
+    }
+
+    $('#filter_form').submit(function(event) {
+        event.preventDefault();
+        send_ajax_filter_request();
     });
+
+    $('#filter_form').on('click', '#reset', function(event) {
+        setTimeout(send_ajax_filter_request, 0);
+    });
+
+    $('#filter_form').on('change',  ['select', 'input'], send_ajax_filter_request);
 
 
     $(document).on('click', '#create_new', function(event) {
