@@ -45,6 +45,55 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
             color=self.color,
         )
 
+    def test_user_can_create_two_new_categories(self):
+        # User enters to site
+        self.enter_to_site()
+
+        # User follows to a categories page
+        self.follow_to_categories_page()
+
+        # User inputs data to the category form
+        self.send_form(
+            form=self.get_category_form(),
+            id_title=self.title,
+        )
+
+        # User checks existing of a new category in the category list
+        cards = self.wait_for(self.get_cards_from_category_list)
+        self.check_category_card(
+            card=cards[0],
+            title=self.title,
+        )
+
+        # User clicks on "Create new"
+        self.click_on_create_new_button()
+
+        # User sees clean category form
+        self.wait_for(
+            lambda: self.get_category_form().find_element(value='id_title').get_attribute('value'),
+            expected_value='',
+        )
+
+        # User inputs data to the category form for second new category
+        second_title = 'Second category'
+        self.send_form(
+            form=self.get_category_form(),
+            id_title=second_title,
+        )
+
+        # User checks existing of two new notes in the category list
+        self.wait_for(
+            lambda: len(self.get_cards_from_category_list()),
+            expected_value=2,
+        )
+
+        cards = self.get_cards_from_category_list()
+        for card, title in zip(cards, (self.title, second_title)):
+            self.check_category_card(
+                card=card,
+                title=title,
+            )
+
     def test_user_can_edit_recently_created_note(self):
         # User enters to site
         self.enter_to_site()
@@ -73,7 +122,7 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
             color=self.color,
         )
 
-        # User changes the title and color of a recently created note in the same form
+        # User changes the title and color of a recently created category in the same form
         new_title = 'New Category title'
         new_color = '#FF0000'
         category_form = self.browser.find_element(value='category_form')
@@ -165,7 +214,7 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
         )
         card.find_element(value='delete').click()
 
-        # User sees empty note list
+        # User sees empty category list
         self.wait_for(
             lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card'),
             expected_value=[],
@@ -213,14 +262,14 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
         )
 
         # User enters new data
-        new_title = 'New Note Title'
+        new_title = 'New category Title'
         note_form = self.browser.find_element(value='category_form')
         self.send_form(
             note_form,
             id_title=new_title,
         )
 
-        # User checks a new category in the note list
+        # User checks a new category in the category list
         card = self.wait_for(
             lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card')[1],
         )
@@ -286,7 +335,7 @@ class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
             color=self.color,
         )
 
-        # User changes the title and color of a recently created note in the same form
+        # User changes the title and color of a recently created category in the same form
         new_title = 'New Category title'
         new_color = '#FF0000'
         category_form = self.browser.find_element(value='category_form')
@@ -372,7 +421,7 @@ class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
         )
         card.find_element(value='delete').click()
 
-        # User sees empty note list
+        # User sees empty category list
         self.wait_for(
             lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card'),
             expected_value=[],
@@ -417,14 +466,14 @@ class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
         )
 
         # User enters new data
-        new_title = 'New Note Title'
+        new_title = 'New Category Title'
         note_form = self.browser.find_element(value='category_form')
         self.send_form(
             note_form,
             id_title=new_title,
         )
 
-        # User checks a new category in the note list
+        # User checks a new category in the category list
         card = self.wait_for(
             lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card')[1],
         )
