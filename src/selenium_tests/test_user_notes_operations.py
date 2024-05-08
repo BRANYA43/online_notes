@@ -1,9 +1,11 @@
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.color import Color
+from selenium.webdriver.support.select import Select
 
 from accounts.forms import User
 from accounts.tests import TEST_EMAIL, TEST_PASSWORD
+from notes.filters import NoteFilters
 from notes.models import Worktable, Category, Note
 from selenium_tests import FunctionalTestCase
 
@@ -295,6 +297,75 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             note_title=new_title,
         )
 
+    def test_user_can_filter_notes(self):
+        category = Category.objects.create(worktable=self.worktable, title='Category #1')
+        Note.objects.bulk_create(
+            [
+                Note(
+                    worktable=self.worktable,
+                    title=f'Note #{n}',
+                    category=category,
+                    words=n * 10,
+                    unique_words=n,
+                    is_archived=True if n == 3 else False,
+                )
+                for n, category in enumerate((category, category, None), start=1)
+            ]
+        )
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User sees three notes in the note list
+        cards = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_elements(By.CLASS_NAME, 'card'),
+        )
+
+        self.assertEqual(len(cards), 3)
+        for expected_note, card in zip(Note.objects.all(), cards):
+            self.check_note_value_in_the_card(
+                card,
+                category_title=expected_note.category.title if expected_note.category else None,
+                note_title=expected_note.title,
+            )
+
+        # User filters notes by status
+        filter_form = self.browser.find_element(value='filter_form')
+        status_select = Select(filter_form.find_element(value='id_status'))
+
+        # | Filtering by active status |
+        status_select.select_by_value(str(NoteFilters.Status.ACTIVE))
+
+        # User sees two filtered notes by active status
+        cards = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_elements(By.CLASS_NAME, 'card'),
+        )
+        self.assertEqual(len(cards), 2)
+        for expected_note, card in zip(Note.objects.filter(is_archived=False), cards):
+            self.check_note_value_in_the_card(
+                card,
+                category_title=expected_note.category.title if expected_note.category else None,
+                note_title=expected_note.title,
+            )
+
+        # | Filtering by archive status |
+        status_select.select_by_value(str(NoteFilters.Status.ARCHIVED))
+
+        # User sees one filtered note by archive status
+        cards = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_elements(By.CLASS_NAME, 'card'),
+        )
+        self.assertEqual(len(cards), 1)
+        for expected_note, card in zip(Note.objects.filter(is_archived=True), cards):
+            self.check_note_value_in_the_card(
+                card,
+                category_title=expected_note.category.title if expected_note.category else None,
+                note_title=expected_note.title,
+            )
+
 
 class AnonymousUserNotesOperationsTest(FunctionalTestCase):
     def setUp(self) -> None:
@@ -576,3 +647,69 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
             card,
             note_title=new_title,
         )
+
+    def test_user_can_filter_notes(self):
+        category = Category.objects.create(worktable=self.get_worktable(), title='Category #1')
+        Note.objects.bulk_create(
+            [
+                Note(
+                    worktable=self.get_worktable(),
+                    title=f'Note #{n}',
+                    category=category,
+                    words=n * 10,
+                    unique_words=n,
+                    is_archived=True if n == 3 else False,
+                )
+                for n, category in enumerate((category, category, None), start=1)
+            ]
+        )
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User sees three notes in the note list
+        cards = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_elements(By.CLASS_NAME, 'card'),
+        )
+
+        self.assertEqual(len(cards), 3)
+        for expected_note, card in zip(Note.objects.all(), cards):
+            self.check_note_value_in_the_card(
+                card,
+                category_title=expected_note.category.title if expected_note.category else None,
+                note_title=expected_note.title,
+            )
+
+        # User filters notes by status
+        filter_form = self.browser.find_element(value='filter_form')
+        status_select = Select(filter_form.find_element(value='id_status'))
+
+        # | Filtering by active status |
+        status_select.select_by_value(str(NoteFilters.Status.ACTIVE))
+
+        # User sees two filtered notes by active status
+        cards = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_elements(By.CLASS_NAME, 'card'),
+        )
+        self.assertEqual(len(cards), 2)
+        for expected_note, card in zip(Note.objects.filter(is_archived=False), cards):
+            self.check_note_value_in_the_card(
+                card,
+                category_title=expected_note.category.title if expected_note.category else None,
+                note_title=expected_note.title,
+            )
+
+        # | Filtering by archive status |
+        status_select.select_by_value(str(NoteFilters.Status.ARCHIVED))
+
+        # User sees one filtered note by archive status
+        cards = self.wait_for(
+            lambda: self.browser.find_element(value='note_list').find_elements(By.CLASS_NAME, 'card'),
+        )
+        self.assertEqual(len(cards), 1)
+        for expected_note, card in zip(Note.objects.filter(is_archived=True), cards):
+            self.check_note_value_in_the_card(
+                card,
+                category_title=expected_note.category.title if expected_note.category else None,
+                note_title=expected_note.title,
+            )
