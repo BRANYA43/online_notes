@@ -211,62 +211,63 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
         )
 
     def test_user_can_create_new_category_after_work_with_another_category(self):
-        category = Category.objects.create(worktable=self.worktable, title='Category #1')
+        Category.objects.create(worktable=self.worktable, title=self.title, color=self.color)
 
         # User enters to site
         self.enter_to_site()
 
-        # User logins to site
-        self.login_user_through_selenium()
+        # User follows to a categories page
+        self.follow_to_categories_page()
 
-        # User finds a categories link and click on it
-        self.get_navbar().find_element(By.NAME, 'categories_link').click()
+        # User clicks on "edit" button of chosen category
+        self.wait_for(lambda: len(self.get_cards_from_category_list()), expected_value=1)
+        cards = self.get_cards_from_category_list()
+        self.click_on_edit_button(cards[0])
 
-        # User sees a category in the category list and click on edit button
-        card = self.wait_for(
-            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
+        # User sees title and text of chosen category
+        self.wait_for(
+            lambda: self.get_category_form().find_element(value='id_title').get_attribute('value'),
+            expected_value=self.title,
         )
+
+        # User edits category data
+        self.send_form(form=self.get_category_form(), id_title=self.new_title, id_color=self.new_color)
+
+        # User checks updating of a category data in the category list
+        cards = self.wait_for(self.get_cards_from_category_list)
         self.check_category_card(
-            card,
-            title=category.title,
+            card=cards[0],
+            title=self.new_title,
+            color=self.new_color,
         )
-        card.find_element(value='edit').click()
 
-        # User sees a full form by info from category
+        # User clicks on "Create new"
+        self.click_on_create_new_button()
+
+        # User sees clean category form
         self.wait_for(
-            lambda: self.browser.find_element(value='category_form')
-            .find_element(value='id_title')
-            .get_attribute('value'),
-            category.title,
+            lambda: self.get_category_form().find_element(value='id_title').get_attribute('value'),
+            expected_value='',
         )
 
-        # User clicks on create new button to create new category
-        self.browser.find_element(value='create_new').click()
-
-        # User sees the empty form
-        self.wait_for(
-            lambda: self.browser.find_element(value='category_form')
-            .find_element(value='id_title')
-            .get_attribute('value'),
-            '',
-        )
-
-        # User enters new data
-        new_title = 'New category Title'
-        category_form = self.browser.find_element(value='category_form')
+        # User inputs data to the category form for second new category
+        second_title = 'Second category'
+        second_color = '#FF0000'
         self.send_form(
-            category_form,
-            id_title=new_title,
+            form=self.get_category_form(),
+            id_title=second_title,
+            id_color=second_color,
         )
 
-        # User checks a new category in the category list
-        card = self.wait_for(
-            lambda: self.browser.find_element(value='category_list').find_elements(By.CLASS_NAME, 'card')[1],
+        # User checks existing of two new categories in the category list
+        self.wait_for(
+            lambda: len(self.get_cards_from_category_list()),
+            expected_value=2,
         )
-        self.check_category_card(
-            card,
-            title=new_title,
-        )
+
+        cards = self.get_cards_from_category_list()
+        for card, title, color in zip(cards, (self.new_title, second_title), (self.new_color, second_color)):
+            self.check_category_card(card=card, title=title, color=color)
 
 
 class AnonymousUserCategoriesOperationsTest(FunctionalTestCase):
