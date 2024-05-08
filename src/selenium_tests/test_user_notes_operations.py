@@ -110,46 +110,44 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
                 title=title,
             )
 
+    def test_user_can_edit_note_after_its_creation_in_same_form(self):
+        # User enters to site
+        self.enter_to_site()
 
-#     def test_user_can_edit_recently_created_note_without_choosing_it_in_note_list(self):
-#         # User enters to site
-#         self.enter_to_site()
-#
-#         # User logins to site
-#         self.login_user_through_selenium()
-#
-#         # User inputs data to the note form
-#         self.send_form(
-#             form=self.get_note_form(),
-#             id_title=self.title,
-#         )
-#
-#         # User checks existing of a new note in the note list
-#         cards = self.wait_for(self.get_cards_form_note_list)
-#         self.check_note_card(
-#             card=cards[0],
-#             title=self.title,
-#         )
-#
-#         # User edits note data
-#         self.send_form(
-#             form=self.get_note_form(),
-#             select_fields=('id_category',),
-#             id_category=str(self.new_category.id),
-#             id_title=self.new_title,
-#         )
-#
-#         # User checks updating of a note data in the note list
-#         cards = self.wait_for(self.get_cards_form_note_list)
-#         self.check_note_card(
-#             card=cards[0], category=self.new_category.title, title=self.new_title, color=self.new_category.color
-#         )
-#
-#         # User checks a note, that has colored text by category color
-#         color = Color.from_string(self.category.color)
-#         card_body = card.find_element(By.CLASS_NAME, 'card-body')
-#
-#         self.assertEqual(card_body.get_attribute('style'), f'color: {color.rgb};')
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User inputs data to the note form
+        self.send_form(
+            form=self.get_note_form(),
+            id_title=self.title,
+        )
+
+        # User checks existing of a new note in the note list
+        cards = self.wait_for(self.get_cards_form_note_list)
+        self.check_note_card(
+            card=cards[0],
+            title=self.title,
+        )
+
+        # User edits note data
+        self.send_form(
+            form=self.get_note_form(),
+            select_fields=('id_category',),
+            id_category=str(self.category.id),
+            id_title=self.new_title,
+        )
+
+        # User checks updating of a note data in the note list
+        cards = self.wait_for(self.get_cards_form_note_list)
+        self.check_note_card(
+            card=cards[0],
+            category=self.category.title,
+            title=self.new_title,
+            color=self.category.color,
+        )
+
+
 #
 #     def test_user_can_edit_choice_note_from_note_list(self):
 #         note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
