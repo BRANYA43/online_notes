@@ -127,6 +127,30 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
             color=self.new_color,
         )
 
+    def test_user_can_look_at_chosen_note_data(self):
+        Category.objects.create(worktable=self.worktable, title=self.title, color=self.color)
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User follows to a categories page
+        self.follow_to_categories_page()
+
+        # User clicks on "edit" button of chosen category
+        self.wait_for(lambda: len(self.get_cards_from_category_list()), expected_value=1)
+        cards = self.get_cards_from_category_list()
+        self.click_on_edit_button(cards[0])
+
+        # User sees title and text of chosen note
+        self.wait_for(
+            lambda: self.get_category_form().find_element(value='id_title').get_attribute('value'),
+            expected_value=self.title,
+        )
+        self.assertEqual(
+            self.get_category_form().find_element(value='id_color').get_attribute('value'),
+            self.color,
+        )
+
     def test_user_can_edit_choice_category_from_category_list(self):
         category = Category.objects.create(worktable=self.worktable, title=self.title, color=self.color)
 
