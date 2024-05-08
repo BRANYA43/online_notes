@@ -169,7 +169,7 @@ class FunctionalTestCase(StaticLiveServerTestCase):
     def get_category_list(self) -> WebElement:
         return self.browser.find_element(value='category_list')
 
-    def get_cards_form_note_list(self) -> list[WebElement]:
+    def get_cards_from_note_list(self) -> list[WebElement]:
         return self.get_note_list().find_elements(By.CLASS_NAME, 'card')
 
     def get_cards_from_category_list(self) -> list[WebElement]:

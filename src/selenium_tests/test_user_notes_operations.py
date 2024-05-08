@@ -42,7 +42,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks existing of a new note in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             title=self.title,
@@ -61,7 +61,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks existing of a new note in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             category=self.category.title,
@@ -80,7 +80,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks existing of a new note in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             title=self.title,
@@ -104,11 +104,11 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User checks existing of two new notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=2,
         )
 
-        cards = self.get_cards_form_note_list()
+        cards = self.get_cards_from_note_list()
         for card, title in zip(cards, (second_title, self.title)):
             self.check_note_card(
                 card=card,
@@ -126,7 +126,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks existing of a new note in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             title=self.title,
@@ -141,7 +141,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks updating of a note data in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             category=self.category.title,
@@ -156,8 +156,8 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "edit" button of chosen note
-        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
-        cards = self.get_cards_form_note_list()
+        self.wait_for(lambda: len(self.get_cards_from_note_list()), expected_value=1)
+        cards = self.get_cards_from_note_list()
         self.click_on_edit_button(cards[0])
 
         # User sees title and text of chosen note
@@ -177,8 +177,8 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "edit" button of chosen note
-        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
-        cards = self.get_cards_form_note_list()
+        self.wait_for(lambda: len(self.get_cards_from_note_list()), expected_value=1)
+        cards = self.get_cards_from_note_list()
         self.click_on_edit_button(cards[0])
 
         # User sees title and text of chosen note
@@ -200,7 +200,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks updating of a note data in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             category=self.category.title,
@@ -215,13 +215,13 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "delete" button of chosen note
-        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
-        cards = self.get_cards_form_note_list()
+        self.wait_for(lambda: len(self.get_cards_from_note_list()), expected_value=1)
+        cards = self.get_cards_from_note_list()
         self.click_on_delete_button(cards[0])
 
         # User sees empty note list
         self.wait_for(
-            lambda: self.get_cards_form_note_list(),
+            lambda: self.get_cards_from_note_list(),
             expected_value=[],
         )
 
@@ -232,13 +232,13 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "archive" button of chosen note
-        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
-        cards = self.get_cards_form_note_list()
+        self.wait_for(lambda: len(self.get_cards_from_note_list()), expected_value=1)
+        cards = self.get_cards_from_note_list()
         self.click_on_archive_button(cards[0])
 
         # User sees changing color of archive button
         self.wait_for(
-            lambda: self.get_cards_form_note_list()[0].find_element(value='archive').get_attribute('class'),
+            lambda: self.get_cards_from_note_list()[0].find_element(value='archive').get_attribute('class'),
             included_value='btn-secondary',
         )
 
@@ -249,8 +249,8 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "edit" button of chosen note
-        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
-        cards = self.get_cards_form_note_list()
+        self.wait_for(lambda: len(self.get_cards_from_note_list()), expected_value=1)
+        cards = self.get_cards_from_note_list()
         self.click_on_edit_button(cards[0])
 
         # User sees title and text of chosen note
@@ -266,7 +266,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks updating of a note data in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             title=self.new_title,
@@ -290,11 +290,11 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User checks existing of two new notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=2,
         )
 
-        cards = self.get_cards_form_note_list()
+        cards = self.get_cards_from_note_list()
         for card, title in zip(cards, (second_title, self.new_title)):
             self.check_note_card(
                 card=card,
@@ -309,7 +309,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -322,7 +322,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 4 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=4,
         )
 
@@ -335,7 +335,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 4 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=1,
         )
 
@@ -347,7 +347,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -360,7 +360,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 4 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=4,
         )
 
@@ -372,7 +372,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -385,7 +385,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 3 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=3,
         )
 
@@ -397,7 +397,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -410,7 +410,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 3 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=3,
         )
 
@@ -422,7 +422,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -439,7 +439,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 3 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=1,
         )
 
@@ -451,7 +451,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -464,7 +464,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 3 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=0,
         )
 
@@ -473,7 +473,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -488,7 +488,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # Rick checks existing of a new note in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             title=self.title,
@@ -503,7 +503,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # Morty doesn't see Rick's note
         cards = self.wait_for(
-            lambda: self.get_cards_form_note_list(),
+            lambda: self.get_cards_from_note_list(),
             expected_value=[],
         )
 
@@ -538,7 +538,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks existing of a new note in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             title=self.title,
@@ -557,7 +557,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks existing of a new note in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             category=self.category.title,
@@ -576,7 +576,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks existing of a new note in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             title=self.title,
@@ -600,11 +600,11 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User checks existing of two new notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=2,
         )
 
-        cards = self.get_cards_form_note_list()
+        cards = self.get_cards_from_note_list()
         for card, title in zip(cards, (second_title, self.title)):
             self.check_note_card(
                 card=card,
@@ -622,7 +622,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks existing of a new note in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             title=self.title,
@@ -637,7 +637,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks updating of a note data in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             category=self.category.title,
@@ -652,8 +652,8 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "edit" button of chosen note
-        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
-        cards = self.get_cards_form_note_list()
+        self.wait_for(lambda: len(self.get_cards_from_note_list()), expected_value=1)
+        cards = self.get_cards_from_note_list()
         self.click_on_edit_button(cards[0])
 
         # User sees title and text of chosen note
@@ -673,8 +673,8 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "edit" button of chosen note
-        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
-        cards = self.get_cards_form_note_list()
+        self.wait_for(lambda: len(self.get_cards_from_note_list()), expected_value=1)
+        cards = self.get_cards_from_note_list()
         self.click_on_edit_button(cards[0])
 
         # User sees title and text of chosen note
@@ -696,7 +696,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks updating of a note data in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             category=self.category.title,
@@ -711,13 +711,13 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "delete" button of chosen note
-        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
-        cards = self.get_cards_form_note_list()
+        self.wait_for(lambda: len(self.get_cards_from_note_list()), expected_value=1)
+        cards = self.get_cards_from_note_list()
         self.click_on_delete_button(cards[0])
 
         # User sees empty note list
         self.wait_for(
-            lambda: self.get_cards_form_note_list(),
+            lambda: self.get_cards_from_note_list(),
             expected_value=[],
         )
 
@@ -728,13 +728,13 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "archive" button of chosen note
-        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
-        cards = self.get_cards_form_note_list()
+        self.wait_for(lambda: len(self.get_cards_from_note_list()), expected_value=1)
+        cards = self.get_cards_from_note_list()
         self.click_on_archive_button(cards[0])
 
         # User sees changing color of archive button
         self.wait_for(
-            lambda: self.get_cards_form_note_list()[0].find_element(value='archive').get_attribute('class'),
+            lambda: self.get_cards_from_note_list()[0].find_element(value='archive').get_attribute('class'),
             included_value='btn-secondary',
         )
 
@@ -745,8 +745,8 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "edit" button of chosen note
-        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
-        cards = self.get_cards_form_note_list()
+        self.wait_for(lambda: len(self.get_cards_from_note_list()), expected_value=1)
+        cards = self.get_cards_from_note_list()
         self.click_on_edit_button(cards[0])
 
         # User sees title and text of chosen note
@@ -762,7 +762,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # User checks updating of a note data in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             title=self.new_title,
@@ -786,11 +786,11 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User checks existing of two new notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=2,
         )
 
-        cards = self.get_cards_form_note_list()
+        cards = self.get_cards_from_note_list()
         for card, title in zip(cards, (second_title, self.new_title)):
             self.check_note_card(
                 card=card,
@@ -805,7 +805,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -818,7 +818,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 4 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=4,
         )
 
@@ -831,7 +831,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 4 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=1,
         )
 
@@ -843,7 +843,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -856,7 +856,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 4 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=4,
         )
 
@@ -868,7 +868,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -881,7 +881,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 3 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=3,
         )
 
@@ -893,7 +893,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -906,7 +906,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 3 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=3,
         )
 
@@ -918,7 +918,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -935,7 +935,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 3 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=1,
         )
 
@@ -947,7 +947,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -960,7 +960,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 3 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=0,
         )
 
@@ -969,7 +969,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # User sees 5 notes in the note list
         self.wait_for(
-            lambda: len(self.get_cards_form_note_list()),
+            lambda: len(self.get_cards_from_note_list()),
             expected_value=5,
         )
 
@@ -984,7 +984,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         )
 
         # Rick checks existing of a new note in the note list
-        cards = self.wait_for(self.get_cards_form_note_list)
+        cards = self.wait_for(self.get_cards_from_note_list)
         self.check_note_card(
             card=cards[0],
             title=self.title,
@@ -999,6 +999,6 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
 
         # Morty doesn't see Rick's note
         cards = self.wait_for(
-            lambda: self.get_cards_form_note_list(),
+            lambda: self.get_cards_from_note_list(),
             expected_value=[],
         )
