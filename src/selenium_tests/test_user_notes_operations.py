@@ -443,6 +443,40 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             expected_value=1,
         )
 
+    def test_user_reset_filter_form(self):
+        self.prepared_notes_for_filter()
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User sees 5 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=5,
+        )
+
+        # User filter notes by words range
+        self.send_filter(
+            form=self.get_filter_form(),
+            range_fields=('id_words',),
+            id_words=(0, 3),
+        )
+
+        # User sees 3 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=0,
+        )
+
+        # User reset form
+        self.click_on_reset_filters_buttons()
+
+        # User sees 5 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=5,
+        )
+
     def test_every_user_has_only_his_notes(self):
         # Rick enters to site
         self.enter_to_site()

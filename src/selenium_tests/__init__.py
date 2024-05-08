@@ -214,3 +214,6 @@ class FunctionalTestCase(StaticLiveServerTestCase):
                 Select(form.find_element(value=input_)).select_by_value(str(value))
             else:
                 form.find_element(value=input_).send_keys(value)
+
+    def click_on_reset_filters_buttons(self):
+        self.get_filter_form().find_element(value='reset').click()
