@@ -1,7 +1,7 @@
 <div class="text-sm">
   <h6>Note List:</h6>
   <div class="border border-top border-2 mb-1"></div>
-  <div id="note_list" class="overflow-auto d-flex flex-column gap-3" style="max-height: 620px;">
+  <div id="note_list" class="overflow-auto d-flex flex-column gap-3" style="height: 520px;">
     {% for note in worktable.get_all_notes %}
         <div id="{{ note.id }}" class="card" data-url="{% url 'update_note' note.id %}">
           <div class="card-body" {% if note.category %} style="color: {{ note.category.color }}"{% endif %}>
