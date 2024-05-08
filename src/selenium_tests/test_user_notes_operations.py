@@ -18,23 +18,10 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         user = User.objects.create_user(email=self.email, password=self.password)
         self.worktable = Worktable.objects.create(user=user)
-
         self.category = Category.objects.create(worktable=self.worktable, title='Category #1', color='#ff0000')
 
         self.title = 'What do I do to find a job?'
-        self.text = """
-            I have to:
-                - be a Senior after finished a study;
-                - have 5 years of experience within 1 year after finished a study;
-                - ...; 
-            """
-
-    def check_note_value_in_the_card(self, card, note_title: str, category_title: str = None):
-        fields = card.find_elements(By.TAG_NAME, 'p')
-        if category_title is None:
-            category_title = '---'
-        self.assertRegex(fields[0].text, rf'Category: {category_title}')
-        self.assertRegex(fields[1].text, rf'Title: {note_title}')
+        self.new_title = 'New Title'
 
     def test_user_can_create_new_note_without_category(self):
         # User enters to site
@@ -43,21 +30,17 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         # User logins to site
         self.login_user_through_selenium()
 
-        # User finds note form and input some text
-        note_form = self.browser.find_element(value='note_form')
+        # User inputs data to the note form
         self.send_form(
-            note_form,
+            form=self.get_note_form(),
             id_title=self.title,
-            id_text=self.text,
         )
 
-        # User checks left side and sees a note list, that have a created new note.
-        card = self.wait_for(
-            lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
-        )
-        self.check_note_value_in_the_card(
-            card,
-            note_title=self.title,
+        # User checks existing of a new note in the note list
+        cards = self.wait_for(self.get_cards_form_note_list)
+        self.check_note_card(
+            card=cards[0],
+            title=self.title,
         )
 
     def test_user_can_create_new_note_with_category(self):
