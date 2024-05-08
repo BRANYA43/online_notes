@@ -21,30 +21,26 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
         self.title = 'Category #1'
         self.color = '#00FF00'
 
+        self.login_user_through_selenium()
+
     def test_user_can_create_new_category(self):
         # User enter to site
         self.enter_to_site()
 
-        # User logins to site
-        self.login_user_through_selenium()
+        # User follows to a categories page
+        self.follow_to_categories_page()
 
-        # User finds a categories link and click on it
-        self.get_navbar().find_element(By.NAME, 'categories_link').click()
-
-        # User finds category form and input some data
-        category_form = self.wait_for(lambda: self.browser.find_element(value='category_form'))
+        # User inputs data to category form
         self.send_form(
-            category_form,
+            form=self.get_category_form(),
             id_title=self.title,
             id_color=self.color,
         )
 
-        # User checks a category list, that has a created new category
-        card = self.wait_for(
-            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
-        )
+        # User checks existing of a new category in the category list
+        cards = self.wait_for(self.get_cards_from_category_list)
         self.check_category_card(
-            card,
+            card=cards[0],
             title=self.title,
             color=self.color,
         )

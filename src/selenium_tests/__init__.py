@@ -157,14 +157,23 @@ class FunctionalTestCase(StaticLiveServerTestCase):
     def get_note_form(self) -> WebElement:
         return self.browser.find_element(value='note_form')
 
-    def get_filter_form(self):
+    def get_category_form(self) -> WebElement:
+        return self.browser.find_element(value='category_form')
+
+    def get_filter_form(self) -> WebElement:
         return self.browser.find_element(value='filter_form')
 
     def get_note_list(self) -> WebElement:
         return self.browser.find_element(value='note_list')
 
+    def get_category_list(self) -> WebElement:
+        return self.browser.find_element(value='category_list')
+
     def get_cards_form_note_list(self) -> list[WebElement]:
         return self.get_note_list().find_elements(By.CLASS_NAME, 'card')
+
+    def get_cards_from_category_list(self) -> list[WebElement]:
+        return self.get_category_list().find_elements(By.CLASS_NAME, 'card')
 
     def check_category_card(self, card, title, color='#FFFFFF'):
         color = Color.from_string(color)
@@ -198,6 +207,10 @@ class FunctionalTestCase(StaticLiveServerTestCase):
 
     def click_on_reset_filters_buttons(self):
         self.get_filter_form().find_element(value='reset').click()
+
+    def follow_to_categories_page(self):
+        self.get_navbar().find_element(By.NAME, 'categories_link').click()
+        self.wait_for(self.get_category_form)
 
     def prepared_notes_for_filter(self):
         worktable = self.get_worktable()
