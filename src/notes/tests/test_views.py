@@ -407,7 +407,7 @@ class CreateNewNoteView(TestCase):
         self.expected_data = {
             'note': {
                 'title': self.data['title'],
-                'date': timezone.now().strftime('%d.%m.%Y'),
+                'created': timezone.now().strftime('%d.%m.%Y'),
             },
             'category': {
                 'title': self.category.title,

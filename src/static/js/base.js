@@ -34,7 +34,7 @@ $(document).ready(function(){
               <div class="card-body" style="${data.category ? 'color: ' + data.category.color + ';' : ''}">
                 <p class="card-subtitle">Category: ${data.category ? data.category.title : '---'}</p>
                 <p class="card-subtitle">Title: ${data.note.title}</p>
-                <p class="card-subtitle">Date: ${data.note.date}</p>
+                <p class="card-subtitle">Date: ${data.note.created}</p>
               </div>
                 <div class="card-footer d-flex justify-content-end gap-2">
                   <a id="edit" href="${data.urls.retrieve}" class="btn btn-outline-secondary btn-sm" ><i data-feather="edit"></i></a>

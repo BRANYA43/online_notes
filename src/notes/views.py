@@ -164,7 +164,7 @@ def create_new_note(request):
             'note': {
                 'id': note.id,
                 'title': note.title,
-                'date': note.created.strftime('%d.%m.%Y'),
+                'created': note.created.strftime('%d.%m.%Y'),
             },
         }
         if note.category:
