@@ -20,6 +20,8 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
 
         self.title = 'Category #1'
         self.color = '#00FF00'
+        self.new_title = 'New Title'
+        self.new_color = '#0000FF'
 
         self.login_user_through_selenium()
 
@@ -94,52 +96,35 @@ class RegisteredUserCategoriesOperationsTest(FunctionalTestCase):
                 title=title,
             )
 
-    def test_user_can_edit_recently_created_note(self):
+    def test_user_can_edit_note_after_its_creation_in_same_form(self):
         # User enters to site
         self.enter_to_site()
 
-        # User logins to site
-        self.login_user_through_selenium()
+        # User follows to a categories page
+        self.follow_to_categories_page()
 
-        # User finds a categories link and click on it
-        self.get_navbar().find_element(By.NAME, 'categories_link').click()
-
-        # User finds category form and input some data
-        category_form = self.browser.find_element(value='category_form')
+        # User inputs data to the category form
         self.send_form(
-            category_form,
+            form=self.get_category_form(),
             id_title=self.title,
-            id_color=self.color,
         )
 
-        # User checks a category list, that has a created new category
-        card = self.wait_for(
-            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
-        )
+        # User checks existing of a new category in the category list
+        cards = self.wait_for(self.get_cards_from_category_list)
         self.check_category_card(
-            card,
+            card=cards[0],
             title=self.title,
-            color=self.color,
         )
 
-        # User changes the title and color of a recently created category in the same form
-        new_title = 'New Category title'
-        new_color = '#FF0000'
-        category_form = self.browser.find_element(value='category_form')
-        self.send_form(
-            category_form,
-            id_title=new_title,
-            id_color=new_color,
-        )
+        # User edits category data
+        self.send_form(form=self.get_category_form(), id_title=self.new_title, id_color=self.new_color)
 
-        # User checks a category list to confirms that title and color changed
-        card = self.wait_for(
-            lambda: self.browser.find_element(value='category_list').find_element(By.CLASS_NAME, 'card'),
-        )
+        # User checks updating of a category data in the category list
+        cards = self.wait_for(self.get_cards_from_category_list)
         self.check_category_card(
-            card,
-            title=new_title,
-            color=new_color,
+            card=cards[0],
+            title=self.new_title,
+            color=self.new_color,
         )
 
     def test_user_can_edit_choice_category_from_category_list(self):
