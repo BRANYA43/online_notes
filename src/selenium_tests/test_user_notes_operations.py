@@ -1,6 +1,6 @@
 from accounts.forms import User
 from accounts.tests import TEST_EMAIL, TEST_PASSWORD
-from notes.models import Worktable, Category
+from notes.models import Worktable, Category, Note
 from selenium_tests import FunctionalTestCase
 
 
@@ -15,6 +15,12 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         self.category = Category.objects.create(worktable=self.worktable, title='Category #1', color='#ff0000')
 
         self.title = 'What do I do to find a job?'
+        self.text = (
+            'I have to:\n'
+            '- be a Senior after finished a study;\n'
+            '- have 5 years of experience within 1 year after finished a study;\n'
+            '- ...; \n'
+        )
         self.new_title = 'New Title'
 
     def test_user_can_create_new_note_without_category(self):
@@ -81,10 +87,10 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             title=self.title,
         )
 
-        # User click on "Create new"
+        # User clicks on "Create new"
         self.click_on_create_new_button()
 
-        # User see clean note form
+        # User sees clean note form
         self.wait_for(
             lambda: self.get_note_form().find_element(value='id_title').get_attribute('value'),
             expected_value='',
@@ -145,6 +151,30 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             category=self.category.title,
             title=self.new_title,
             color=self.category.color,
+        )
+
+    def test_user_can_look_at_chosen_note_data(self):
+        Note.objects.create(worktable=self.worktable, title=self.title, text=self.text)
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User clicks on "edit" button of chosen note
+        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
+        cards = self.get_cards_form_note_list()
+        self.click_on_edit_button(cards[0])
+
+        # User sees title and text of chosen note
+        self.wait_for(
+            lambda: self.get_note_form().find_element(value='id_title').get_attribute('value'),
+            expected_value=self.title,
+        )
+        self.assertEqual(
+            self.get_note_form().find_element(value='id_text').get_attribute('value'),
+            self.text,
         )
 
 

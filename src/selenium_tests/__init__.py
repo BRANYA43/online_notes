@@ -166,3 +166,6 @@ class FunctionalTestCase(StaticLiveServerTestCase):
 
     def click_on_create_new_button(self):
         self.browser.find_element(value='create_new').click()
+
+    def click_on_edit_button(self, card: WebElement):
+        card.find_element(value='edit').click()
