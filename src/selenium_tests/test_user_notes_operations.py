@@ -258,58 +258,69 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             included_value='btn-secondary',
         )
 
+    def test_user_can_create_new_note_after_work_with_another_note(self):
+        Note.objects.create(worktable=self.worktable, title=self.title)
 
-#
-#     def test_user_can_create_new_note_after_work_with_another_note(self):
-#         note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
-#
-#         # User enters to site
-#         self.enter_to_site()
-#
-#         # User logins to site
-#         self.login_user_through_selenium()
-#
-#         # User sees a note in the note list and click on edit button
-#         card = self.wait_for(
-#             lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
-#         )
-#         self.check_note_card(
-#             card,
-#             title=note.title,
-#         )
-#         card.find_element(value='edit').click()
-#
-#         # User sees a full form by info from note
-#         self.wait_for(
-#             lambda: self.browser.find_element(value='note_form').find_element(value='id_title').get_attribute('value'),
-#             note.title,
-#         )
-#
-#         # User clicks on create new button to create new note
-#         self.browser.find_element(value='create_new').click()
-#
-#         # User sees the empty form
-#         self.wait_for(
-#             lambda: self.browser.find_element(value='note_form').find_element(value='id_title').get_attribute('value'),
-#             '',
-#         )
-#
-#         # User enters new data
-#         new_title = 'New Note Title'
-#         note_form = self.browser.find_element(value='note_form')
-#         self.send_form(
-#             note_form,
-#             id_title=new_title,
-#         )
-#
-#         # User checks a new note in the note list
-#         card = self.wait_for(
-#             lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
-#         )
-#         self.check_note_card(
-#             card,
-#             title=new_title,
-#         )
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User clicks on "edit" button of chosen note
+        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
+        cards = self.get_cards_form_note_list()
+        self.click_on_edit_button(cards[0])
+
+        # User sees title and text of chosen note
+        self.wait_for(
+            lambda: self.get_note_form().find_element(value='id_title').get_attribute('value'),
+            expected_value=self.title,
+        )
+
+        # User edits note data
+        self.send_form(
+            form=self.get_note_form(),
+            id_title=self.new_title,
+        )
+
+        # User checks updating of a note data in the note list
+        cards = self.wait_for(self.get_cards_form_note_list)
+        self.check_note_card(
+            card=cards[0],
+            title=self.new_title,
+        )
+
+        # User clicks on "Create new"
+        self.click_on_create_new_button()
+
+        # User sees clean note form
+        self.wait_for(
+            lambda: self.get_note_form().find_element(value='id_title').get_attribute('value'),
+            expected_value='',
+        )
+
+        # User inputs data to the note form for second new note
+        second_title = 'Second Note'
+        self.send_form(
+            form=self.get_note_form(),
+            id_title=second_title,
+        )
+
+        # User checks existing of two new notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=2,
+        )
+
+        cards = self.get_cards_form_note_list()
+        for card, title in zip(cards, (second_title, self.new_title)):
+            self.check_note_card(
+                card=card,
+                title=title,
+            )
+
+
 #
 #     def test_user_can_filter_notes(self):
 #         category = Category.objects.create(worktable=self.worktable, title='Category #1')
