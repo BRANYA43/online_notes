@@ -169,3 +169,6 @@ class FunctionalTestCase(StaticLiveServerTestCase):
 
     def click_on_edit_button(self, card: WebElement):
         card.find_element(value='edit').click()
+
+    def click_on_delete_button(self, card: WebElement):
+        card.find_element(value='delete').click()
