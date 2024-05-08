@@ -177,58 +177,48 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             self.text,
         )
 
+    def test_user_can_edit_chosen_note(self):
+        Note.objects.create(worktable=self.worktable, title=self.title, text=self.text)
 
-#
-#     def test_user_can_edit_choice_note_from_note_list(self):
-#         note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
-#
-#         # User enters to site
-#         self.enter_to_site()
-#
-#         # User logins to site
-#         self.login_user_through_selenium()
-#
-#         # User sees a note in the note list and click on edit button
-#         card = self.wait_for(
-#             lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
-#         )
-#         self.check_note_card(
-#             card,
-#             title=note.title,
-#         )
-#         card.find_element(value='edit').click()
-#
-#         # User sees a full form by info from note
-#         self.wait_for(
-#             lambda: self.browser.find_element(value='note_form').find_element(value='id_title').get_attribute('value'),
-#             note.title,
-#         )
-#
-#         # User changes a title
-#         new_title = 'Changed Title'
-#         note_form = self.browser.find_element(value='note_form')
-#         self.send_form(
-#             note_form,
-#             select_fields=('id_category',),
-#             id_category=str(self.category.id),
-#             id_title=new_title,
-#         )
-#
-#         # User checks a note in the note list
-#         card = self.wait_for(
-#             lambda: self.browser.find_element(value='note_list').find_element(By.CLASS_NAME, 'card'),
-#         )
-#         self.check_note_card(
-#             card,
-#             category=self.category.title,
-#             title=new_title,
-#         )
-#
-#         # User checks a note, that has colored text by category color
-#         color = Color.from_string(self.category.color)
-#         card_body = card.find_element(By.CLASS_NAME, 'card-body')
-#
-#         self.assertEqual(card_body.get_attribute('style'), f'color: {color.rgb};')
+        # User enters to site
+        self.enter_to_site()
+
+        # User logins to site
+        self.login_user_through_selenium()
+
+        # User clicks on "edit" button of chosen note
+        self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
+        cards = self.get_cards_form_note_list()
+        self.click_on_edit_button(cards[0])
+
+        # User sees title and text of chosen note
+        self.wait_for(
+            lambda: self.get_note_form().find_element(value='id_title').get_attribute('value'),
+            expected_value=self.title,
+        )
+        self.assertEqual(
+            self.get_note_form().find_element(value='id_text').get_attribute('value'),
+            self.text,
+        )
+
+        # User edits note data
+        self.send_form(
+            form=self.get_note_form(),
+            select_fields=('id_category',),
+            id_category=str(self.category.id),
+            id_title=self.new_title,
+        )
+
+        # User checks updating of a note data in the note list
+        cards = self.wait_for(self.get_cards_form_note_list)
+        self.check_note_card(
+            card=cards[0],
+            category=self.category.title,
+            title=self.new_title,
+            color=self.category.color,
+        )
+
+
 #
 #     def test_user_can_deletes_choice_note_from_note_list(self):
 #         note = Note.objects.create(worktable=self.worktable, title='Note #1', text='Some Text')
