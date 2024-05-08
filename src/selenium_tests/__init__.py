@@ -163,3 +163,6 @@ class FunctionalTestCase(StaticLiveServerTestCase):
             color = Color.from_string(color)
             card_body = card.find_element(By.CLASS_NAME, 'card-body')
             self.assertIn(color.rgb, card_body.get_attribute('style'))
+
+    def click_on_create_new_button(self):
+        self.browser.find_element(value='create_new').click()
