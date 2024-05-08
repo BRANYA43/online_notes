@@ -335,6 +335,31 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             expected_value=1,
         )
 
+    def test_user_can_filter_notes_by_category(self):
+        self.prepared_notes_for_filter()
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User sees 5 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=5,
+        )
+
+        # User filter notes by category
+        self.send_filter(
+            form=self.get_filter_form(),
+            select_fields=('id_category',),
+            id_category=self.category.id,
+        )
+
+        # User sees 4 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=4,
+        )
+
 
 #
 #     def test_user_can_filter_notes(self):

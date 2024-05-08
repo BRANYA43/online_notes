@@ -180,8 +180,8 @@ class FunctionalTestCase(StaticLiveServerTestCase):
 
     def prepared_notes_for_filter(self):
         worktable = self.get_worktable()
-        category = Category.objects.create(worktable=worktable, title='Category #1')
-        categories = tuple(category for _ in range(4)) + (None,)
+        self.category = Category.objects.create(worktable=worktable, title='Category #1')
+        categories = tuple(self.category for _ in range(4)) + (None,)
         notes = [
             Note(
                 worktable=worktable,
