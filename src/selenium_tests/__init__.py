@@ -122,6 +122,19 @@ class FunctionalTestCase(StaticLiveServerTestCase):
                 input_elem.send_keys(value)
         form.find_element(value='submit_btn').click()
 
+    def send_filter(self, form: WebElement, select_fields=(), range_fields=(), **inputs_and_values):
+        for input_, value in inputs_and_values.items():
+            if input_ in range_fields:
+                input_1 = form.find_element(value=f'{input_}_0')
+                input_1.send_keys(value[0])
+                input_2 = form.find_element(value=f'{input_}_1')
+                input_2.send_keys(value[1])
+                ActionChains(self.browser).move_by_offset(0, 0).click().perform()
+            elif input_ in select_fields:
+                Select(form.find_element(value=input_)).select_by_value(str(value))
+            else:
+                form.find_element(value=input_).send_keys(value)
+
     def login_user_through_selenium(self):
         self.enter_to_site()
 
@@ -143,6 +156,9 @@ class FunctionalTestCase(StaticLiveServerTestCase):
 
     def get_note_form(self) -> WebElement:
         return self.browser.find_element(value='note_form')
+
+    def get_filter_form(self):
+        return self.browser.find_element(value='filter_form')
 
     def get_note_list(self) -> WebElement:
         return self.browser.find_element(value='note_list')
@@ -180,6 +196,9 @@ class FunctionalTestCase(StaticLiveServerTestCase):
     def click_on_archive_button(self, card: WebElement):
         card.find_element(value='archive').click()
 
+    def click_on_reset_filters_buttons(self):
+        self.get_filter_form().find_element(value='reset').click()
+
     def prepared_notes_for_filter(self):
         worktable = self.get_worktable()
         self.category = Category.objects.create(worktable=worktable, title='Category #1')
@@ -198,22 +217,3 @@ class FunctionalTestCase(StaticLiveServerTestCase):
         notes = Note.objects.bulk_create(notes)
         notes[3].created = timezone.now() + timedelta(days=1)
         notes[3].save()
-
-    def get_filter_form(self):
-        return self.browser.find_element(value='filter_form')
-
-    def send_filter(self, form: WebElement, select_fields=(), range_fields=(), **inputs_and_values):
-        for input_, value in inputs_and_values.items():
-            if input_ in range_fields:
-                input_1 = form.find_element(value=f'{input_}_0')
-                input_1.send_keys(value[0])
-                input_2 = form.find_element(value=f'{input_}_1')
-                input_2.send_keys(value[1])
-                ActionChains(self.browser).move_by_offset(0, 0).click().perform()
-            elif input_ in select_fields:
-                Select(form.find_element(value=input_)).select_by_value(str(value))
-            else:
-                form.find_element(value=input_).send_keys(value)
-
-    def click_on_reset_filters_buttons(self):
-        self.get_filter_form().find_element(value='reset').click()
