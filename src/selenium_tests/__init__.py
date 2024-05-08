@@ -221,6 +221,12 @@ class FunctionalTestCase(StaticLiveServerTestCase):
     def click_on_sing_in(self):
         self.get_navbar().find_element(By.NAME, 'login_link').click()
 
+    def click_on_user_logout(self):
+        self.get_navbar().find_element(By.NAME, 'logout_link').click()
+
+    def click_on_user_email(self):
+        self.get_navbar().find_element(value='user').click()
+
     def click_on_reset_filters_buttons(self):
         self.get_filter_form().find_element(value='reset').click()
 

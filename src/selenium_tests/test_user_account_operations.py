@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from selenium.webdriver.common.by import By
 
 from accounts.tests import TEST_EMAIL, TEST_PASSWORD
 from notes.models import Worktable
@@ -51,26 +50,19 @@ class UserAccountOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User login to the site
-        navbar = self.wait_for(self.get_navbar)
-        navbar.find_element(By.NAME, 'login_link').click()
+        self.click_on_sing_in()
 
-        modal_form = self.browser.find_element(value='modal_login_form')
         self.send_form(
-            modal_form,
+            form=self.get_login_form(),
             id_email=self.email,
             id_password=self.password,
         )
 
         # User clicks on his email link in navbar.
-        user_email = self.wait_for(
-            lambda: self.get_navbar().find_element(value='user'),
-        )
-        user_email.click()
+        self.wait_for(self.click_on_user_email)
 
         # In drop list user clicks on logout
-        self.get_navbar().find_element(By.NAME, 'logout_link').click()
+        self.wait_for(self.click_on_user_logout)
 
         # User checks navbar to confirm he was exits from his account.
-        self.wait_for(
-            lambda: self.get_navbar().find_element(By.NAME, 'registration_link'),
-        )
+        self.wait_for(self.click_on_sing_up)
