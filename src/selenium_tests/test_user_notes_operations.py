@@ -23,12 +23,11 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         )
         self.new_title = 'New Title'
 
+        self.login_user_through_selenium()
+
     def test_user_can_create_new_note_without_category(self):
         # User enters to site
         self.enter_to_site()
-
-        # User logins to site
-        self.login_user_through_selenium()
 
         # User inputs data to the note form
         self.send_form(
@@ -46,9 +45,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
     def test_user_can_create_new_note_with_category(self):
         # User enters to site
         self.enter_to_site()
-
-        # User logins to site
-        self.login_user_through_selenium()
 
         # User inputs data to the note form
         self.send_form(
@@ -70,9 +66,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
     def test_user_can_create_two_new_notes(self):
         # User enters to site
         self.enter_to_site()
-
-        # User logins to site
-        self.login_user_through_selenium()
 
         # User inputs data to the note form
         self.send_form(
@@ -120,9 +113,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         # User enters to site
         self.enter_to_site()
 
-        # User logins to site
-        self.login_user_through_selenium()
-
         # User inputs data to the note form
         self.send_form(
             form=self.get_note_form(),
@@ -159,9 +149,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         # User enters to site
         self.enter_to_site()
 
-        # User logins to site
-        self.login_user_through_selenium()
-
         # User clicks on "edit" button of chosen note
         self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
         cards = self.get_cards_form_note_list()
@@ -182,9 +169,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User enters to site
         self.enter_to_site()
-
-        # User logins to site
-        self.login_user_through_selenium()
 
         # User clicks on "edit" button of chosen note
         self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
@@ -224,9 +208,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         # User enters to site
         self.enter_to_site()
 
-        # User logins to site
-        self.login_user_through_selenium()
-
         # User clicks on "delete" button of chosen note
         self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
         cards = self.get_cards_form_note_list()
@@ -244,9 +225,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         # User enters to site
         self.enter_to_site()
 
-        # User logins to site
-        self.login_user_through_selenium()
-
         # User clicks on "archive" button of chosen note
         self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)
         cards = self.get_cards_form_note_list()
@@ -263,9 +241,6 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
 
         # User enters to site
         self.enter_to_site()
-
-        # User logins to site
-        self.login_user_through_selenium()
 
         # User clicks on "edit" button of chosen note
         self.wait_for(lambda: len(self.get_cards_form_note_list()), expected_value=1)

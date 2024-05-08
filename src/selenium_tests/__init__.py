@@ -121,6 +121,8 @@ class FunctionalTestCase(StaticLiveServerTestCase):
         form.find_element(value='submit_btn').click()
 
     def login_user_through_selenium(self):
+        self.enter_to_site()
+
         navbar = self.wait_for(self.get_navbar)
         navbar.find_element(By.NAME, 'login_link').click()
 
