@@ -28,8 +28,7 @@ class NoteModelTest(TestCase):
     def test_worktable_field_is_required(self):
         del self.data['worktable']
         with self.assertRaisesRegex(IntegrityError, r'NOT NULL .+'):
-            note = self.model_class.objects.create(**self.data)
-            note.full_clean()
+            self.model_class.objects.create(**self.data)
 
     def test_category_field_isnt_required(self):
         note = self.model_class.objects.create(**self.data)
@@ -46,32 +45,26 @@ class NoteModelTest(TestCase):
         note.full_clean()  # not raise error
 
     def test_words_field_is_0_by_default(self):
-        note = self.model_class()
+        note = self.model_class.objects.create(**self.data)
+        note.full_clean()
 
         self.assertEqual(note.words, 0)
 
     def test_words_field_cannot_be_negative_integer(self):
-        self.assertRaisesRegex(
-            IntegrityError,
-            r'CHECK .+',
-            self.model_class.objects.create,
-            words=-1,
-            **self.data,
-        )
+        self.data['words'] = -1
+        with self.assertRaisesRegex(IntegrityError, r'CHECK .+'):
+            self.model_class.objects.create(**self.data)
 
     def test_unique_words_field_is_0_by_default(self):
-        note = self.model_class()
+        note = self.model_class.objects.create(**self.data)
+        note.full_clean()
 
         self.assertEqual(note.unique_words, 0)
 
     def test_unique_words_field_cannot_be_negative_integer(self):
-        self.assertRaisesRegex(
-            IntegrityError,
-            r'CHECK .+',
-            self.model_class.objects.create,
-            unique_words=-1,
-            **self.data,
-        )
+        self.data['unique_words'] = -1
+        with self.assertRaisesRegex(IntegrityError, r'CHECK .+'):
+            self.model_class.objects.create(**self.data)
 
     def test_is_archived_field_is_false_by_default(self):
         note = self.model_class.objects.create(**self.data)
@@ -117,7 +110,7 @@ class NoteModelTest(TestCase):
         self.assertIsNone(note.category)
 
     def test_model_str_representation_is_title(self):
-        note = self.model_class(**self.data)
+        note = self.model_class.objects.create(**self.data)
         self.assertEqual(str(note), self.data['title'])
 
 
@@ -135,8 +128,7 @@ class CategoryModelTest(TestCase):
     def test_worktable_field_is_required(self):
         del self.data['worktable']
         with self.assertRaisesRegex(IntegrityError, r'NOT NULL .+'):
-            category = self.model_class.objects.create(**self.data)
-            category.full_clean()
+            self.model_class.objects.create(**self.data)
 
     def test_title_field_is_required(self):
         del self.data['title']
@@ -174,7 +166,6 @@ class WorktableModelTest(TestCase):
         self.model_class = models.Worktable
 
         self.user = User.objects.create_user(email=TEST_EMAIL, password=TEST_PASSWORD)
-        self.client.session.save()
         self.session_key = self.client.session.session_key
 
     def test_user_field_isnt_required(self):
@@ -229,12 +220,8 @@ class WorktableModelTest(TestCase):
     def test_model_has_one_to_one_relation_with_session(self):
         self.model_class.objects.create(session_key=self.session_key)
 
-        self.assertRaisesRegex(
-            IntegrityError,
-            r'UNIQUE .+',
-            self.model_class.objects.create,
-            session_key=self.session_key,
-        )
+        with self.assertRaisesRegex(IntegrityError, r'UNIQUE .+'):
+            self.model_class.objects.create(session_key=self.session_key)
 
     def test_model_str_representation_is_user_email_or_session_key(self):
         worktable = self.model_class.objects.create(user=self.user)
@@ -244,19 +231,15 @@ class WorktableModelTest(TestCase):
         self.assertEqual(str(worktable), self.session_key)
 
     def test_get_all_categories_method_returns_all_worktable_categories(self):
-        category_titles = ('#1', '#2', '#3')
-        worktable = self.model_class.objects.create(user=self.user)
+        worktable = self.model_class.objects.create(session_key=self.session_key)
         models.Category.objects.bulk_create(
-            [models.Category(worktable=worktable, title=title) for title in category_titles]
+            [models.Category(worktable=worktable, title=f'Category #{n}') for n in range(3)],
         )
 
-        for category, expected_title in zip(worktable.get_all_categories(), category_titles):
-            self.assertEqual(category.title, expected_title)
+        self.assertQuerySetEqual(worktable.get_all_categories(), worktable.category_set.all())
 
     def test_get_all_notes_method_returns_only_all_worktable_active_notes(self):
-        notes_titles = ('#1', '#2', '#3')
-        worktable = self.model_class.objects.create(user=self.user)
-        models.Note.objects.bulk_create([models.Note(worktable=worktable, title=title) for title in notes_titles])
+        worktable = self.model_class.objects.create(session_key=self.session_key)
+        models.Note.objects.bulk_create([models.Note(worktable=worktable, title=f'Note #{n}') for n in range(3)])
 
-        for note, expected_title in zip(worktable.get_all_notes().order_by('title'), notes_titles):
-            self.assertEqual(note.title, expected_title)
+        self.assertQuerySetEqual(worktable.get_all_notes(), worktable.note_set.all())
