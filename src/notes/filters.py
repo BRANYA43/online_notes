@@ -5,7 +5,7 @@ from django.db import models as dj_models
 from notes import models
 
 
-class NoteFilters(filters.FilterSet):
+class NoteFilter(filters.FilterSet):
     class Status(dj_models.IntegerChoices):
         ACTIVE = 1, _('active')
         ARCHIVED = 2, _('archived')

@@ -8,7 +8,7 @@ from notes import models, filters
 
 class NoteFilterTest(TestCase):
     def setUp(self) -> None:
-        self.filter_class = filters.NoteFilters
+        self.filter_class = filters.NoteFilter
         self.worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
         self.category = models.Category.objects.create(worktable=self.worktable, title='Category #1')
 

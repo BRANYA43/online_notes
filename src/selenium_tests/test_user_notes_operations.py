@@ -5,7 +5,7 @@ from selenium.webdriver.support.select import Select
 
 from accounts.forms import User
 from accounts.tests import TEST_EMAIL, TEST_PASSWORD
-from notes.filters import NoteFilters
+from notes.filters import NoteFilter
 from notes.models import Worktable, Category, Note
 from selenium_tests import FunctionalTestCase
 
@@ -337,7 +337,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         status_select = Select(filter_form.find_element(value='id_status'))
 
         # | Filtering by active status |
-        status_select.select_by_value(str(NoteFilters.Status.ACTIVE))
+        status_select.select_by_value(str(NoteFilter.Status.ACTIVE))
 
         # User sees two filtered notes by active status
         cards = self.wait_for(
@@ -352,7 +352,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             )
 
         # | Filtering by archive status |
-        status_select.select_by_value(str(NoteFilters.Status.ARCHIVED))
+        status_select.select_by_value(str(NoteFilter.Status.ARCHIVED))
 
         # User sees one filtered note by archive status
         cards = self.wait_for(
@@ -685,7 +685,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
         status_select = Select(filter_form.find_element(value='id_status'))
 
         # | Filtering by active status |
-        status_select.select_by_value(str(NoteFilters.Status.ACTIVE))
+        status_select.select_by_value(str(NoteFilter.Status.ACTIVE))
 
         # User sees two filtered notes by active status
         cards = self.wait_for(
@@ -700,7 +700,7 @@ class AnonymousUserNotesOperationsTest(FunctionalTestCase):
             )
 
         # | Filtering by archive status |
-        status_select.select_by_value(str(NoteFilters.Status.ARCHIVED))
+        status_select.select_by_value(str(NoteFilter.Status.ARCHIVED))
 
         # User sees one filtered note by archive status
         cards = self.wait_for(

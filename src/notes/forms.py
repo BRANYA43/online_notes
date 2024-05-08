@@ -2,7 +2,7 @@ from django import forms
 
 from notes import models, filters
 
-NoteFiltersForm = filters.NoteFilters().get_form_class()
+NoteFiltersForm = filters.NoteFilter().get_form_class()
 
 
 class BaseCreateForm(forms.ModelForm):

@@ -10,7 +10,7 @@ from notes import forms, models, filters, services
 
 
 def filter_notes(request):
-    filter_ = filters.NoteFilters(request.GET)
+    filter_ = filters.NoteFilter(request.GET)
     data = services.serialize_filter_qs(filter_.qs)
     return JsonResponse(data=data, status=200, safe=False)
 
