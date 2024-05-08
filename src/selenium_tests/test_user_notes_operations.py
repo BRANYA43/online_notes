@@ -1,3 +1,7 @@
+from datetime import timedelta
+
+from django.utils import timezone
+
 from accounts.forms import User
 from accounts.tests import TEST_EMAIL, TEST_PASSWORD
 from notes.filters import NoteFilter
@@ -408,6 +412,35 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         self.wait_for(
             lambda: len(self.get_cards_form_note_list()),
             expected_value=3,
+        )
+
+    def test_user_can_filter_notes_by_date_range(self):
+        self.prepared_notes_for_filter()
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User sees 5 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=5,
+        )
+
+        # User filter notes by date range
+        start = timezone.now() + timedelta(days=1)
+        start = start.strftime('%Y-%m-%d')
+        end = timezone.now() + timedelta(days=2)
+        end = end.strftime('%Y-%m-%d')
+        self.send_filter(
+            form=self.get_filter_form(),
+            range_fields=('id_created',),
+            id_created=(start, end),
+        )
+
+        # User sees 3 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=1,
         )
 
 

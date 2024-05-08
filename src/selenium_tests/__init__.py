@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from functools import wraps
 from time import time, sleep
 from typing import Callable
@@ -6,6 +7,7 @@ from typing import Callable
 from django.conf import settings
 from django.test.utils import override_settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.utils import timezone
 from selenium.common import WebDriverException, ElementClickInterceptedException
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
@@ -193,7 +195,9 @@ class FunctionalTestCase(StaticLiveServerTestCase):
             )
             for n, category in enumerate(categories, start=1)
         ]
-        Note.objects.bulk_create(notes)
+        notes = Note.objects.bulk_create(notes)
+        notes[3].created = timezone.now() + timedelta(days=1)
+        notes[3].save()
 
     def get_filter_form(self):
         return self.browser.find_element(value='filter_form')
@@ -201,10 +205,11 @@ class FunctionalTestCase(StaticLiveServerTestCase):
     def send_filter(self, form: WebElement, select_fields=(), range_fields=(), **inputs_and_values):
         for input_, value in inputs_and_values.items():
             if input_ in range_fields:
-                form.find_element(value=f'{input_}_0').send_keys(value[0])
+                input_1 = form.find_element(value=f'{input_}_0')
+                input_1.send_keys(value[0])
                 input_2 = form.find_element(value=f'{input_}_1')
                 input_2.send_keys(value[1])
-                input_2.send_keys(Keys.TAB)
+                ActionChains(self.browser).move_by_offset(0, 0).click().perform()
             elif input_ in select_fields:
                 Select(form.find_element(value=input_)).select_by_value(str(value))
             else:
