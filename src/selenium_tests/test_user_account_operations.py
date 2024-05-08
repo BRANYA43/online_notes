@@ -19,37 +19,28 @@ class UserAccountOperationsTest(FunctionalTestCase):
         self.enter_to_site()
 
         # User clicks on "Sing Up" link in navbar.
-        navbar = self.wait_for(self.get_navbar)
-        navbar.find_element(By.NAME, 'registration_link').click()
+        self.click_on_sing_up()
 
-        # User inputs credentials to appeared modal form to register.
-        modal_form = self.browser.find_element(value='modal_registration_form')
+        # User inputs credentials in the registration form
         self.send_form(
-            modal_form,
+            form=self.get_registration_form(),
             id_email=self.email,
             id_password=self.password,
             id_confirming_password=self.password,
         )
 
         # User clicks on "Sing In" link in navbar.
-        self.wait_for(
-            lambda: navbar.find_element(By.NAME, 'login_link').click(),
-        )
+        self.wait_for(self.click_on_sing_in)
 
-        # User inputs credentials to appeared modal form to login.
-        modal_form = self.browser.find_element(value='modal_login_form')
+        # User inputs credentials in the login form
         self.send_form(
-            modal_form,
+            form=self.get_login_form(),
             id_email=self.email,
             id_password=self.password,
         )
 
         # User checks navbar to confirm he was entered to his account.
-        email = self.wait_for(
-            lambda: self.get_navbar().find_element(value='user').text,
-        )
-
-        self.assertEqual(email, self.email)
+        self.wait_for(self.check_user_link)
 
     def test_user_can_logout(self):
         # | Prepare for Test |

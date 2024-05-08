@@ -154,6 +154,12 @@ class FunctionalTestCase(StaticLiveServerTestCase):
         self.enter_to_site()
         return Worktable.objects.first()
 
+    def get_registration_form(self) -> WebElement:
+        return self.browser.find_element(value='modal_registration_form')
+
+    def get_login_form(self) -> WebElement:
+        return self.browser.find_element(value='modal_login_form')
+
     def get_note_form(self) -> WebElement:
         return self.browser.find_element(value='note_form')
 
@@ -193,6 +199,10 @@ class FunctionalTestCase(StaticLiveServerTestCase):
             card_body = card.find_element(By.CLASS_NAME, 'card-body')
             self.assertIn(color.rgb, card_body.get_attribute('style'))
 
+    def check_user_link(self):
+        email = self.get_navbar().find_element(value='user').text
+        self.assertEqual(email, self.email)
+
     def click_on_create_new_button(self):
         self.browser.find_element(value='create_new').click()
 
@@ -204,6 +214,12 @@ class FunctionalTestCase(StaticLiveServerTestCase):
 
     def click_on_archive_button(self, card: WebElement):
         card.find_element(value='archive').click()
+
+    def click_on_sing_up(self):
+        self.get_navbar().find_element(By.NAME, 'registration_link').click()
+
+    def click_on_sing_in(self):
+        self.get_navbar().find_element(By.NAME, 'login_link').click()
 
     def click_on_reset_filters_buttons(self):
         self.get_filter_form().find_element(value='reset').click()
