@@ -16,7 +16,7 @@ from selenium.webdriver.support.select import Select
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium import webdriver
 
-from notes.models import Worktable
+from notes.models import Worktable, Note, Category
 
 
 def wait(wait_time=5):
@@ -177,3 +177,33 @@ class FunctionalTestCase(StaticLiveServerTestCase):
 
     def click_on_archive_button(self, card: WebElement):
         card.find_element(value='archive').click()
+
+    def prepared_notes_for_filter(self):
+        worktable = self.get_worktable()
+        category = Category.objects.create(worktable=worktable, title='Category #1')
+        categories = tuple(category for _ in range(4)) + (None,)
+        notes = [
+            Note(
+                worktable=worktable,
+                title=f'Note #{n}',
+                category=category,
+                words=n * 10,
+                unique_words=n,
+                is_archived=True if n == 5 else False,
+            )
+            for n, category in enumerate(categories, start=1)
+        ]
+        Note.objects.bulk_create(notes)
+
+    def get_filter_form(self):
+        return self.browser.find_element(value='filter_form')
+
+    def send_filter(self, form: WebElement, select_fields=(), range_fields=(), **inputs_and_values):
+        for input_, value in inputs_and_values.items():
+            if input_ in range_fields:
+                form.find_element(value=f'{input_}_0').send_keys(value[0])
+                form.find_element(value=f'{input_}_1').send_keys(value[1])
+            elif input_ in select_fields:
+                Select(form.find_element(value=input_)).select_by_value(str(value))
+            else:
+                form.find_element(value=input_).send_keys(value)

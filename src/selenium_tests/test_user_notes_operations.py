@@ -1,5 +1,6 @@
 from accounts.forms import User
 from accounts.tests import TEST_EMAIL, TEST_PASSWORD
+from notes.filters import NoteFilter
 from notes.models import Worktable, Category, Note
 from selenium_tests import FunctionalTestCase
 
@@ -9,6 +10,7 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
         super().setUp()
         self.email = TEST_EMAIL
         self.password = TEST_PASSWORD
+        self.filter_class = NoteFilter
 
         user = User.objects.create_user(email=self.email, password=self.password)
         self.worktable = Worktable.objects.create(user=user)
@@ -294,6 +296,44 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
                 card=card,
                 title=title,
             )
+
+    def test_user_can_filter_notes_by_status(self):
+        self.prepared_notes_for_filter()
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User sees 5 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=5,
+        )
+
+        # User filter notes by active status
+        self.send_filter(
+            form=self.get_filter_form(),
+            select_fields=('id_status',),
+            id_status=self.filter_class.Status.ACTIVE,
+        )
+
+        # User sees 4 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=4,
+        )
+
+        # User filter notes by archived status
+        self.send_filter(
+            form=self.get_filter_form(),
+            select_fields=('id_status',),
+            id_status=self.filter_class.Status.ARCHIVED,
+        )
+
+        # User sees 4 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=1,
+        )
 
 
 #
