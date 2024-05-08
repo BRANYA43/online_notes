@@ -14,13 +14,13 @@
       </div>
       <div class="input-group input-group-sm">
         <span class="input-group-text" id="sort_by_words">Words:</span>
-        <input id="{{ filter_form.words.auto_id }}_0" class="form-control form-control-sm" type="number" name="created_after" placeholder="Start" aria-describedby="sort_by_words">
-        <input id="{{ filter_form.words.auto_id }}_1" class="form-control form-control-sm" type="number" name="created_before" placeholder="End" aria-describedby="sort_by_words">
+        <input id="{{ filter_form.words.auto_id }}_0" class="form-control form-control-sm" type="number" name="words_min" placeholder="Min" aria-describedby="sort_by_words">
+        <input id="{{ filter_form.words.auto_id }}_1" class="form-control form-control-sm" type="number" name="words_max" placeholder="Max" aria-describedby="sort_by_words">
       </div>
       <div class="input-group input-group-sm">
         <span class="input-group-text" id="sort_by_unique_words">Unique Words:</span>
-        <input id="{{ filter_form.unique_words.auto_id }}_0" class="form-control form-control-sm" type="number" name="created_after" placeholder="Start" aria-describedby="sort_by_unique_words">
-        <input id="{{ filter_form.unique_words.auto_id }}_1" class="form-control form-control-sm" type="number" name="created_before" placeholder="End" aria-describedby="sort_by_unique_words">
+        <input id="{{ filter_form.unique_words.auto_id }}_0" class="form-control form-control-sm" type="number" name="unique_words_min" placeholder="Min" aria-describedby="sort_by_unique_words">
+        <input id="{{ filter_form.unique_words.auto_id }}_1" class="form-control form-control-sm" type="number" name="unique_words_max" placeholder="Max" aria-describedby="sort_by_unique_words">
       </div>
       <div class="input-group input-group-sm">
         <span class="input-group-text" id="sort_by_date_range">Date Range:</span>

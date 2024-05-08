@@ -360,6 +360,31 @@ class RegisteredUserNotesOperationsTest(FunctionalTestCase):
             expected_value=4,
         )
 
+    def test_user_can_filter_notes_by_quantity_words_range(self):
+        self.prepared_notes_for_filter()
+
+        # User enters to site
+        self.enter_to_site()
+
+        # User sees 5 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=5,
+        )
+
+        # User filter notes by words range
+        self.send_filter(
+            form=self.get_filter_form(),
+            range_fields=('id_words',),
+            id_words=(0, 30),
+        )
+
+        # User sees 3 notes in the note list
+        self.wait_for(
+            lambda: len(self.get_cards_form_note_list()),
+            expected_value=3,
+        )
+
 
 #
 #     def test_user_can_filter_notes(self):

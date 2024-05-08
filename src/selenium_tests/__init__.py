@@ -202,7 +202,9 @@ class FunctionalTestCase(StaticLiveServerTestCase):
         for input_, value in inputs_and_values.items():
             if input_ in range_fields:
                 form.find_element(value=f'{input_}_0').send_keys(value[0])
-                form.find_element(value=f'{input_}_1').send_keys(value[1])
+                input_2 = form.find_element(value=f'{input_}_1')
+                input_2.send_keys(value[1])
+                input_2.send_keys(Keys.TAB)
             elif input_ in select_fields:
                 Select(form.find_element(value=input_)).select_by_value(str(value))
             else:
