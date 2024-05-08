@@ -152,4 +152,14 @@ class FunctionalTestCase(StaticLiveServerTestCase):
         self.assertRegex(title_field.text, rf'Title: {title}')
 
         card_body = card.find_element(By.CLASS_NAME, 'card-body')
-        self.assertEqual(card_body.get_attribute('style'), f'color: {color.rgb};')
+        self.assertIn(color.rgb, card_body.get_attribute('style'))
+
+    def check_note_card(self, card, title: str, category: str = '---', color=None):
+        fields = card.find_elements(By.TAG_NAME, 'p')
+        self.assertRegex(fields[0].text, rf'Category: {category}')
+        self.assertRegex(fields[1].text, rf'Title: {title}')
+
+        if color:
+            color = Color.from_string(color)
+            card_body = card.find_element(By.CLASS_NAME, 'card-body')
+            self.assertIn(color.rgb, card_body.get_attribute('style'))
