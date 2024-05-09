@@ -53,7 +53,7 @@ $(document).ready(function(){
             </div>
             <div class="card-footer d-flex justify-content-end gap-2">
               <a id="edit" href="${data.urls.retrieve}" class="btn btn-outline-secondary btn-sm">${feather.icons.edit.toSvg({ width: '18', height: '18'})}</i></a>
-              <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm"><${feather.icons['trash-2'].toSvg({ width: '18', height: '18'})}</i></a>
+              <a id="delete" href="${data.urls.delete}" class="btn btn-outline-secondary btn-sm">${feather.icons['trash-2'].toSvg({ width: '18', height: '18'})}</i></a>
             </div>
           </div>
         `);
