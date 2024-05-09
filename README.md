@@ -32,13 +32,10 @@ User opportunities:
 
 # Docker
 ## How deploy app to server
-In any folder download or clone files by this command:
+In any folder clone files by this command:
 
 ```commandline
 git clone -b deploy https://github.com/BRANYA43/online_notes.git
-```
-```commandline
-git archive --remote=https://github.com/BRANYA43/online_notes.git --format=zip deploy > online_notes.zip
 ```
 Then set up environments in the `your_folder/.env` by this template:
 
