@@ -1,8 +1,34 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from django.urls import reverse
 
+from accounts.tests import TEST_PASSWORD, TEST_EMAIL
 from notes import services, models
+from notes.tests.test_forms import get_test_request
+
+User = get_user_model()
+
+
+class GetWorktableServiceTest(TestCase):
+    def setUp(self) -> None:
+        self.service_fn = services.get_worktable
+
+        self.request = get_test_request(self.client)
+        self.user = User.objects.create_user(email=TEST_EMAIL, password=TEST_PASSWORD)
+
+    def test_service_retunrs_worktable_by_session_key(self):
+        expected_worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
+        worktable = self.service_fn(self.request)
+
+        self.assertEqual(worktable.id, expected_worktable.id)
+
+    def test_service_returns_worktable_by_user(self):
+        self.request.user = self.user
+        expected_worktable = models.Worktable.objects.create(user=self.user)
+        worktable = self.service_fn(self.request)
+
+        self.assertEqual(worktable.id, expected_worktable.id)
 
 
 class SerializeModelTest(TestCase):

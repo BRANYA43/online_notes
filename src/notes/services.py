@@ -5,6 +5,15 @@ from typing import Type
 from django.db.models import QuerySet, Model
 from django.urls import reverse
 
+from notes import models
+
+
+def get_worktable(request):
+    if request.user.is_authenticated:
+        return request.user.worktable
+    else:
+        return models.Worktable.objects.get(session_key=request.session.session_key)
+
 
 def serialize_filter_qs(qs: QuerySet) -> list[dict]:
     serialized_data = []
