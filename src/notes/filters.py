@@ -24,6 +24,7 @@ class NoteFilter(filters.FilterSet):
         self.request = request
         self.worktable = services.get_worktable(self.request)
         self.queryset = self.worktable.get_all_notes()
+        self.filters['category'].queryset = self.worktable.get_all_categories()
 
     def _get_value_as_int(self, value):
         try:

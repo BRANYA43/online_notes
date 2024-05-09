@@ -83,3 +83,12 @@ class NoteFilterTest(TestCase):
 
         self.assertEqual(filter_.qs.count(), 2)
         self.assertQuerySetEqual(filter_.qs, expected_qs)
+
+    def test_category_filter_returns_categories_of_current_worktable(self):
+        morty_worktable = models.Worktable.objects.create(session_key='morty_worktable_session_key')
+        morty_category = models.Category.objects.create(worktable=morty_worktable, title='Morty Note')
+        filter_ = self.filter_class(request=self.request)
+        category_qs = filter_.filters['category'].queryset
+
+        self.assertQuerySetEqual(category_qs, self.worktable.get_all_categories())
+        self.assertFalse(category_qs.filter(id=morty_category.id))
