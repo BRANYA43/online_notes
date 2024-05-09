@@ -7,7 +7,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -20,7 +19,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=50, verbose_name='title')),
-                ('color', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None, verbose_name='color')),
+                (
+                    'color',
+                    colorfield.fields.ColorField(
+                        default='#FFFFFF', image_field=None, max_length=25, samples=None, verbose_name='color'
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'category',
@@ -32,8 +36,20 @@ class Migration(migrations.Migration):
             name='Worktable',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('session_key', models.CharField(blank=True, max_length=50, null=True, unique=True, verbose_name='session')),
-                ('user', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='user')),
+                (
+                    'session_key',
+                    models.CharField(blank=True, max_length=50, null=True, unique=True, verbose_name='session'),
+                ),
+                (
+                    'user',
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name='user',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'worktable',
@@ -48,11 +64,28 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=50, verbose_name='title')),
                 ('text', models.TextField(blank=True, null=True, verbose_name='text')),
                 ('words', models.PositiveIntegerField(default=0, verbose_name='Quantity of words in text')),
-                ('unique_words', models.PositiveIntegerField(default=0, verbose_name='Quantity of unique words in text')),
+                (
+                    'unique_words',
+                    models.PositiveIntegerField(default=0, verbose_name='Quantity of unique words in text'),
+                ),
                 ('is_archived', models.BooleanField(default=False, verbose_name='archived')),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='notes.category', verbose_name='category')),
-                ('worktable', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='notes.worktable', verbose_name='worktable')),
+                (
+                    'category',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to='notes.category',
+                        verbose_name='category',
+                    ),
+                ),
+                (
+                    'worktable',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to='notes.worktable', verbose_name='worktable'
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'note',
@@ -63,6 +96,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='category',
             name='worktable',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='notes.worktable', verbose_name='worktable'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='notes.worktable', verbose_name='worktable'
+            ),
         ),
     ]
