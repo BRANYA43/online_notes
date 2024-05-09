@@ -6,8 +6,9 @@ from django.urls import reverse
 
 
 def serialize_filter_qs(qs: QuerySet) -> list[dict]:
-    data = []
-    for note, category in zip(qs.values('id', 'title', 'created'), qs.values('category__title', 'category__color')):
+    data = zip(qs.values('id', 'title', 'is_archived', 'created'), qs.values('category__title', 'category__color'))
+    serialized_data = []
+    for note, category in data:
         note['created'] = note['created'].strftime('%d.%m.%Y')
 
         category['title'] = category.pop('category__title')
@@ -20,7 +21,7 @@ def serialize_filter_qs(qs: QuerySet) -> list[dict]:
             'delete': reverse('delete_note', args=[note['id']]),
         }
 
-        data.append(
+        serialized_data.append(
             {
                 'urls': urls,
                 'note': note,
@@ -28,7 +29,7 @@ def serialize_filter_qs(qs: QuerySet) -> list[dict]:
             }
         )
 
-    return data
+    return serialized_data
 
 
 def count_words_in_text(text: str, unique=False) -> int:

@@ -23,6 +23,7 @@ class SerializeFilterQS(TestCase):
                 'note': {
                     'id': self.note.id,
                     'title': self.note.title,
+                    'is_archived': self.note.is_archived,
                     'created': self.note.created.strftime('%d.%m.%Y'),
                 },
                 'category': {
