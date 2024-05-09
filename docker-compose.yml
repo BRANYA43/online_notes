@@ -26,6 +26,10 @@ services:
       timeout: 10s
       retries: 3
     restart: always
+    networks:
+      - web_db_network
+      - nginx_web_network
+
 
   db:
     build: ./docker/postgres
@@ -41,6 +45,8 @@ services:
       timeout: 2s
       retries: 5
     restart: always
+    networks:
+      - web_db_network
 
   nginx:
     build: ./docker/nginx
@@ -62,6 +68,8 @@ services:
       timeout: 5s
       retries: 3
     restart: always
+    networks:
+      - nginx_web_network
 
 
 
@@ -72,3 +80,7 @@ volumes:
     name: web_media
   static_volume:
     name: web_static
+
+networks:
+  web_db_network:
+  nginx_web_network:
