@@ -50,9 +50,14 @@ class NoteInlineForWorktable(admin.StackedInline):
     extra = 1
     show_change_link = True
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'category':
+            worktable_id = request.resolver_match.kwargs['object_id']
+            kwargs['queryset'] = models.Category.objects.filter(worktable_id=worktable_id)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 @admin.register(models.Worktable)
 class WorktableAdmin(admin.ModelAdmin):
-    list_display = ('user', 'session_key')
     fieldsets = (('Information', {'fields': ('user', 'session_key')}),)
     inlines = (CategoryInline, NoteInlineForWorktable)
