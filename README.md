@@ -82,10 +82,10 @@ docker-compose up
 
 # Images
 ### Notes Page
-![page_note_1.png](..%2F..%2F..%2F..%2F%D0%97%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F%2Fpage_note_1.png)
+![page_category_1.png](images_for_readme%2Fpage_category_1.png)
 ### Category Page
-![page_category_1.png](..%2F..%2F..%2F..%2F%D0%97%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F%2Fpage_category_1.png)
+![page_note_1.png](images_for_readme%2Fpage_note_1.png)
 ### Register Form
-![page3.png](..%2F..%2F..%2F..%2F%D0%97%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F%2Fpage3.png)
+![page_note_2.png](images_for_readme%2Fpage_note_2.png)
 ### Login Form
-![page_note_3.png](..%2F..%2F..%2F..%2F%D0%97%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F%2Fpage_note_3.png)
+![page_note_3.png](images_for_readme%2Fpage_note_3.png)
