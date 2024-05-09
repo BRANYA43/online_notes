@@ -12,7 +12,8 @@ services:
       bash -c "
       python manage.py makemigrations;
       python manage.py migrate;
-      python manage.py createsuperuser --no-input; 
+      python manage.py createsuperuser --no-input;
+      python manage.py create-superuser-worktable --no-input;
       python manage.py collectstatic --no-input;
       gunicorn core.wsgi:application --workers 4 --bind 0.0.0.0:8000"
     env_file:
