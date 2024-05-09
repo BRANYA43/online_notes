@@ -1,0 +1,19 @@
+<div class="text-sm">
+  <h6>Category List:</h6>
+  <div class="border border-top border-2 mb-1"></div>
+  <div id="category_list" class="overflow-auto d-flex flex-column gap-3" style="max-height: 620px;">
+    {% for category in worktable.get_all_categories %}
+        <div id="{{ category.id }}" class="card" data-url="{% url 'update_category' category.id %}">
+          <div class="card-body" style="color: {{ category.color }}">
+            <p class="card-subtitle">Title: {{ category.title }}</p>
+          </div>
+            <div class="card-footer d-flex justify-content-end gap-2">
+              <a id="edit" href="{% url 'retrieve_category' category.id %}" class="btn btn-outline-secondary btn-sm"><i data-feather="edit"></i></a>
+              <a id="delete" href="{% url 'delete_category' category.id %}" class="btn btn-outline-secondary btn-sm"><i data-feather="trash-2"></i></a>
+            </div>
+        </div>
+    {% endfor %}
+
+  </div>
+  <div class="border border-top border-2 mt-1"></div>
+</div>
