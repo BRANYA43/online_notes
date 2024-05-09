@@ -9,7 +9,7 @@ from notes import forms, models, filters, services
 
 
 def filter_notes(request):
-    filter_ = filters.NoteFilter(request.GET)
+    filter_ = filters.NoteFilter(request=request, data=request.GET)
     data = services.serialize_filter_qs(filter_.qs)
     return JsonResponse(data=data, status=200, safe=False)
 
@@ -161,6 +161,7 @@ class BaseView(views.View, generic.base.ContextMixin, generic.base.TemplateRespo
         return kwargs
 
     def get_context_data(self, **kwargs):
+        kwargs['worktable'] = self.get_worktable()
         if self.extra_form_classes:
             kwargs.update(self.get_extra_forms())
 
@@ -170,7 +171,6 @@ class BaseView(views.View, generic.base.ContextMixin, generic.base.TemplateRespo
             else:
                 kwargs[form_key] = form()
 
-        kwargs['worktable'] = self.get_worktable()
         return super().get_context_data(**kwargs)
 
     def get_worktable(self) -> models.Worktable:
@@ -189,8 +189,14 @@ class NotesView(BaseView):
     template_name = 'home.html'
     extra_form_classes = {
         'note_create_form': forms.NoteCreateForm,
-        'filter_form': forms.NoteFiltersForm,
     }
+    filter_class = filters.NoteFilter
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        filter_form_class = self.filter_class(self.request).get_form_class()
+        kwargs['filter_form'] = filter_form_class()
+        return kwargs
 
 
 class CategoryView(BaseView):

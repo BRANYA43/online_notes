@@ -531,7 +531,6 @@ class NotesViewTest(TestCase):
     def test_view_context_has_expected_forms(self):
         expected_forms = {
             'note_create_form': forms.NoteCreateForm,
-            'filter_form': forms.NoteFiltersForm,
         }
         response = self.client.get(self.url)
 
@@ -540,6 +539,11 @@ class NotesViewTest(TestCase):
                 self.assertIsInstance(form, cls)
             else:
                 self.fail(f'Missed <{cls.__name__}>.')
+
+    def test_view_context_has_filter_form(self):
+        response = self.client.get(self.url)
+
+        self.assertIsNotNone(response.context.get('filter_form'))
 
 
 class CategoriesViewTest(TestCase):
