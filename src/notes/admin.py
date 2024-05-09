@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.forms import HiddenInput
 
 from notes import models
 
@@ -20,9 +21,16 @@ class NoteAdmin(admin.ModelAdmin):
 
 class NoteInlineForCategory(admin.StackedInline):
     model = models.Note
-    fields = ('title', 'text')
+    fields = ('worktable', 'title', 'text')
     extra = 1
     show_change_link = True
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+        if obj:
+            formset.form.base_fields['worktable'].widget = HiddenInput()
+            formset.form.base_fields['worktable'].initial = obj.worktable
+        return formset
 
 
 @admin.register(models.Category)
