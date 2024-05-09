@@ -1,6 +1,7 @@
 from django import forms
 
 from notes import models, services
+from notes.services import get_worktable
 
 
 class BaseCreateForm(forms.ModelForm):
@@ -33,6 +34,10 @@ class NoteCreateForm(BaseCreateForm):
     class Meta:
         model = models.Note
         fields = ('category', 'title', 'text')
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(request, *args, **kwargs)
+        self.fields['category'].queryset = get_worktable(self.request).get_all_categories()
 
 
 class NoteUpdateForm(forms.ModelForm):
