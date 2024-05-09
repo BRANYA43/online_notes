@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from accounts.tests import TEST_PASSWORD, TEST_EMAIL
 from notes import services, models
-from notes.tests.test_forms import get_test_request
+from notes.tests import get_test_request
 
 User = get_user_model()
 
@@ -17,7 +17,7 @@ class GetWorktableServiceTest(TestCase):
         self.request = get_test_request(self.client)
         self.user = User.objects.create_user(email=TEST_EMAIL, password=TEST_PASSWORD)
 
-    def test_service_retunrs_worktable_by_session_key(self):
+    def test_service_returns_worktable_by_session_key(self):
         expected_worktable = models.Worktable.objects.create(session_key=self.client.session.session_key)
         worktable = self.service_fn(self.request)
 

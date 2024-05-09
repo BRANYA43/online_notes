@@ -1,20 +1,12 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AnonymousUser
-from django.http import HttpRequest
 from django.test import TestCase
 from django import forms as dj_forms
 
 from accounts.tests import TEST_EMAIL, TEST_PASSWORD
 from notes import forms, models
+from notes.tests import get_test_request
 
 User = get_user_model()
-
-
-def get_test_request(client) -> HttpRequest:
-    request = HttpRequest()
-    request.session = client.session
-    request.user = AnonymousUser()
-    return request
 
 
 class NoteUpdateForm(TestCase):

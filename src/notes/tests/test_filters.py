@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from notes import models, filters
-from notes.tests.test_forms import get_test_request
+from notes.tests import get_test_request
 
 
 class NoteFilterTest(TestCase):
