@@ -1,8 +1,6 @@
 from django import forms
 
-from notes import models, filters
-
-NoteFiltersForm = filters.NoteFilter().get_form_class()
+from notes import models
 
 
 class BaseCreateForm(forms.ModelForm):
