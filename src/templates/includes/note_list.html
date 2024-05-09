@@ -2,31 +2,7 @@
   <h6>Note List:</h6>
   <div class="border border-top border-2 mb-1"></div>
   <div id="note_list" class="overflow-auto d-flex flex-column gap-3" style="height: 520px;">
-    {% for note in worktable.get_all_notes %}
-        <div id="{{ note.id }}" class="card" data-url="{% url 'update_note' note.id %}">
-          <div class="card-body" {% if note.category %} style="color: {{ note.category.color }}"{% endif %}>
-            <p class="card-subtitle">
-              {% if note.category %}
-                Category: {{ note.category.title }}
-              {% else %}
-                Category: ---
-              {% endif %}
-            </p>
-            <p class="card-subtitle">Title: {{ note.title }}</p>
-            <p class="card-subtitle">Date: {{ note.created|date:"d.m.Y" }}</p>
-          </div>
-            <div class="card-footer d-flex justify-content-end gap-2">
-              <a id="edit" href="{% url 'retrieve_note' note.id %}" class="btn btn-outline-secondary btn-sm"><i data-feather="edit"></i></a>
-              {% if note.is_archived %}
-                <a id="archive" href="{% url 'archive_note' note.id %}" class="btn btn-secondary btn-sm"><i data-feather="archive"></i></a>
-              {% else %}
-                <a id="archive" href="{% url 'archive_note' note.id %}" class="btn btn-outline-secondary btn-sm"><i data-feather="archive"></i></a>
-              {% endif %}
-              <a id="delete" href="{% url 'delete_note' note.id %}" class="btn btn-outline-secondary btn-sm"><i data-feather="trash-2"></i></a>
-            </div>
-        </div>
-    {% endfor %}
-
+    ...
   </div>
   <div class="border border-top border-2 mt-1"></div>
 </div>

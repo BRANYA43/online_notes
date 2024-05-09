@@ -319,4 +319,6 @@ $(document).ready(function(){
             console.error(errors);
         });
     });
+
+    send_ajax_filter_request()
 });
