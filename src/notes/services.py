@@ -7,28 +7,21 @@ from django.urls import reverse
 
 
 def serialize_filter_qs(qs: QuerySet) -> list[dict]:
-    data = zip(qs.values('id', 'title', 'is_archived', 'created'), qs.values('category__title', 'category__color'))
     serialized_data = []
-    for note, category in data:
-        note['created'] = note['created'].strftime('%d.%m.%Y')
-
-        category['title'] = category.pop('category__title')
-        category['color'] = category.pop('category__color')
-
-        urls = {
-            'update': reverse('update_note', args=[note['id']]),
-            'retrieve': reverse('retrieve_note', args=[note['id']]),
-            'archive': reverse('archive_note', args=[note['id']]),
-            'delete': reverse('delete_note', args=[note['id']]),
-        }
-
-        serialized_data.append(
-            {
-                'urls': urls,
-                'note': note,
-                'category': category if category['title'] else None,
-            }
+    for note in qs:
+        note_data = serialize_model(
+            note,
+            ('id', 'title', 'is_archived'),
+            ('update', 'retrieve', 'archive', 'delete'),
         )
+        note_data['note']['created'] = note.created.strftime('%d.%m.%Y')
+        if note.category:
+            category_data = serialize_model(
+                note.category,
+                ('title', 'color'),
+            )
+            note_data.update(category_data)
+        serialized_data.append(note_data)
 
     return serialized_data
 

@@ -71,7 +71,7 @@ class SerializeFilterQS(TestCase):
     def test_service_serializes_filter_qs_correctly_if_note_doesnt_have_category(self):
         self.note.category = None
         self.note.save()
-        self.expected_data[0]['category'] = None
+        del self.expected_data[0]['category']
 
         data = self.service_fn(models.Note.objects.all())
 
