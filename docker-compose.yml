@@ -6,7 +6,7 @@ services:
     image: branya/online_notes_web:1.0.0
     container_name: web
     volumes:
-      - static_volume:/opt/src/static
+      - static_volume:/opt/src/collected_static
       - media_volume:/opt/src/media
     command: >
       bash -c "
@@ -53,7 +53,7 @@ services:
     image: branya/online_notes_nginx:1.0.0
     container_name: nginx
     volumes:
-      - static_volume:/opt/src/static
+      - static_volume:/opt/src/collected_static
       - media_volume:/opt/src/media
     ports:
       - "80:80"
