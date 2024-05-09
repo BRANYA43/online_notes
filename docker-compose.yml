@@ -3,6 +3,7 @@ version: "3.9"
 services:
   web:
     build: .
+    image: branya/online_notes_web:1.0.0
     container_name: web
     volumes:
       - static_volume:/opt/src/static
@@ -28,6 +29,7 @@ services:
 
   db:
     build: ./docker/postgres
+    image: branya/online_notes_db:1.0.0
     container_name: db
     volumes:
       - db_volume:/var/lib/postgresql/data/
@@ -42,6 +44,7 @@ services:
 
   nginx:
     build: ./docker/nginx
+    image: branya/online_notes_nginx:1.0.0
     container_name: nginx
     volumes:
       - static_volume:/opt/src/static
