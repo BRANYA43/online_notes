@@ -2,7 +2,7 @@ import django_filters as filters
 from django.utils.translation import gettext as _
 from django.db import models as dj_models
 
-from notes import models
+from notes import models, services
 
 
 class NoteFilter(filters.FilterSet):
@@ -18,6 +18,12 @@ class NoteFilter(filters.FilterSet):
     class Meta:
         model = models.Note
         fields = ['category', 'created', 'words', 'unique_words']
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+        self.worktable = services.get_worktable(self.request)
+        self.queryset = self.worktable.get_all_notes()
 
     def _get_value_as_int(self, value):
         try:
