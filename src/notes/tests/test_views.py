@@ -518,6 +518,10 @@ class BaseViewTest(TestCase):
 class NotesViewTest(TestCase):
     def setUp(self) -> None:
         self.url = reverse('home')
+        self.view_class = views.NotesView
+
+    def test_view_inherits_BaseView(self):
+        self.assertTrue(issubclass(self.view_class, views.BaseView))
 
     def test_view_uses_expected_template(self):
         response = self.client.get(self.url)
@@ -541,6 +545,10 @@ class NotesViewTest(TestCase):
 class CategoriesViewTest(TestCase):
     def setUp(self) -> None:
         self.url = reverse('categories')
+        self.view_class = views.CategoryView
+
+    def test_view_inherits_BaseView(self):
+        self.assertTrue(issubclass(self.view_class, views.BaseView))
 
     def test_view_uses_expected_template(self):
         response = self.client.get(self.url)
